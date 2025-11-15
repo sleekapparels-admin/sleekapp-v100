@@ -24,7 +24,7 @@ import type {
  * Usage: const { data, error } = await queryTable<Order>('orders').select('*').eq('buyer_id', userId);
  */
 export const queryTable = <T>(tableName: string): any => {
-  return supabase.from(tableName) as any;
+  return (supabase as any).from(tableName) as any;
 };
 
 /**
@@ -260,7 +260,7 @@ export const roleHelpers = {
  */
 export const profileHelpers = {
   async getByUserId(userId: string): Promise<any> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
@@ -268,8 +268,8 @@ export const profileHelpers = {
     return { data: data as any as Profile | null, error };
   },
 
-  async update(userId: string, updates: UpdateData<Profile>) {
-    const { data, error } = await supabase
+  async update(userId: string, updates: UpdateData<Profile>): Promise<any> {
+    const { data, error } = await (supabase as any)
       .from('profiles')
       .update(updates as any)
       .eq('user_id', userId)
