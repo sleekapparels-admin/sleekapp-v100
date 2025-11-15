@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { PaymentForm } from "@/components/payment/PaymentForm";
 import { Card } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";

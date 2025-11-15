@@ -1,6 +1,6 @@
 import { Shield, Award, Leaf, Users, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 
 const iconMap: Record<string, any> = {
   Shield,

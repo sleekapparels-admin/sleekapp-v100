@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";

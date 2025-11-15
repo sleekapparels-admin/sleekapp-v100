@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { documentHelpers } from "@/lib/supabaseHelpers";
 import type { OrderDocument } from "@/types/database";
 import { Upload, File, Download, Trash2, Loader2 } from "lucide-react";

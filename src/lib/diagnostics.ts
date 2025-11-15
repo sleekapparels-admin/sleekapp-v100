@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { generateAIQuote, AIQuoteRequest } from "./api/aiQuote";
 
 export interface DiagnosticResult {

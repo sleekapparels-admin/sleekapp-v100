@@ -9,7 +9,7 @@ import {
   BarChart3,
   PieChart as PieChartIcon
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import {
   LineChart,
   Line,

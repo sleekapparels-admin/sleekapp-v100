@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 

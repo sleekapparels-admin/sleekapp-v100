@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { useToast } from "@/hooks/use-toast";
 
 export const useSupplierOrders = (supplierId: string) => {

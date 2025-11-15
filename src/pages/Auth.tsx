@@ -190,7 +190,11 @@ export default function Auth() {
       
       setActiveTab("login");
     } catch (error: any) {
-      toast.error(error.message || "Failed to create account");
+      if (error.message === "Failed to fetch") {
+        toast.error("Network error. Please check your connection or ensure this app's URL is added to allowed URLs in backend settings.");
+      } else {
+        toast.error(error.message || "Failed to create account");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -239,7 +243,11 @@ export default function Auth() {
       toast.success("Signed in successfully");
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in");
+      if (error.message === "Failed to fetch") {
+        toast.error("Network error. Please check your connection or ensure this app's URL is added to allowed URLs in backend settings.");
+      } else {
+        toast.error(error.message || "Failed to sign in");
+      }
     } finally {
       setIsLoading(false);
     }
