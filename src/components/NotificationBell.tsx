@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bell } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import type { UserNotification } from "@/types/database";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";

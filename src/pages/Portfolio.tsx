@@ -7,7 +7,7 @@ import { FloatingContactWidget } from "@/components/FloatingContactWidget";
 import { CTASection } from "@/components/CTASection";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { LazyImage } from "@/components/LazyImage";
 import { Link } from "react-router-dom";

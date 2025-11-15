@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles, Clock, DollarSign, Calendar, TrendingDown, Lightbulb, Upload, X, FileText, Image as ImageIcon, Mail, Shield } from "lucide-react";
 import { generateAIQuote } from "@/lib/api/aiQuote";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { SmartFactoryMatcher } from "@/components/quote/SmartFactoryMatcher";
 import { CurrencyDisplay } from "@/components/quote/CurrencyDisplay";
 import { COUNTRIES } from "@/lib/countries";

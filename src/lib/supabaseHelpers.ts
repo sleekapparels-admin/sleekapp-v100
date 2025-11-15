@@ -3,7 +3,7 @@
  * Use these helpers to get better type inference with the loosely-typed client
  */
 
-import { supabase } from './supabaseClient';
+import { supabaseInjected as supabase } from '@/integrations/supabase/client.injected';
 import type {
   Order,
   OrderWithRelations,
@@ -23,16 +23,8 @@ import type {
  * Generic type-safe query builder
  * Usage: const { data, error } = await queryTable<Order>('orders').select('*').eq('buyer_id', userId);
  */
-export const queryTable = <T>(tableName: string) => {
-  return supabase.from(tableName) as any as {
-    select: (columns?: string) => Promise<{ data: T[] | null; error: any }>;
-    insert: (data: InsertData<T> | InsertData<T>[]) => Promise<{ data: T[] | null; error: any }>;
-    update: (data: UpdateData<T>) => Promise<{ data: T[] | null; error: any }>;
-    delete: () => Promise<{ data: T[] | null; error: any }>;
-    eq: (column: string, value: any) => any;
-    single: () => Promise<{ data: T | null; error: any }>;
-    maybeSingle: () => Promise<{ data: T | null; error: any }>;
-  };
+export const queryTable = <T>(tableName: string): any => {
+  return supabase.from(tableName) as any;
 };
 
 /**
@@ -69,7 +61,7 @@ export const orderHelpers = {
       `)
       .eq('id', orderId)
       .maybeSingle();
-    return { data: data as OrderWithRelations | null, error };
+    return { data: data as any as OrderWithRelations | null, error };
   },
 
   async updateStatus(orderId: string, status: string, notes?: string) {
@@ -149,7 +141,7 @@ export const notificationHelpers = {
   async create(notification: InsertData<UserNotification>) {
     const { data, error } = await supabase
       .from('notifications')
-      .insert(notification)
+      .insert(notification as any)
       .select()
       .single();
     return { data: data as UserNotification | null, error };
@@ -191,7 +183,7 @@ export const quoteHelpers = {
   async create(quote: InsertData<AIQuote>) {
     const { data, error } = await supabase
       .from('ai_quotes')
-      .insert(quote)
+      .insert(quote as any)
       .select()
       .single();
     return { data: data as AIQuote | null, error };
@@ -208,7 +200,7 @@ export const supplierHelpers = {
       .select('*')
       .eq('verification_status', 'verified')
       .order('rating', { ascending: false });
-    return { data: data as Supplier[] | null, error };
+    return { data: data as any as Supplier[] | null, error };
   },
 
   async getById(supplierId: string) {
@@ -217,7 +209,7 @@ export const supplierHelpers = {
       .select('*')
       .eq('id', supplierId)
       .maybeSingle();
-    return { data: data as Supplier | null, error };
+    return { data: data as any as Supplier | null, error };
   },
 
   async getByUserId(userId: string) {
@@ -226,7 +218,7 @@ export const supplierHelpers = {
       .select('*')
       .eq('user_id', userId)
       .maybeSingle();
-    return { data: data as Supplier | null, error };
+    return { data: data as any as Supplier | null, error };
   },
 };
 
@@ -248,7 +240,7 @@ export const roleHelpers = {
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
-      .eq('role', role)
+      .eq('role', role as any)
       .maybeSingle();
     return { hasRole: !!data, error };
   },
@@ -256,7 +248,7 @@ export const roleHelpers = {
   async assignRole(userId: string, role: string) {
     const { data, error } = await supabase
       .from('user_roles')
-      .insert({ user_id: userId, role })
+      .insert({ user_id: userId, role: role as any } as any)
       .select()
       .single();
     return { data: data as UserRole | null, error };
@@ -267,23 +259,23 @@ export const roleHelpers = {
  * Profile helpers
  */
 export const profileHelpers = {
-  async getByUserId(userId: string) {
+  async getByUserId(userId: string): Promise<any> {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
       .maybeSingle();
-    return { data: data as Profile | null, error };
+    return { data: data as any as Profile | null, error };
   },
 
   async update(userId: string, updates: UpdateData<Profile>) {
     const { data, error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(updates as any)
       .eq('user_id', userId)
       .select()
       .single();
-    return { data: data as Profile | null, error };
+    return { data: data as any as Profile | null, error };
   },
 };
 
@@ -336,7 +328,7 @@ export const documentHelpers = {
   async upload(document: InsertData<OrderDocument>) {
     const { data, error } = await supabase
       .from('order_documents')
-      .insert(document)
+      .insert(document as any)
       .select()
       .single();
     return { data: data as OrderDocument | null, error };
@@ -375,7 +367,7 @@ export const blogHelpers = {
   },
 
   async incrementViews(postId: string) {
-    const { error } = await supabase.rpc('increment_blog_views', {
+    const { error } = await supabase.rpc('increment_blog_views' as any, {
       post_id: postId,
     });
     return { error };

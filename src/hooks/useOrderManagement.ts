@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { orderHelpers } from "@/lib/supabaseHelpers";
 import { useToast } from "@/hooks/use-toast";
 import type { Order } from "@/types/database";

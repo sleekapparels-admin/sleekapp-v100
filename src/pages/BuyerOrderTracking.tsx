@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrderStatusTimeline } from "@/components/OrderStatusTimeline";
 import { OrderMessaging } from "@/components/OrderMessaging";
 import { Package, Clock, MapPin, DollarSign } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 

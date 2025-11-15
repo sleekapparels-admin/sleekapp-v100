@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, MapPin, Send, Download } from "lucide-react";
 import { z } from "zod";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
 import { SmartReplyButtons } from "@/components/SmartReplyButtons";
 import { BrochureDownload } from "@/components/BrochureDownload";
 
