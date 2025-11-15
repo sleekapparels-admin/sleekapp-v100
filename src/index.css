@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Professional B2B Color Scheme */
+    /* Primary: Teal Green #2D9B93 */
+    --primary: 175 55% 39%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 175 55% 55%;
+    --primary-dark: 175 55% 30%;
+
+    /* Secondary: Deep Navy #1E3A5F */
+    --secondary: 214 52% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent: Warm Gold #D4AF37 */
+    --accent: 46 65% 52%;
+    --accent-foreground: 210 29% 24%;
+
+    /* Coral Accent #E86A5D */
+    --coral: 7 73% 64%;
+    --coral-foreground: 0 0% 100%;
+
+    /* Neutrals */
+    --background: 216 33% 97%; /* Background Light #F5F7FA */
+    --foreground: 210 29% 24%; /* Charcoal #2C3E50 */
+    
+    --card: 0 0% 100%; /* Pure White */
+    --card-foreground: 210 29% 24%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 29% 24%;
+
+    /* Muted: Soft Gray variations */
+    --muted: 216 33% 95%;
+    --muted-foreground: 220 9% 46%; /* Medium Gray #6B7280 */
+
+    /* Borders & Inputs: Soft Gray #E5E7EB */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 175 55% 39%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --radius: 0.5rem;
+
+    /* Chart colors */
+    --chart-1: 175 55% 39%;
+    --chart-2: 214 52% 25%;
+    --chart-3: 46 65% 52%;
+    --chart-4: 175 55% 55%;
+    --chart-5: 214 52% 35%;
+
+    /* Gradients */
+    --gradient-subtle: linear-gradient(180deg, hsl(216 33% 97%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(214 52% 25%), hsl(214 52% 35%));
+    --gradient-warm: linear-gradient(135deg, hsl(175 55% 39%), hsl(175 55% 55%));
+    --gradient-craft: linear-gradient(180deg, hsl(175 55% 39% / 0.05), hsl(175 55% 39% / 0.02));
+
+    /* Shadows */
+    --shadow-card: 0 2px 8px hsl(210 29% 24% / 0.08);
+    --shadow-card-hover: 0 8px 24px hsl(210 29% 24% / 0.12);
+    --shadow-glow: 0 0 40px hsl(175 55% 39% / 0.25);
+  }
+
+  .dark {
+    /* Primary: Teal (brighter in dark mode) */
+    --primary: 175 55% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 175 55% 60%;
+    --primary-dark: 175 55% 35%;
+
+    /* Secondary: Deep Navy (lighter in dark mode) */
+    --secondary: 214 52% 30%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent: Warm Gold (brighter in dark mode) */
+    --accent: 46 65% 58%;
+    --accent-foreground: 214 52% 12%;
+
+    /* Coral Accent */
+    --coral: 7 73% 68%;
+    --coral-foreground: 0 0% 100%;
+
+    /* Backgrounds & Text */
+    --background: 214 52% 12%;
+    --foreground: 0 0% 95%;
+
+    --card: 214 52% 15%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 214 52% 15%;
+    --popover-foreground: 0 0% 95%;
+
+    --muted: 214 52% 20%;
+    --muted-foreground: 210 15% 70%;
+
+    --border: 214 52% 25%;
+    --input: 214 52% 25%;
+    --ring: 175 55% 45%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --chart-1: 175 55% 45%;
+    --chart-2: 214 52% 30%;
+    --chart-3: 46 65% 58%;
+    --chart-4: 175 55% 60%;
+    --chart-5: 214 52% 40%;
+
+    --gradient-subtle: linear-gradient(180deg, hsl(214 52% 15%), hsl(214 52% 12%));
+    --gradient-hero: linear-gradient(135deg, hsl(214 52% 25%), hsl(214 52% 35%));
+    --gradient-warm: linear-gradient(135deg, hsl(175 55% 45%), hsl(175 55% 60%));
+    --gradient-craft: linear-gradient(180deg, hsl(175 55% 45% / 0.08), hsl(175 55% 45% / 0.03));
+
+    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.3);
+    --shadow-card-hover: 0 8px 24px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(175 55% 45% / 0.25);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Fix deprecated H1UserAgentFontSizeInSection warning */
+  h1 {
+    font-size: revert-layer;
+  }
+}
+
+/* Performance optimizations to reduce forced reflows */
+@layer utilities {
+  /* Hint browser to optimize animations - apply to motion elements */
+  [data-radix-scroll-area-viewport],
+  [data-state] {
+    will-change: auto;
+  }
+
+  /* Optimize GPU-accelerated transforms */
+  .transform-gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  /* Batch layout reads */
+  img,
+  video {
+    content-visibility: auto;
+  }
+}

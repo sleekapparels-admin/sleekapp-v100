@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- Thread spool base -->
+  <rect x="40" y="120" width="30" height="50" rx="4" fill="#2D9C88"/>
+  <ellipse cx="55" cy="120" rx="15" ry="6" fill="#2D9C88"/>
+  <ellipse cx="55" cy="170" rx="15" ry="6" fill="#2D9C88"/>
+  
+  <!-- Sewing machine simplified profile -->
+  <path d="M90 80 L90 110 L140 110 L150 100 L160 100 L160 80 L150 70 L100 70 Z" fill="#2D9C88"/>
+  <circle cx="130" cy="120" r="8" fill="#2D9C88"/>
+  <rect x="125" y="128" width="10" height="15" fill="#2D9C88"/>
+  
+  <!-- Large stylized needle -->
+  <path d="M75 45 L77 45 L82 150 L80 150 Z" fill="#2D9C88"/>
+  <ellipse cx="76" cy="42" rx="3" ry="6" fill="#2D9C88"/>
+  <circle cx="76" cy="42" r="2" fill="white"/>
+  
+  <!-- Thread connecting elements -->
+  <path d="M70 130 Q85 120 125 128" stroke="#2D9C88" stroke-width="2" fill="none"/>
+  <path d="M76 50 Q90 65 125 80" stroke="#2D9C88" stroke-width="2" fill="none"/>
+</svg>
