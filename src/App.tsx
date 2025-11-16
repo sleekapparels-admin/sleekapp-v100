@@ -96,14 +96,9 @@ const queryClient = new QueryClient({
   },
 });
 
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="text-center">
-      <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
-      <p className="text-muted-foreground">Loading...</p>
-    </div>
-  </div>
-);
+// Import loading skeletons
+import { PageLoadingSkeleton, MinimalLoadingFallback } from "@/components/LoadingSkeleton";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 const Root = () => {
   const location = useLocation();
@@ -119,9 +114,11 @@ const Root = () => {
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
-        <Suspense fallback={<LoadingFallback />}>
-          <Outlet />
-        </Suspense>
+        <RouteErrorBoundary>
+          <Suspense fallback={<PageLoadingSkeleton />}>
+            <Outlet />
+          </Suspense>
+        </RouteErrorBoundary>
       )}
     </AnalyticsProvider>
   );
@@ -202,6 +199,34 @@ function App() {
       <Suspense fallback={null}>
         <Sonner />
       </Suspense>
+      <noscript>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: '#ffffff',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          textAlign: 'center'
+        }}>
+          <div>
+            <h1 style={{ fontSize: '24px', marginBottom: '16px', color: '#000' }}>
+              JavaScript Required
+            </h1>
+            <p style={{ fontSize: '16px', color: '#666', marginBottom: '24px' }}>
+              This website requires JavaScript to function properly. Please enable JavaScript in your browser settings.
+            </p>
+            <div style={{ fontSize: '14px', color: '#999' }}>
+              <p>For the best experience, we recommend using a modern browser with JavaScript enabled.</p>
+            </div>
+          </div>
+        </div>
+      </noscript>
       <RouterProvider router={router} />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
