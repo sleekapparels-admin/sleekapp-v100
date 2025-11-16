@@ -1510,6 +1510,42 @@ export type Database = {
         }
         Relationships: []
       }
+      product_categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       production_batches: {
         Row: {
           actual_start_date: string | null
@@ -1639,6 +1675,7 @@ export type Database = {
           ai_generated_image: boolean | null
           category: string
           colors: string[] | null
+          compare_at_price: number | null
           created_at: string
           description: string | null
           featured: boolean | null
@@ -1648,6 +1685,12 @@ export type Database = {
           image_generation_date: string | null
           image_generation_prompt: string | null
           image_url: string
+          lead_time_days: number | null
+          materials: string[] | null
+          moq: number | null
+          popularity_score: number | null
+          price: number | null
+          search_vector: unknown
           title: string
           updated_at: string
           yarn: string | null
@@ -1656,6 +1699,7 @@ export type Database = {
           ai_generated_image?: boolean | null
           category: string
           colors?: string[] | null
+          compare_at_price?: number | null
           created_at?: string
           description?: string | null
           featured?: boolean | null
@@ -1665,6 +1709,12 @@ export type Database = {
           image_generation_date?: string | null
           image_generation_prompt?: string | null
           image_url: string
+          lead_time_days?: number | null
+          materials?: string[] | null
+          moq?: number | null
+          popularity_score?: number | null
+          price?: number | null
+          search_vector?: unknown
           title: string
           updated_at?: string
           yarn?: string | null
@@ -1673,6 +1723,7 @@ export type Database = {
           ai_generated_image?: boolean | null
           category?: string
           colors?: string[] | null
+          compare_at_price?: number | null
           created_at?: string
           description?: string | null
           featured?: boolean | null
@@ -1682,6 +1733,12 @@ export type Database = {
           image_generation_date?: string | null
           image_generation_prompt?: string | null
           image_url?: string
+          lead_time_days?: number | null
+          materials?: string[] | null
+          moq?: number | null
+          popularity_score?: number | null
+          price?: number | null
+          search_vector?: unknown
           title?: string
           updated_at?: string
           yarn?: string | null

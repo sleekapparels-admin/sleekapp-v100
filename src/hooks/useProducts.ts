@@ -18,6 +18,13 @@ export interface Product {
   image_generation_prompt?: string | null;
   created_at?: string;
   updated_at?: string;
+  price?: number | null;
+  compare_at_price?: number | null;
+  materials?: string[] | null;
+  popularity_score?: number | null;
+  lead_time_days?: number | null;
+  moq?: number | null;
+  search_vector?: string | null;
 }
 
 export interface ProductCategory {
@@ -34,6 +41,12 @@ export interface ProductFilters {
   category?: string;
   search?: string;
   featured?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  minMOQ?: number;
+  materials?: string[];
+  colors?: string[];
+  sortBy?: 'newest' | 'price_asc' | 'price_desc' | 'popular';
 }
 
 export const useProducts = (filters?: ProductFilters) => {
@@ -43,24 +56,89 @@ export const useProducts = (filters?: ProductFilters) => {
       .from("products")
       .select("*");
 
+    // Category filter
     if (filters?.category && filters.category !== "all") {
       query = query.eq("category", filters.category);
     }
 
+    // Text search using full-text search
     if (filters?.search) {
-      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      query = query.textSearch('search_vector', filters.search, {
+        type: 'websearch',
+        config: 'english'
+      });
     }
 
+    // Featured filter
     if (filters?.featured !== undefined) {
       query = query.eq("featured", filters.featured);
     }
 
-    const { data, error } = await query.order("created_at", { ascending: false });
+    // Price range filters
+    if (filters?.minPrice !== undefined) {
+      query = query.gte("price", filters.minPrice);
+    }
+    if (filters?.maxPrice !== undefined) {
+      query = query.lte("price", filters.maxPrice);
+    }
+
+    // MOQ filter
+    if (filters?.minMOQ !== undefined) {
+      query = query.gte("moq", filters.minMOQ);
+    }
+
+    // Materials filter
+    if (filters?.materials && filters.materials.length > 0) {
+      query = query.overlaps("materials", filters.materials);
+    }
+
+    // Colors filter
+    if (filters?.colors && filters.colors.length > 0) {
+      query = query.overlaps("colors", filters.colors);
+    }
+
+    // Sorting
+    switch (filters?.sortBy) {
+      case "newest":
+        query = query.order("created_at", { ascending: false });
+        break;
+      case "price_asc":
+        query = query.order("price", { ascending: true });
+        break;
+      case "price_desc":
+        query = query.order("price", { ascending: false });
+        break;
+      case "popular":
+        query = query
+          .order("featured", { ascending: false })
+          .order("popularity_score", { ascending: false });
+        break;
+      default:
+        query = query.order("created_at", { ascending: false });
+    }
+
+    const { data, error } = await query;
     
     if (error) throw error;
 
-    return (data || []) as Product[];
-  }, [filters?.category, filters?.search, filters?.featured]);
+    // Add fallback for missing images
+    const productsWithFallback = (data || []).map(product => ({
+      ...product,
+      image_url: product.image_url || '/placeholder.svg'
+    }));
+
+    return productsWithFallback as Product[];
+  }, [
+    filters?.category, 
+    filters?.search, 
+    filters?.featured, 
+    filters?.minPrice, 
+    filters?.maxPrice, 
+    filters?.minMOQ,
+    filters?.materials,
+    filters?.colors,
+    filters?.sortBy
+  ]);
 
   return useQuery({
     queryKey: ["products", filters],
