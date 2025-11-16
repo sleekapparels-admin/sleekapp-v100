@@ -15,50 +15,50 @@ import factoryPoster from "@/assets/factory/wide-factory-floor.webp";
 const serviceDetails = [
   {
     icon: Package2,
-    title: "Knitwear Manufacturing | Europe & North America",
+    title: "Casualwear Manufacturing",
     description:
-      "Custom knitwear for European and North American brands. Sweaters, cardigans, polos. MOQ 50 pieces. Automated flat-knit technology. Serving Nordic, UK, Germany, Spain, USA. Fine gauge (12GG-14GG) to chunky (3GG-7GG). Organic cotton, merino wool, cashmere, bamboo. Complete finishing: washing, embroidery, printing. Quality: ±1cm tolerance, AQL 2.5.",
+      "Custom t-shirts, hoodies, sweatshirts, and polo shirts for global brands. MOQ from 50-300 pieces depending on style. Ring-spun cotton, organic cotton, poly-cotton blends, French terry, fleece. Custom branding options: screen print, embroidery, heat transfer, DTG printing. Serving Europe, North America, and worldwide markets.",
     features: [
-      "Premium yarns: Organic cotton, Merino wool, Bamboo, Cashmere, RPET recycled",
-      "Knit structures: Jersey, Rib, Milano, Jacquard, Cable knit, French terry",
-      "Full finishing: Washing, steaming, pressing, linking, embroidery, printing",
-      "Precision quality: ±1cm tolerance, AQL 2.5 inspection standard",
+      "T-shirts: Basic crew neck, V-neck, fashion fits, heavyweight, organic cotton",
+      "Hoodies & Sweatshirts: Pullover, zip-up, crewneck, French terry, fleece",
+      "Polo Shirts: Pique cotton, performance poly, custom collar styles",
+      "Fabrics: Ring-spun cotton, organic cotton, poly-cotton blends, moisture-wicking",
     ],
   },
   {
     icon: Scissors,
-    title: "Cut & Sew Sourcing | Woven Apparel for EU & NA",
+    title: "Activewear & Joggers",
     description:
-      "Full-package cut & sew sourcing through vetted Bangladesh factory partners. Woven garments for European and North American brands: Oxford shirts, dress shirts, jackets, blazers, chinos, trousers. Complete service: pattern making, grading, cutting, sewing, finishing, QC. MOQ 300 pieces.",
+      "Performance wear and athletic basics manufacturing. Joggers, athletic pants, performance t-shirts, and activewear essentials. Moisture-wicking fabrics, stretch materials, durable construction. MOQ from 100-500 pieces. Complete finishing including custom branding and labels.",
     features: [
-      "Woven shirts: Oxford, dress shirts, casual shirts, chambray, poplin",
-      "Outerwear: Jackets, blazers, windbreakers, bomber jackets, parkas",
-      "Bottom wear: Chino trousers, work pants, casual pants, twill, denim",
-      "Quality: AQL 2.5 inspection, pattern accuracy, durability testing",
+      "Joggers: Fleece joggers, French terry, athletic fit, tapered, cuffed",
+      "Performance wear: Moisture-wicking tees, athletic shorts, compression",
+      "Fabrics: Stretch polyester, cotton-poly blends, performance knits",
+      "Features: Elastic waistbands, drawstrings, zippered pockets, moisture management",
     ],
   },
   {
     icon: Clock,
-    title: "Fast Sampling & Production for EU & NA Markets",
+    title: "Uniforms & Teamwear",
     description:
-      "Industry-leading turnaround times for European and North American brands. Streamlined sampling workflow gets designs into bulk production faster. Tech pack review to pre-production samples to bulk manufacturing. Transparent timelines with LoopTrace™ tracking. International shipping expertise.",
+      "Corporate, school, and sports uniform manufacturing with custom branding. Complete service from design to delivery. Screen printing, embroidery, heat transfer, and woven labels available. MOQ from 50-200 pieces depending on complexity. Fast turnaround times with quality control.",
     features: [
-      "First sample: 3-7 business days from design approval",
-      "Tech pack development assistance and pattern digitization support",
-      "Pantone color matching with physical approval swatches",
-      "Bulk knitwear: 10-20 days | Cut & sew: 15-25 days after sample approval",
+      "Corporate uniforms: Polo shirts, button-ups, branded apparel",
+      "School uniforms: T-shirts, hoodies, sports jerseys, PE kits",
+      "Sports teams: Custom jerseys, practice wear, warm-up suits",
+      "Branding options: Screen print, embroidery, heat transfer, patches, labels",
     ],
   },
   {
     icon: Shield,
-    title: "Quality Assurance & Compliance for EU & NA Brands",
+    title: "Quality Assurance & Fast Production",
     description:
-      "Certified quality management meeting international standards. AQL 2.5 inspection at multiple checkpoints. Third-party audit reports available. OEKO-TEX certified materials. Complete traceability from raw materials to finished garments. International compliance documentation.",
+      "Industry-leading production times with AQL 2.5 quality standards. Complete quality control at every stage. First samples in 3-7 days. Bulk production in 10-20 days. LoopTrace™ AI tracking for complete transparency. OEKO-TEX certified materials available. International compliance documentation.",
     features: [
-      "In-line quality control during production at critical checkpoints",
-      "Pre-final and final inspection before packing (100% inspection available)",
-      "Measurement verification against tech pack specs (±1cm tolerance)",
-      "Complete photo documentation, inspection reports, compliance certificates",
+      "Fast sampling: 3-7 business days for first samples",
+      "Quick production: 10-20 days bulk production after approval",
+      "Quality control: AQL 2.5 inspection, measurement verification",
+      "Tracking: Real-time LoopTrace™ AI-powered production tracking",
     ],
   },
 ];
@@ -76,10 +76,10 @@ const Services = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl animate-fade-up">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">
-                Apparel Manufacturing for European & North American Brands
+                Apparel Manufacturing Services
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground leading-relaxed">
-                Complete garment manufacturing from Bangladesh for EU & NA brands. Knitwear, cut & sew, uniforms. MOQ 50-300 pieces. Fast sampling 3-7 days. Serving Nordic countries, UK, Germany, Spain, France, USA. Ethical production, transparent pricing, AQL 2.5 quality.
+                Complete apparel manufacturing services for global brands. T-shirts, hoodies, sweatshirts, joggers, activewear, and uniforms. MOQ from 50 pieces. Fast sampling 3-7 days. Serving Europe, North America, and worldwide markets. Ethical production, transparent pricing, AQL 2.5 quality.
               </p>
             </div>
           </div>

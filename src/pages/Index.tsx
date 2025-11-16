@@ -231,9 +231,9 @@ function Index() {
                     </div>
                     <div className="space-y-3">
                       {[
-                        { stage: "Yarn Received", progress: 100, status: "completed" },
-                        { stage: "Knitting", progress: 100, status: "completed" },
-                        { stage: "Washing & Finishing", progress: 75, status: "in_progress" },
+                        { stage: "Fabric Received", progress: 100, status: "completed" },
+                        { stage: "Cutting & Sewing", progress: 100, status: "completed" },
+                        { stage: "Printing & Branding", progress: 75, status: "in_progress" },
                         { stage: "Quality Check", progress: 0, status: "pending" },
                         { stage: "Packing & Shipping", progress: 0, status: "pending" },
                       ].map((item, idx) => (

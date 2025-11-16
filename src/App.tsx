@@ -19,6 +19,8 @@ import Health from "./pages/Health";
 // Lazy load secondary pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
 const Services = lazy(() => import("./pages/Services"));
+const Casualwear = lazy(() => import("./pages/Casualwear"));
+const Activewear = lazy(() => import("./pages/Activewear"));
 const Knitwear = lazy(() => import("./pages/Knitwear"));
 const CutAndSew = lazy(() => import("./pages/CutAndSew"));
 const UniformsTeamwear = lazy(() => import("./pages/UniformsTeamwear"));
@@ -131,6 +133,8 @@ const router = createBrowserRouter([
       { path: "/health", element: <Health /> },
       { path: "/products", element: <ProductCatalog /> },
       { path: "/services", element: <Services /> },
+      { path: "/casualwear", element: <Casualwear /> },
+      { path: "/activewear", element: <Activewear /> },
       { path: "/knitwear", element: <Knitwear /> },
       { path: "/cut-and-sew", element: <CutAndSew /> },
       { path: "/uniforms-teamwear", element: <UniformsTeamwear /> },

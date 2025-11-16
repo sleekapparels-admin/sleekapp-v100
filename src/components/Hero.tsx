@@ -59,14 +59,14 @@ export const Hero = () => {
         >
           {/* Heading */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-4 sm:mb-6 lg:mb-8 text-white">
-            Bangladesh's First AI-Tracked Digital Sourcing Partner
+            Custom Apparel Manufacturer
             <span className="block mt-3 sm:mt-4 text-accent font-semibold px-0 py-1 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl leading-relaxed">
-              From 50 Pieces | Real-Time LoopTrace™ | 10-20 Day Production
+              T-shirts, Hoodies, Sweatshirts, Joggers & More | MOQ from 50 Pieces
             </span>
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl leading-relaxed font-light tracking-wide">
-            Revolutionary transparency meets low MOQ manufacturing. Track every stage of your order with AI-powered insights—from fabric to finished product.
+            Premium casualwear manufacturing from Bangladesh. Fast production, ethical practices, AI-powered tracking with LoopTrace™ from fabric to finished product.
           </p>
 
           {/* CTA Buttons */}
