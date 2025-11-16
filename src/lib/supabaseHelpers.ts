@@ -263,7 +263,7 @@ export const profileHelpers = {
     const { data, error } = await (supabase as any)
       .from('profiles')
       .select('*')
-      .eq('user_id', userId)
+      .eq('id', userId)
       .maybeSingle();
     return { data: data as any as Profile | null, error };
   },
@@ -272,7 +272,7 @@ export const profileHelpers = {
     const { data, error } = await (supabase as any)
       .from('profiles')
       .update(updates as any)
-      .eq('user_id', userId)
+      .eq('id', userId)
       .select()
       .single();
     return { data: data as any as Profile | null, error };
