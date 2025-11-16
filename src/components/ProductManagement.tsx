@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit } from "lucide-react";
+import { Plus, Trash2, Edit, ImageOff, Loader2 } from "lucide-react";
 
 // ... existing code ...
 
@@ -30,6 +30,7 @@ export const ProductManagement = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -67,8 +68,15 @@ export const ProductManagement = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // STRICT VALIDATION: Require either image file OR image URL
+    if (!imageFile && !formData.image_url.trim()) {
+      toast.error("Product image is required. Please upload an image or provide an image URL.");
+      return;
+    }
+
     let uploadedUrl: string | null = null;
     if (imageFile) {
+      setUploadingImage(true);
       try {
         const fileName = `${Date.now()}_${imageFile.name.replace(/\s+/g, "-")}`;
         const { data: uploadRes, error: uploadError } = await supabase.storage
@@ -78,15 +86,37 @@ export const ProductManagement = () => {
             contentType: imageFile.type,
           });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          // Provide specific error messages
+          const errorMessage = uploadError.message.includes("Bucket not found") 
+            ? "Storage bucket 'product-images' not found. Please contact support."
+            : uploadError.message.includes("storage/quota")
+            ? "Storage quota exceeded. Please free up space."
+            : `Image upload failed: ${uploadError.message}`;
+          
+          toast.error(errorMessage);
+          setUploadingImage(false);
+          return; // STOP submission if upload fails
+        }
+        
         const { data: publicUrl } = supabase.storage
           .from("product-images")
           .getPublicUrl(uploadRes.path);
         uploadedUrl = publicUrl.publicUrl;
+        setUploadingImage(false);
       } catch (err) {
         console.error("Image upload failed:", err);
-        toast.error("Image upload failed. Please check storage bucket 'product-images'.");
+        toast.error("Image upload failed. Please try again or use an image URL instead.");
+        setUploadingImage(false);
+        return; // STOP submission if upload fails
       }
+    }
+
+    // Validate final image URL
+    const finalImageUrl = uploadedUrl || formData.image_url.trim();
+    if (!finalImageUrl) {
+      toast.error("Product image is required. Please provide a valid image.");
+      return;
     }
 
     const productData = {
@@ -95,7 +125,7 @@ export const ProductManagement = () => {
       gauge: formData.gauge || null,
       yarn: formData.yarn || null,
       colors: formData.colors ? formData.colors.split(",").map((c) => c.trim()) : null,
-      image_url: uploadedUrl || formData.image_url,
+      image_url: finalImageUrl,
       description: formData.description || null,
       featured: formData.featured,
     };
@@ -215,11 +245,27 @@ export const ProductManagement = () => {
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="knitwear">Knitwear</SelectItem>
-                    <SelectItem value="cutsew">Cut & Sew</SelectItem>
-                    <SelectItem value="uniforms">Uniforms</SelectItem>
-                    <SelectItem value="accessories">Accessories</SelectItem>
+                  <SelectContent className="max-h-[300px] overflow-y-auto">
+                    <SelectItem value="knitwear">Knitwear (Sweaters, Pullovers, Cardigans)</SelectItem>
+                    <SelectItem value="tshirts">T-Shirts & Tops</SelectItem>
+                    <SelectItem value="hoodies">Hoodies & Sweatshirts</SelectItem>
+                    <SelectItem value="polo">Polo Shirts</SelectItem>
+                    <SelectItem value="dress_shirts">Dress Shirts & Blouses</SelectItem>
+                    <SelectItem value="dresses">Dresses & Skirts</SelectItem>
+                    <SelectItem value="pants">Pants & Trousers</SelectItem>
+                    <SelectItem value="jeans">Jeans & Denim</SelectItem>
+                    <SelectItem value="shorts">Shorts</SelectItem>
+                    <SelectItem value="activewear">Activewear & Sportswear</SelectItem>
+                    <SelectItem value="outerwear">Outerwear & Jackets</SelectItem>
+                    <SelectItem value="coats">Coats & Overcoats</SelectItem>
+                    <SelectItem value="suits">Suits & Formal Wear</SelectItem>
+                    <SelectItem value="uniforms">Uniforms & Workwear</SelectItem>
+                    <SelectItem value="sleepwear">Sleepwear & Loungewear</SelectItem>
+                    <SelectItem value="underwear">Underwear & Intimates</SelectItem>
+                    <SelectItem value="swimwear">Swimwear & Beachwear</SelectItem>
+                    <SelectItem value="accessories">Accessories (Scarves, Belts, Hats)</SelectItem>
+                    <SelectItem value="safety">Safety Apparel</SelectItem>
+                    <SelectItem value="cutsew">Cut & Sew (Custom)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -256,23 +302,34 @@ export const ProductManagement = () => {
               </div>
 
               <div>
-                <Label htmlFor="image_file">Upload Image</Label>
+                <Label htmlFor="image_file">Upload Image* (Required)</Label>
                 <Input
                   id="image_file"
                   type="file"
                   accept="image/*"
                   onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                  disabled={uploadingImage}
                 />
+                {uploadingImage && (
+                  <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading image...
+                  </p>
+                )}
               </div>
 
               <div>
-                <Label htmlFor="image_url">Image URL (optional)</Label>
+                <Label htmlFor="image_url">Or Provide Image URL*</Label>
                 <Input
                   id="image_url"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                   placeholder="Public URL or /assets/portfolio/filename.webp"
+                  disabled={uploadingImage}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Either upload an image file OR provide an image URL (required)
+                </p>
               </div>
 
               <div>
@@ -297,11 +354,18 @@ export const ProductManagement = () => {
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} disabled={uploadingImage}>
                   Cancel
                 </Button>
-                <Button type="submit">
-                  {editingProduct ? "Update" : "Create"} Product
+                <Button type="submit" disabled={uploadingImage}>
+                  {uploadingImage ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>{editingProduct ? "Update" : "Create"} Product</>
+                  )}
                 </Button>
               </div>
             </form>
@@ -312,12 +376,34 @@ export const ProductManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <Card key={product.id} className="overflow-hidden">
-            <div className="aspect-[4/5] overflow-hidden bg-muted">
-              <img
-                src={product.image_url}
-                alt={product.title}
-                className="w-full h-full object-cover"
-              />
+            <div className="aspect-[4/5] overflow-hidden bg-muted relative">
+              {product.image_url ? (
+                <img
+                  src={product.image_url}
+                  alt={product.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Show broken image icon if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent && !parent.querySelector('.broken-image-icon')) {
+                      const iconDiv = document.createElement('div');
+                      iconDiv.className = 'broken-image-icon absolute inset-0 flex items-center justify-center';
+                      iconDiv.innerHTML = '<div class="text-center"><svg class="h-16 w-16 text-muted-foreground/50 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="text-sm text-muted-foreground mt-2">Image broken</p></div>';
+                      parent.appendChild(iconDiv);
+                    }
+                  }}
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                  <div className="text-center">
+                    <ImageOff className="h-16 w-16 text-destructive/50 mx-auto" />
+                    <p className="text-sm text-destructive mt-2 font-semibold">DATA CORRUPT</p>
+                    <p className="text-xs text-muted-foreground">Image missing - delete product</p>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="p-4">
               <div className="flex items-start justify-between mb-2">
