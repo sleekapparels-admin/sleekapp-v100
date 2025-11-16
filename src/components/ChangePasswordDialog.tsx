@@ -35,16 +35,32 @@ export const ChangePasswordDialog = () => {
     setIsLoading(true);
     setErrors([]);
 
-    try {
-      // Validate new password
-      const validation = passwordSchema.safeParse(newPassword);
-      if (!validation.success) {
-        setErrors(validation.error.errors.map(e => e.message));
-        return;
-      }
+    // Validate new password
+    const validation = passwordSchema.safeParse(newPassword);
+    if (!validation.success) {
+      setErrors(validation.error.errors.map(e => e.message));
+      setIsLoading(false);
+      return;
+    }
 
-      if (newPassword !== confirmPassword) {
-        setErrors(["Passwords do not match"]);
+    if (newPassword !== confirmPassword) {
+      setErrors(["Passwords do not match"]);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Check password against breach database
+      const { data: breachData, error: breachError } = await supabase.functions.invoke('password-breach-check', {
+        body: { password: newPassword }
+      });
+
+      if (breachError) {
+        console.error('Breach check error:', breachError);
+        // Continue with password change if breach check fails
+      } else if (breachData?.pwned) {
+        setErrors([`This password has been exposed in ${breachData.count.toLocaleString()} data breaches. Please choose a different password.`]);
+        setIsLoading(false);
         return;
       }
 
