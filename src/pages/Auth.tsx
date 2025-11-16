@@ -243,8 +243,11 @@ export default function Auth() {
       toast.success("Signed in successfully");
       navigate("/dashboard");
     } catch (error: any) {
-      if (error.message === "Failed to fetch") {
-        toast.error("Network error. Please check your connection or ensure this app's URL is added to allowed URLs in backend settings.");
+      if (error.message === "Failed to fetch" || error.message?.includes('fetch')) {
+        toast.error(
+          "Network error: Unable to reach authentication service. Check your connection and ensure this app's URL is in the allowed URLs list. Visit /admin-setup to run diagnostics.",
+          { duration: 7000 }
+        );
       } else {
         toast.error(error.message || "Failed to sign in");
       }
