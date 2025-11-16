@@ -17,10 +17,28 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        heading: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        body: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        accent: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['Open Sans', 'Lato', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'sans-serif'],
+        body: ['Open Sans', 'Lato', 'system-ui', '-apple-system', 'sans-serif'],
+        accent: ['Crimson Text', 'Georgia', 'serif'],
+      },
+      fontSize: {
+        'h1': ['48px', { lineHeight: '1.2', fontWeight: '700' }],
+        'h1-mobile': ['32px', { lineHeight: '1.2', fontWeight: '700' }],
+        'h2': ['40px', { lineHeight: '1.2', fontWeight: '600' }],
+        'h2-mobile': ['28px', { lineHeight: '1.2', fontWeight: '600' }],
+        'h3': ['32px', { lineHeight: '1.2', fontWeight: '600' }],
+        'h3-mobile': ['24px', { lineHeight: '1.2', fontWeight: '600' }],
+        'h4': ['24px', { lineHeight: '1.2', fontWeight: '500' }],
+        'h4-mobile': ['20px', { lineHeight: '1.2', fontWeight: '500' }],
+        'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+        'body': ['16px', { lineHeight: '1.6', fontWeight: '400' }],
+        'body-sm': ['14px', { lineHeight: '1.6', fontWeight: '400' }],
+      },
+      spacing: {
+        'section': '80px',
+        'section-mobile': '48px',
+        'component': '24px',
       },
 			colors: {
 				border: "hsl(var(--border))",
@@ -77,6 +95,14 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        'button': '8px',
+        'card': '12px',
+        'image': '8px',
+      },
+      boxShadow: {
+        'card': 'var(--shadow-card)',
+        'card-hover': 'var(--shadow-card-hover)',
+        'button-hover': 'var(--shadow-button-hover)',
       },
       keyframes: {
         "accordion-down": {
