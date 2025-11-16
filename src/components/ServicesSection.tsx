@@ -45,6 +45,9 @@ export const ServicesSection = () => {
                   src={service.image}
                   alt={service.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
+                  width="600"
+                  height="400"
                 />
               </div>
               <div className="p-6">

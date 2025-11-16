@@ -1,44 +1,36 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import sleekLogo from "@/assets/sleek-logo.svg";
 
 /**
- * Comprehensive loading skeleton for page content
- * Provides visual feedback during async loading
+ * Branded loading component with spinning logo animation
+ * Provides engaging visual feedback during page loading
  */
 export const PageLoadingSkeleton = () => {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navbar skeleton */}
-      <div className="sticky top-0 bg-background/98 backdrop-blur-md border-b border-border z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Skeleton className="h-10 w-32" />
-            <div className="hidden md:flex gap-4">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-24" />
-            </div>
-            <Skeleton className="h-10 w-32" />
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9F7F4' }}>
+      <div className="text-center space-y-6">
+        {/* Spinning Logo */}
+        <div className="flex justify-center mb-6">
+          <div className="relative w-24 h-24">
+            <img 
+              src={sleekLogo} 
+              alt="Sleek Apparels Logo" 
+              className="w-full h-full object-contain animate-spin"
+              style={{ animationDuration: '2s' }}
+            />
           </div>
         </div>
-      </div>
-
-      {/* Hero/Header skeleton */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="space-y-4 mb-12">
-          <Skeleton className="h-12 w-3/4 max-w-2xl" />
-          <Skeleton className="h-6 w-1/2 max-w-xl" />
-        </div>
-
-        {/* Content grid skeleton */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="h-48 w-full rounded-lg" />
-              <Skeleton className="h-6 w-3/4" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-            </div>
-          ))}
+        
+        {/* Loading Text */}
+        <div className="space-y-2">
+          <p className="text-lg font-semibold" style={{ color: '#2C2C2C' }}>
+            Preparing your experience...
+          </p>
+          <div className="flex justify-center gap-1">
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#2C2C2C', animationDelay: '0ms' }}></div>
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#2C2C2C', animationDelay: '150ms' }}></div>
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#2C2C2C', animationDelay: '300ms' }}></div>
+          </div>
         </div>
       </div>
     </div>
@@ -46,20 +38,23 @@ export const PageLoadingSkeleton = () => {
 };
 
 /**
- * Minimal loading fallback with spinner
+ * Minimal loading fallback with branded spinner
  * Used for quick transitions
  */
 export const MinimalLoadingFallback = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9F7F4' }}>
       <div className="text-center space-y-4">
-        <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" 
-             role="status" 
-             aria-label="Loading">
+        <div className="flex justify-center">
+          <img 
+            src={sleekLogo} 
+            alt="Loading" 
+            className="h-16 w-16 animate-spin"
+            style={{ animationDuration: '2s' }}
+          />
         </div>
         <div className="space-y-2">
-          <p className="text-lg font-medium text-foreground">Loading...</p>
-          <p className="text-sm text-muted-foreground">Please wait while we prepare your content</p>
+          <p className="text-lg font-semibold" style={{ color: '#2C2C2C' }}>Preparing your experience...</p>
         </div>
       </div>
     </div>
