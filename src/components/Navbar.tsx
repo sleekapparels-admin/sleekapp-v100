@@ -120,7 +120,13 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16 rounded-none">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <img src={sleekLogo} alt="Sleek Apparels" className="h-9 w-9 sm:h-10 sm:w-10" />
+            <img 
+              src={sleekLogo} 
+              alt="Sleek Apparels" 
+              className="h-9 w-9 sm:h-10 sm:w-10"
+              width="40"
+              height="40"
+            />
             <span className={`text-lg sm:text-2xl font-bold whitespace-nowrap ${isHome ? "text-white drop-shadow-lg" : "text-foreground"}`}>
               Sleek Apparels
             </span>
