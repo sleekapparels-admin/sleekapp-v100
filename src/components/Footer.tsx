@@ -52,22 +52,22 @@ export const Footer = () => {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/services" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/casualwear" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
                   Casualwear Manufacturing
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/activewear" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
                   Activewear & Joggers
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/uniforms-teamwear" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
                   Uniforms & Teamwear
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/cut-and-sew" className="text-body-sm text-muted-foreground hover:text-primary transition-colors">
                   Cut & Sew Production
                 </Link>
               </li>
