@@ -15,6 +15,9 @@ export const FounderMessage = () => {
                 src={founderPhoto}
                 alt="Khondaker Rajiur Rahman, Managing Director"
                 className="w-full h-full object-cover"
+                loading="lazy"
+                width="800"
+                height="800"
               />
             </div>
           </div>

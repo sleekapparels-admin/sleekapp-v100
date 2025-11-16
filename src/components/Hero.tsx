@@ -12,6 +12,9 @@ export const Hero = () => {
           src={heroBackground}
           alt="Premium knitwear textile manufacturing quality"
           className="w-full h-full object-cover"
+          width="1920"
+          height="1080"
+          fetchPriority="high"
         />
         {/* Dark gradient overlay from left */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent"></div>
