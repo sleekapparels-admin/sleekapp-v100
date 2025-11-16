@@ -6,7 +6,6 @@ export const TrustBadgeBar = () => {
     { icon: CheckCircle2, label: "BSCI Compliant" },
     { icon: Award, label: "WRAP Certified" },
     { icon: Star, label: "Alibaba Gold Supplier" },
-    { icon: Shield, label: "BGMEA Member" },
     { icon: Users, label: "100+ Brands Served" },
     { icon: Clock, label: "10+ Years Experience" },
   ];
@@ -14,7 +13,7 @@ export const TrustBadgeBar = () => {
   return (
     <section className="py-8 bg-muted/20 border-y border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {badges.map((badge, index) => {
             const Icon = badge.icon;
             return (
