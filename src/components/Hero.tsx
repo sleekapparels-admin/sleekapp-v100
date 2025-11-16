@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { trackBusinessEvent } from "@/lib/analytics";
 import { Link } from "react-router-dom";
-import { DelayedLazyVideo } from "@/components/DelayedLazyVideo";
+
 import { FloatingGeometryGroup } from "@/components/FloatingGeometry";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -24,17 +24,20 @@ export const Hero = () => {
 
   return (
     <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden bg-slate-900 -mt-16 sm:-mt-16 pt-16 sm:pt-16">
-      {/* Hero Video Background with Parallax - extends behind navbar */}
+      {/* Hero Background - Optimized gradient (video removed for performance) */}
       <motion.div 
         className="absolute inset-0 -top-16 sm:-top-16 z-0"
         style={{ scale: videoScale, opacity: videoOpacity }}
       >
-        <DelayedLazyVideo
-          webmSrc="/videos/hero-textile.webm"
-          mp4Src="/videos/hero-textile.mp4"
-          className="w-full h-full object-cover"
-          delayMs={2000}
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          {/* Animated mesh gradient overlay */}
+          <div className="absolute inset-0 opacity-30" 
+            style={{
+              backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--accent) / 0.15) 0%, transparent 50%)',
+              animation: 'pulse 8s ease-in-out infinite'
+            }}
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/70" />
       </motion.div>
 
