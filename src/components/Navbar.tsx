@@ -139,7 +139,7 @@ export const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`!h-auto !w-auto px-2 xl:px-3 py-2 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 border-0 shadow-none ${isHome ? "!bg-transparent text-white/90 hover:text-white hover:!bg-white/10 data-[state=open]:text-white data-[state=open]:!bg-white/20" : "!bg-transparent text-muted-foreground hover:text-foreground hover:!bg-muted data-[state=open]:!bg-muted data-[state=open]:text-foreground"}`}>
+                  <NavigationMenuTrigger className={`!h-10 px-2 xl:px-3 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 !border-none !shadow-none ${isHome ? "!bg-transparent !text-white hover:!text-white hover:!bg-white/10 data-[state=open]:!text-white data-[state=open]:!bg-white/20" : "!bg-transparent !text-foreground hover:!text-foreground hover:!bg-muted data-[state=open]:!bg-muted data-[state=open]:!text-foreground"}`}>
                     Services
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -167,7 +167,7 @@ export const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`!h-auto !w-auto px-2 xl:px-3 py-2 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 border-0 shadow-none ${isHome ? "!bg-transparent text-white/90 hover:text-white hover:!bg-white/10 data-[state=open]:text-white data-[state=open]:!bg-white/20" : "!bg-transparent text-muted-foreground hover:text-foreground hover:!bg-muted data-[state=open]:!bg-muted data-[state=open]:text-foreground"}`}>
+                  <NavigationMenuTrigger className={`!h-10 px-2 xl:px-3 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 !border-none !shadow-none ${isHome ? "!bg-transparent !text-white hover:!text-white hover:!bg-white/10 data-[state=open]:!text-white data-[state=open]:!bg-white/20" : "!bg-transparent !text-foreground hover:!text-foreground hover:!bg-muted data-[state=open]:!bg-muted data-[state=open]:!text-foreground"}`}>
                     Resources
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
