@@ -16,7 +16,7 @@ const messageSchema = z.object({
 const requestSchema = z.object({
   messages: z.array(messageSchema).min(1).max(50, 'Maximum 50 messages allowed'),
   sessionId: z.string().optional(),
-  conversationId: z.string().uuid().optional()
+  conversationId: z.string().uuid().nullish()
 });
 
 serve(async (req) => {
