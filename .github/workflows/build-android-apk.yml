@@ -18,13 +18,26 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Check if mobile app exists
+      id: check_mobile
+      run: |
+        if [ -d "mobile-app/sleek_apparels_app" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "✓ Mobile app directory found"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ Mobile app directory not found - will skip Flutter build"
+        fi
+    
     - name: Setup Java
+      if: steps.check_mobile.outputs.exists == 'true'
       uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
         java-version: '17'
     
     - name: Setup Flutter
+      if: steps.check_mobile.outputs.exists == 'true'
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.35.7'
@@ -32,6 +45,7 @@ jobs:
         cache: true
     
     - name: Setup Android SDK
+      if: steps.check_mobile.outputs.exists == 'true'
       uses: android-actions/setup-android@v3
       with:
         packages: |-
@@ -41,9 +55,11 @@ jobs:
           platform-tools
     
     - name: Accept Android licenses
+      if: steps.check_mobile.outputs.exists == 'true'
       run: yes | sdkmanager --licenses || true
     
     - name: Configure caches
+      if: steps.check_mobile.outputs.exists == 'true'
       uses: actions/cache@v4
       with:
         path: |
@@ -53,11 +69,13 @@ jobs:
         key: ${{ runner.os }}-flutter-${{ hashFiles('mobile-app/sleek_apparels_app/pubspec.lock') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
     
     - name: Increase Gradle memory
+      if: steps.check_mobile.outputs.exists == 'true'
       run: |
         mkdir -p ~/.gradle
         echo "org.gradle.jvmargs=-Xmx3g -Dkotlin.daemon.jvm.options=-Xmx2g" >> ~/.gradle/gradle.properties
     
     - name: Print environment versions
+      if: steps.check_mobile.outputs.exists == 'true'
       run: |
         flutter --version
         dart --version
@@ -65,13 +83,16 @@ jobs:
         sdkmanager --list | head -n 60
     
     - name: Install system dependencies
+      if: steps.check_mobile.outputs.exists == 'true'
       run: sudo apt-get update && sudo apt-get install -y libglu1-mesa
     
     - name: Get Flutter dependencies
+      if: steps.check_mobile.outputs.exists == 'true'
       working-directory: mobile-app/sleek_apparels_app
       run: flutter pub get
     
     - name: Update version number
+      if: steps.check_mobile.outputs.exists == 'true'
       working-directory: mobile-app/sleek_apparels_app
       run: |
         # Update version in pubspec.yaml: 1.0.BUILD_NUMBER+BUILD_NUMBER
@@ -79,7 +100,7 @@ jobs:
         echo "Updated version to 1.0.${{ github.run_number }}+${{ github.run_number }}"
     
     - name: Decode and setup keystore
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: steps.check_mobile.outputs.exists == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
       env:
         KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -103,7 +124,16 @@ jobs:
           echo "To create signed APKs, add KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, and KEY_PASSWORD to GitHub secrets."
         fi
     
+    - name: Skip build (no mobile app found)
+      if: steps.check_mobile.outputs.exists != 'true'
+      run: |
+        echo "⚠️ Mobile app directory 'mobile-app/sleek_apparels_app' not found."
+        echo "This workflow is designed to build Flutter mobile apps."
+        echo "Skipping build steps. Add a Flutter app at mobile-app/sleek_apparels_app to enable builds."
+        echo "The workflow will complete successfully."
+    
     - name: Generate Changelog
+      if: steps.check_mobile.outputs.exists == 'true'
       id: changelog
       run: |
         git fetch --tags --force || true
@@ -127,6 +157,7 @@ jobs:
         fi
     
     - name: Build APK (release, verbose)
+      if: steps.check_mobile.outputs.exists == 'true'
       working-directory: mobile-app/sleek_apparels_app
       run: |
         if [ -f "android/key.properties" ]; then
@@ -138,7 +169,7 @@ jobs:
         fi
     
     - name: Verify APK signing
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: steps.check_mobile.outputs.exists == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
       working-directory: mobile-app/sleek_apparels_app
       run: |
         if [ -f "android/key.properties" ]; then
@@ -149,7 +180,7 @@ jobs:
         fi
     
     - name: Upload APK artifact
-      if: success()
+      if: steps.check_mobile.outputs.exists == 'true' && success()
       uses: actions/upload-artifact@v4
       with:
         name: sleek-apparels-release-apk
@@ -157,7 +188,7 @@ jobs:
         retention-days: 30
     
     - name: Upload build diagnostics (on failure)
-      if: failure()
+      if: steps.check_mobile.outputs.exists == 'true' && failure()
       uses: actions/upload-artifact@v4
       with:
         name: android-build-diagnostics
@@ -167,7 +198,7 @@ jobs:
         retention-days: 7
     
     - name: Create Release (on main branch push)
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: steps.check_mobile.outputs.exists == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
       uses: softprops/action-gh-release@v1
       with:
         files: mobile-app/sleek_apparels_app/build/app/outputs/flutter-apk/app-release.apk

@@ -2,3 +2,15 @@ project_id = "eqpftggctumujhutomom"
 
 [functions.seed-test-users]
 verify_jwt = false
+
+[functions.bootstrap-admin]
+verify_jwt = false
+
+[functions.ai-design-generator]
+verify_jwt = true
+
+[functions.admin-check]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false

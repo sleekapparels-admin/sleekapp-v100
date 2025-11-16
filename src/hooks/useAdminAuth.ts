@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabaseInjected as supabase } from '@/integrations/supabase/client.injected';
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
 export const useAdminAuth = () => {

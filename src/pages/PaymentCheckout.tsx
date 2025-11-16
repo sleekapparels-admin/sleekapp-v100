@@ -2,14 +2,20 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { PaymentForm } from "@/components/payment/PaymentForm";
 import { Card } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Package } from "lucide-react";
 
-const stripePromise = loadStripe('pk_live_51RuOd84W76nzQIDC9qT7MvMrIpGTb1i8aygafh6Qa4l44E1xUYntfNrZ6weFRn9Jq49nc3k8VhD1uKVFrnlaF1Yb00fzcClw3T');
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+if (!stripePublishableKey) {
+  console.error('CRITICAL: VITE_STRIPE_PUBLISHABLE_KEY is not configured in environment variables');
+}
+
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 export default function PaymentCheckout() {
   const { orderId } = useParams();
@@ -72,6 +78,20 @@ export default function PaymentCheckout() {
       navigate(`/orders/${orderId}`);
     }, 2000);
   };
+
+  if (!stripePublishableKey) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-destructive font-semibold">Payment system not configured</p>
+            <p className="text-muted-foreground text-sm mt-2">Please contact support</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (loading) {
     return (
