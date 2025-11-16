@@ -8,121 +8,119 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Professional B2B Color Scheme */
-    /* Primary: Teal Green #2D9B93 */
-    --primary: 175 55% 39%;
+    /* Modern Warm Sustainable Color Scheme */
+    /* Primary: Deep Forest Green #2D5C4E */
+    --primary: 158 35% 27%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 175 55% 55%;
-    --primary-dark: 175 55% 30%;
+    --primary-light: 158 35% 37%;
+    --primary-dark: 158 35% 20%;
 
-    /* Secondary: Deep Navy #1E3A5F */
-    --secondary: 214 52% 25%;
+    /* Secondary: Warm Terracotta #C9846D */
+    --secondary: 18 47% 60%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Accent: Warm Gold #D4AF37 */
-    --accent: 46 65% 52%;
-    --accent-foreground: 210 29% 24%;
+    /* Accent: Soft Sage #B5C4A3 */
+    --accent: 90 23% 70%;
+    --accent-foreground: 0 0% 17%;
 
-    /* Coral Accent #E86A5D */
-    --coral: 7 73% 64%;
+    /* Coral kept for compatibility */
+    --coral: 18 47% 60%;
     --coral-foreground: 0 0% 100%;
 
     /* Neutrals */
-    --background: 216 33% 97%; /* Background Light #F5F7FA */
-    --foreground: 210 29% 24%; /* Charcoal #2C3E50 */
+    --background: 30 25% 96%; /* Warm off-white/cream #F9F7F4 */
+    --foreground: 0 0% 17%; /* Deep charcoal #2C2C2C */
     
     --card: 0 0% 100%; /* Pure White */
-    --card-foreground: 210 29% 24%;
+    --card-foreground: 0 0% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 29% 24%;
+    --popover-foreground: 0 0% 17%;
 
-    /* Muted: Soft Gray variations */
-    --muted: 216 33% 95%;
-    --muted-foreground: 220 9% 46%; /* Medium Gray #6B7280 */
+    /* Muted: Soft warm gray */
+    --muted: 30 15% 92%;
+    --muted-foreground: 0 0% 40%;
 
-    /* Borders & Inputs: Soft Gray #E5E7EB */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 175 55% 39%;
+    /* Borders & Inputs */
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 158 35% 27%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Chart colors */
-    --chart-1: 175 55% 39%;
-    --chart-2: 214 52% 25%;
-    --chart-3: 46 65% 52%;
-    --chart-4: 175 55% 55%;
-    --chart-5: 214 52% 35%;
+    --chart-1: 158 35% 27%;
+    --chart-2: 18 47% 60%;
+    --chart-3: 90 23% 70%;
+    --chart-4: 158 35% 40%;
+    --chart-5: 18 47% 50%;
 
     /* Gradients */
-    --gradient-subtle: linear-gradient(180deg, hsl(216 33% 97%), hsl(0 0% 100%));
-    --gradient-hero: linear-gradient(135deg, hsl(214 52% 25%), hsl(214 52% 35%));
-    --gradient-warm: linear-gradient(135deg, hsl(175 55% 39%), hsl(175 55% 55%));
-    --gradient-craft: linear-gradient(180deg, hsl(175 55% 39% / 0.05), hsl(175 55% 39% / 0.02));
+    --gradient-subtle: linear-gradient(180deg, hsl(30 25% 96%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(158 35% 27%), hsl(158 35% 20%));
+    --gradient-warm: linear-gradient(135deg, hsl(18 47% 60%), hsl(18 47% 70%));
+    --gradient-craft: linear-gradient(180deg, hsl(158 35% 27% / 0.05), hsl(158 35% 27% / 0.02));
 
-    /* Shadows */
-    --shadow-card: 0 2px 8px hsl(210 29% 24% / 0.08);
-    --shadow-card-hover: 0 8px 24px hsl(210 29% 24% / 0.12);
-    --shadow-glow: 0 0 40px hsl(175 55% 39% / 0.25);
+    /* Shadows - Soft and subtle */
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+    --shadow-button-hover: 0 6px 20px rgba(45, 92, 78, 0.15);
+    --shadow-glow: 0 0 40px hsl(158 35% 27% / 0.15);
   }
 
   .dark {
-    /* Primary: Teal (brighter in dark mode) */
-    --primary: 175 55% 45%;
+    /* Dark mode - maintaining warmth */
+    --primary: 158 35% 40%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 175 55% 60%;
-    --primary-dark: 175 55% 35%;
+    --primary-light: 158 35% 50%;
+    --primary-dark: 158 35% 30%;
 
-    /* Secondary: Deep Navy (lighter in dark mode) */
-    --secondary: 214 52% 30%;
+    --secondary: 18 47% 65%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Accent: Warm Gold (brighter in dark mode) */
-    --accent: 46 65% 58%;
-    --accent-foreground: 214 52% 12%;
+    --accent: 90 23% 60%;
+    --accent-foreground: 0 0% 10%;
 
-    /* Coral Accent */
-    --coral: 7 73% 68%;
+    --coral: 18 47% 65%;
     --coral-foreground: 0 0% 100%;
 
-    /* Backgrounds & Text */
-    --background: 214 52% 12%;
+    --background: 0 0% 12%;
     --foreground: 0 0% 95%;
 
-    --card: 214 52% 15%;
+    --card: 0 0% 15%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 214 52% 15%;
+    --popover: 0 0% 15%;
     --popover-foreground: 0 0% 95%;
 
-    --muted: 214 52% 20%;
-    --muted-foreground: 210 15% 70%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
 
-    --border: 214 52% 25%;
-    --input: 214 52% 25%;
-    --ring: 175 55% 45%;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 158 35% 40%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --chart-1: 175 55% 45%;
-    --chart-2: 214 52% 30%;
-    --chart-3: 46 65% 58%;
-    --chart-4: 175 55% 60%;
-    --chart-5: 214 52% 40%;
+    --chart-1: 158 35% 40%;
+    --chart-2: 18 47% 65%;
+    --chart-3: 90 23% 60%;
+    --chart-4: 158 35% 50%;
+    --chart-5: 18 47% 55%;
 
-    --gradient-subtle: linear-gradient(180deg, hsl(214 52% 15%), hsl(214 52% 12%));
-    --gradient-hero: linear-gradient(135deg, hsl(214 52% 25%), hsl(214 52% 35%));
-    --gradient-warm: linear-gradient(135deg, hsl(175 55% 45%), hsl(175 55% 60%));
-    --gradient-craft: linear-gradient(180deg, hsl(175 55% 45% / 0.08), hsl(175 55% 45% / 0.03));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 15%), hsl(0 0% 12%));
+    --gradient-hero: linear-gradient(135deg, hsl(158 35% 27%), hsl(158 35% 35%));
+    --gradient-warm: linear-gradient(135deg, hsl(18 47% 60%), hsl(18 47% 70%));
+    --gradient-craft: linear-gradient(180deg, hsl(158 35% 40% / 0.08), hsl(158 35% 40% / 0.03));
 
-    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.3);
-    --shadow-card-hover: 0 8px 24px hsl(0 0% 0% / 0.5);
-    --shadow-glow: 0 0 40px hsl(175 55% 45% / 0.25);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.6);
+    --shadow-button-hover: 0 6px 20px rgba(45, 92, 78, 0.3);
+    --shadow-glow: 0 0 40px hsl(158 35% 40% / 0.25);
   }
 }
 
@@ -132,7 +130,12 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-body;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 
   /* Fix deprecated H1UserAgentFontSizeInSection warning */
