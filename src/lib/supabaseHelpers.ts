@@ -3,7 +3,7 @@
  * Use these helpers to get better type inference with the loosely-typed client
  */
 
-import { supabaseInjected as supabase } from '@/integrations/supabase/client.injected';
+import { supabase } from '@/integrations/supabase/client';
 import type {
   Order,
   OrderWithRelations,
