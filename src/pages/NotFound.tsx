@@ -1,8 +1,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, Search, ArrowLeft, Package, Phone, FileQuestion } from "lucide-react";
+import { FileQuestion } from "lucide-react";
 import { SEO } from "@/components/SEO";
 
 const NotFound = () => {
@@ -19,12 +18,6 @@ const NotFound = () => {
     }
   }, [location.pathname]);
 
-  const quickLinks = [
-    { name: "Home", href: "/", icon: Home, description: "Return to homepage" },
-    { name: "Services", href: "/services", icon: Package, description: "Explore our services" },
-    { name: "Contact", href: "/contact", icon: Phone, description: "Get in touch" },
-    { name: "FAQ", href: "/faq", icon: FileQuestion, description: "Common questions" },
-  ];
 
   return (
     <>
@@ -36,67 +29,128 @@ const NotFound = () => {
         }}
       />
       
-      <div className="min-h-screen flex items-center justify-center bg-background px-4 py-16">
-        <Card className="max-w-2xl w-full">
-          <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center">
-              <div className="rounded-full bg-muted p-6">
-                <Search className="h-12 w-12 text-muted-foreground" />
-              </div>
-            </div>
-            <CardTitle className="text-4xl md:text-5xl font-bold">404</CardTitle>
-            <CardDescription className="text-lg">
-              We couldn't find the page you're looking for
-            </CardDescription>
-            {import.meta.env.DEV && (
-              <div className="text-sm text-muted-foreground bg-muted p-3 rounded">
-                <strong>Attempted path:</strong> {location.pathname}
-              </div>
-            )}
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
-            <div className="text-center space-y-2">
-              <p className="text-muted-foreground">
-                The page may have been moved, deleted, or the URL might be incorrect.
-              </p>
-            </div>
+      <div className="min-h-screen flex items-center justify-center px-4 py-16" style={{ backgroundColor: '#FFFFFF' }}>
+        <div className="max-w-2xl w-full text-center">
+          {/* Large 404 Icon */}
+          <div className="flex justify-center mb-8">
+            <FileQuestion 
+              className="w-32 h-32" 
+              style={{ color: '#2D5C4E' }}
+              strokeWidth={1.5}
+            />
+          </div>
 
-            {/* Quick actions */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={() => window.history.back()} variant="outline" className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Go Back
-              </Button>
-              <Link to="/">
-                <Button className="gap-2 w-full sm:w-auto">
-                  <Home className="h-4 w-4" />
-                  Return Home
-                </Button>
+          {/* Heading */}
+          <h1 
+            className="font-bold mb-4"
+            style={{ 
+              fontSize: '40px', 
+              color: '#2C2C2C',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            Page Not Found
+          </h1>
+
+          {/* Subheading */}
+          <p 
+            className="mb-8"
+            style={{ 
+              fontSize: '18px', 
+              color: '#666666',
+              fontFamily: 'Open Sans, sans-serif'
+            }}
+          >
+            The page you're looking for doesn't exist or has been moved.
+          </p>
+
+          {/* Three Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+            <Button 
+              asChild
+              style={{
+                backgroundColor: '#2D5C4E',
+                color: 'white',
+                padding: '14px 32px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 500
+              }}
+            >
+              <Link to="/">Go to Homepage</Link>
+            </Button>
+
+            <Button 
+              asChild
+              style={{
+                backgroundColor: '#C9846D',
+                color: 'white',
+                padding: '14px 32px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 500
+              }}
+            >
+              <Link to="/quote-generator">Get a Quote</Link>
+            </Button>
+
+            <Button 
+              asChild
+              variant="outline"
+              style={{
+                backgroundColor: 'transparent',
+                border: '2px solid #2D5C4E',
+                color: '#2D5C4E',
+                padding: '12px 32px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 500
+              }}
+            >
+              <Link to="/contact">Contact Us</Link>
+            </Button>
+          </div>
+
+          {/* Popular Pages */}
+          <div className="pt-8 border-t" style={{ borderColor: '#E5E7EB' }}>
+            <p style={{ fontSize: '14px', color: '#666666', marginBottom: '12px' }}>
+              Popular pages:
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 text-sm">
+              <Link 
+                to="/about" 
+                className="hover:underline"
+                style={{ color: '#2D5C4E' }}
+              >
+                About Us
+              </Link>
+              <span style={{ color: '#666666' }}>|</span>
+              <Link 
+                to="/casualwear" 
+                className="hover:underline"
+                style={{ color: '#2D5C4E' }}
+              >
+                Our Services
+              </Link>
+              <span style={{ color: '#666666' }}>|</span>
+              <Link 
+                to="/capabilities" 
+                className="hover:underline"
+                style={{ color: '#2D5C4E' }}
+              >
+                Capabilities
+              </Link>
+              <span style={{ color: '#666666' }}>|</span>
+              <Link 
+                to="/contact" 
+                className="hover:underline"
+                style={{ color: '#2D5C4E' }}
+              >
+                Contact
               </Link>
             </div>
-
-            {/* Quick links */}
-            <div className="pt-6 border-t">
-              <h3 className="text-sm font-semibold mb-4 text-center">Quick Links</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {quickLinks.map((link) => (
-                  <Link key={link.href} to={link.href}>
-                    <Card className="hover:bg-accent transition-colors cursor-pointer h-full">
-                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                        <link.icon className="h-5 w-5 text-primary" />
-                        <div>
-                          <div className="font-medium text-sm">{link.name}</div>
-                          <div className="text-xs text-muted-foreground">{link.description}</div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </>
   );
