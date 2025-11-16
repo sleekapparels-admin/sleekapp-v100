@@ -4,6 +4,8 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { getPageSEO } from "@/lib/seo";
 import { FloatingContactWidget } from "@/components/FloatingContactWidget";
+import { TrustBadgeBar } from "@/components/TrustBadgeBar";
+import { TrustIndicators } from "@/components/TrustIndicators";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { ScrollRevealSection } from "@/components/ScrollRevealSection";
 import { Button } from "@/components/ui/button";
@@ -41,6 +43,8 @@ function Index() {
       <div className="min-h-screen bg-background">
         <Navbar />
         <Hero />
+        <TrustBadgeBar />
+        <TrustIndicators />
         
         {/* Section 2: Social Proof - Visual with Interactive Map */}
         <AnimatedSection>

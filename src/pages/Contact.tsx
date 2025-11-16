@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { getPageSEO } from "@/lib/seo";
 import { Footer } from "@/components/Footer";
 import { FloatingContactWidget } from "@/components/FloatingContactWidget";
+import { BusinessHours } from "@/components/BusinessHours";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -226,8 +227,7 @@ const Contact = () => {
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="font-bold mb-2">Response Time</h3>
-                  <p className="text-sm text-muted-foreground">We aim to respond to all inquiries within 24 hours during business days.</p>
+                  <BusinessHours />
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 mt-6">

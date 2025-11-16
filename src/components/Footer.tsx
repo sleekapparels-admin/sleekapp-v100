@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Linkedin, Instagram, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DualEntityFooter } from "@/components/DualEntityFooter";
+import { BusinessHours } from "@/components/BusinessHours";
 
 export const Footer = () => {
   return (
@@ -157,6 +158,12 @@ export const Footer = () => {
                 </a>
               </li>
             </ul>
+            
+            {/* Business Hours */}
+            <div className="mt-6 pt-6 border-t border-border">
+              <BusinessHours variant="compact" />
+            </div>
+            
             <div className="flex gap-3 mt-4">
               <a 
                 href="https://www.linkedin.com/company/sleekapparels-bangladesh" 

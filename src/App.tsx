@@ -4,8 +4,9 @@ import { createBrowserRouter, RouterProvider, Outlet, Navigate, useLocation } fr
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
+import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 // Lazy load Sonner for better initial page load
 const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
@@ -106,6 +107,28 @@ const Root = () => {
   const location = useLocation();
   const isAdminSubdomain = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.');
 
+  // Initialize Tawk.to live chat
+  useEffect(() => {
+    // Tawk.to script
+    const tawkScript = document.createElement('script');
+    tawkScript.async = true;
+    tawkScript.src = 'https://embed.tawk.to/YOUR_TAWK_PROPERTY_ID/YOUR_TAWK_WIDGET_ID';
+    tawkScript.charset = 'UTF-8';
+    tawkScript.setAttribute('crossorigin', '*');
+    
+    const firstScript = document.getElementsByTagName('script')[0];
+    if (firstScript && firstScript.parentNode) {
+      firstScript.parentNode.insertBefore(tawkScript, firstScript);
+    }
+
+    return () => {
+      // Cleanup if needed
+      if (tawkScript && tawkScript.parentNode) {
+        tawkScript.parentNode.removeChild(tawkScript);
+      }
+    };
+  }, []);
+
   return (
     <AnalyticsProvider 
       gaId={GA4_MEASUREMENT_ID}
@@ -113,6 +136,7 @@ const Root = () => {
     >
       <ScrollToTop />
       <ServiceWorkerStatus />
+      <WhatsAppFloatingButton />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
