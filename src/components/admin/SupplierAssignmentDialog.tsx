@@ -14,7 +14,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle, Factory, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SupplierAssignmentDialogProps {
   order: any;

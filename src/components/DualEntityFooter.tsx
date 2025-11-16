@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { Building2, MapPin, Mail, Phone } from "lucide-react";
 
 export const DualEntityFooter = () => {

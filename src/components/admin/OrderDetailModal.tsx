@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { UserPlus, DollarSign, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { SupplierAssignmentDialog } from "./SupplierAssignmentDialog";
 
 interface OrderDetailModalProps {

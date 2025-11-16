@@ -4,7 +4,7 @@ import { Menu, X, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { roleHelpers } from "@/lib/supabaseHelpers";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import sleekLogo from "@/assets/sleek-logo.webp";
