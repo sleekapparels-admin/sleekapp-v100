@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import founderPhoto from "@/assets/founder-photo.webp";
 
 export const FounderMessage = () => {
   return (
@@ -11,7 +12,7 @@ export const FounderMessage = () => {
           <div className="relative">
             <div className="aspect-square rounded-image overflow-hidden shadow-card">
               <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop"
+                src={founderPhoto}
                 alt="Khondaker Rajiur Rahman, Managing Director"
                 className="w-full h-full object-cover"
               />
