@@ -71,6 +71,7 @@ const SamplePolicy = lazy(() => import("./pages/SamplePolicy"));
 const LoopTraceTechnology = lazy(() => import("./pages/LoopTraceTechnology"));
 const WhySleekApparels = lazy(() => import("./pages/WhySleekApparels"));
 const FirstTimeOrdering = lazy(() => import("./pages/FirstTimeOrdering"));
+const AdminBootstrap = lazy(() => import("./pages/AdminBootstrap"));
 // AdminSetup page removed (security hardening)
 import QuoteHistory from "./pages/QuoteHistory";
 import QuoteDetails from "./pages/QuoteDetails";
@@ -141,6 +142,7 @@ const router = createBrowserRouter([
       { path: "/sustainability", element: <Sustainability /> },
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
+      { path: "/admin-bootstrap", element: <AdminBootstrap /> },
       { path: "/dashboard", element: <Dashboard /> },
       { path: "/admin", element: <AdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },
