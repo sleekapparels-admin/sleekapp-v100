@@ -71,9 +71,6 @@ const resourcesMenu = [{
   description: "Get in touch with our team"
 }];
 const navigation = [{
-  name: "Home",
-  href: "/"
-}, {
   name: "Our Partner Network",
   href: "/suppliers"
 }];
@@ -131,9 +128,6 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            <Link to="/" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${isHome ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"}`}>
-              Home
-            </Link>
             <Link to="/why-sleek-apparels" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${isHome ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"}`}>
               Why Choose Us
             </Link>
