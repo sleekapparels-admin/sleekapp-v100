@@ -115,11 +115,17 @@ export const generateArticleSchema = (article: ArticleSchema) => {
 
 export const localBusinessSchema = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  '@id': `${BASE_URL}/#localbusiness`,
-  name: 'Sleek Apparels',
-  description: 'Ethical garment manufacturer in Bangladesh specializing in low-MOQ knitwear, cut & sew, and sustainable apparel production',
+  '@type': 'Organization',
+  '@id': `${BASE_URL}/#organization`,
+  name: 'Sleek Apparels Limited',
+  description: 'Custom apparel manufacturer specializing in t-shirts, hoodies, sweatshirts, and joggers with low MOQ from 50 pieces',
   url: BASE_URL,
+  logo: `${BASE_URL}/sleek-logo.webp`,
+  foundingDate: '2014',
+  founder: {
+    '@type': 'Person',
+    name: 'Khondaker Rajiur Rahman',
+  },
   telephone: '+880-186-1011-367',
   email: 'inquiry@sleekapparels.com',
   address: {
@@ -135,6 +141,17 @@ export const localBusinessSchema = {
     latitude: '23.8759',
     longitude: '90.3795',
   },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+880-186-1011-367',
+    contactType: 'Sales',
+    email: 'inquiry@sleekapparels.com',
+    availableLanguage: ['English'],
+  },
+  sameAs: [
+    'https://www.linkedin.com/company/sleek-apparels-limited',
+    'https://www.alibaba.com/sleek-apparels',
+  ],
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
@@ -151,10 +168,6 @@ export const localBusinessSchema = {
   ],
   priceRange: '$$',
   image: `${BASE_URL}/og-image.jpg`,
-  sameAs: [
-    'https://www.linkedin.com/company/sleek-apparels',
-    'https://www.instagram.com/sleekapparels',
-  ],
 };
 
 export const serviceSchema = {

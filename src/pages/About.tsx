@@ -12,7 +12,11 @@ import { BrochureDownload } from "@/components/BrochureDownload";
 const About = () => {
   return (
     <>
-      <SEO config={getPageSEO('about')} />
+      <SEO 
+        config={getPageSEO('about')} 
+        includeOrganizationSchema 
+        includeLocalBusinessSchema 
+      />
 
       <div className="min-h-screen bg-background">
         <Navbar />

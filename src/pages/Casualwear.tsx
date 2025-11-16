@@ -10,7 +10,10 @@ import productDisplay from "@/assets/factory/product-knitwear-display.webp";
 const Casualwear = () => {
   return (
     <>
-      <SEO config={getPageSEO('casualwear')} />
+      <SEO 
+        config={getPageSEO('casualwear')} 
+        includeServiceSchema 
+      />
 
       <div className="min-h-screen bg-background">
         <Navbar />

@@ -9,7 +9,10 @@ import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 const QuoteGenerator = () => {
   return (
     <>
-      <SEO config={getPageSEO('quote')} />
+      <SEO 
+        config={getPageSEO('quote')} 
+        includeServiceSchema 
+      />
 
       <div className="min-h-screen bg-background">
         <Navbar />
