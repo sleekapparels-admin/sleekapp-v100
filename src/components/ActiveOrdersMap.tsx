@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MapPin, Factory, Truck } from "lucide-react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { ProductionStage } from "./ProductionTimeline";

@@ -3,7 +3,7 @@
  * Integrates with Bangladesh manufacturing standards
  */
 
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { calculatePricing, calculateTimeline, calculateTotalPrice } from "@/lib/bangladeshManufacturing";
 
 export interface AIQuoteRequest {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { profileHelpers, roleHelpers } from "@/lib/supabaseHelpers";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";

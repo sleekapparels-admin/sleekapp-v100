@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Textarea } from "./ui/textarea";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
 interface CurrencyDisplayProps {

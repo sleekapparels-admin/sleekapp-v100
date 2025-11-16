@@ -2,7 +2,7 @@
  * User Analytics & Behavior Tracking
  */
 
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 
 // Get session ID for anonymous tracking
 const getSessionId = (): string => {
