@@ -9,13 +9,13 @@ import { roleHelpers } from "@/lib/supabaseHelpers";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import sleekLogo from "@/assets/sleek-logo.webp";
 const servicesMenu = [{
-  name: "Knitwear Manufacturing",
-  href: "/knitwear",
-  description: "Premium knitted garments with low MOQ"
+  name: "Casualwear Manufacturing",
+  href: "/casualwear",
+  description: "T-shirts, hoodies, sweatshirts, joggers"
 }, {
-  name: "Cut & Sew Production",
-  href: "/cut-and-sew",
-  description: "Custom apparel from your designs"
+  name: "Activewear & Performance",
+  href: "/activewear",
+  description: "Performance wear and athletic basics"
 }, {
   name: "Uniforms & Teamwear",
   href: "/uniforms-teamwear",
