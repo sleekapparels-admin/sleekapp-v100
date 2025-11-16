@@ -112,7 +112,7 @@ const Root = () => {
     // Tawk.to script
     const tawkScript = document.createElement('script');
     tawkScript.async = true;
-    tawkScript.src = 'https://embed.tawk.to/YOUR_TAWK_PROPERTY_ID/YOUR_TAWK_WIDGET_ID';
+    tawkScript.src = 'https://embed.tawk.to/691a406ddde8a31959180423/1ja78nc05';
     tawkScript.charset = 'UTF-8';
     tawkScript.setAttribute('crossorigin', '*');
     
