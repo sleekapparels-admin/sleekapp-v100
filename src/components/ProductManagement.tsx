@@ -31,6 +31,7 @@ export const ProductManagement = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   // Form state
   const [formData, setFormData] = useState({
@@ -377,30 +378,25 @@ export const ProductManagement = () => {
         {products.map((product) => (
           <Card key={product.id} className="overflow-hidden">
             <div className="aspect-[4/5] overflow-hidden bg-muted relative">
-              {product.image_url ? (
-                <img
-                  src={product.image_url}
-                  alt={product.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Show broken image icon if image fails to load
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const parent = target.parentElement;
-                    if (parent && !parent.querySelector('.broken-image-icon')) {
-                      const iconDiv = document.createElement('div');
-                      iconDiv.className = 'broken-image-icon absolute inset-0 flex items-center justify-center';
-                      iconDiv.innerHTML = '<div class="text-center"><svg class="h-16 w-16 text-muted-foreground/50 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="text-sm text-muted-foreground mt-2">Image broken</p></div>';
-                      parent.appendChild(iconDiv);
-                    }
-                  }}
-                />
+              {product.image_url && !failedImages.has(product.id) ? (
+                <>
+                  <img
+                    src={product.image_url}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                    onError={() => {
+                      // SECURITY FIX: Use React state instead of unsafe innerHTML
+                      setFailedImages(prev => new Set(prev).add(product.id));
+                    }}
+                  />
+                </>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center bg-muted">
                   <div className="text-center">
-                    <ImageOff className="h-16 w-16 text-destructive/50 mx-auto" />
-                    <p className="text-sm text-destructive mt-2 font-semibold">DATA CORRUPT</p>
-                    <p className="text-xs text-muted-foreground">Image missing - delete product</p>
+                    <ImageOff className="h-16 w-16 text-muted-foreground/50 mx-auto" />
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {product.image_url ? 'Image broken' : 'Image missing'}
+                    </p>
                   </div>
                 </div>
               )}
