@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star } from "lucide-react";
+import heroBackground from "@/assets/hero-knitwear-bg.png";
 
 export const Hero = () => {
   return (
@@ -8,8 +9,8 @@ export const Hero = () => {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop"
-          alt="Custom apparel streetwear"
+          src={heroBackground}
+          alt="Premium knitwear textile manufacturing quality"
           className="w-full h-full object-cover"
         />
         {/* Dark gradient overlay from left */}
