@@ -10,7 +10,7 @@ import {
   CheckCircle,
   AlertCircle 
 } from "lucide-react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SupplierPerformanceMetricsProps {
   supplierId: string;

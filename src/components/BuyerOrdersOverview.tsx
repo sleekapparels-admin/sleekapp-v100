@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Package, Clock, CheckCircle2, TrendingUp } from "lucide-react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Progress } from "./ui/progress";
 

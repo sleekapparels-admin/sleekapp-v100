@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Share2, Facebook, Linkedin, Twitter } from "lucide-react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface SocialShareButtonsProps {

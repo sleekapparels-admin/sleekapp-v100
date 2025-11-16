@@ -1,4 +1,4 @@
-import { supabaseInjected as supabase } from '@/integrations/supabase/client.injected';
+import { supabase } from '@/integrations/supabase/client';
 
 export type AuditAction = 
   | 'blog_post_created'

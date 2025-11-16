@@ -7,7 +7,7 @@ import { SEO } from "@/components/SEO";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { SocialShareButtons } from "@/components/blog/SocialShareButtons";
 import { Button } from "@/components/ui/button";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Calendar, Eye, Share2 } from "lucide-react";
 import { LazyImage } from "@/components/LazyImage";
 import DOMPurify from "dompurify";
