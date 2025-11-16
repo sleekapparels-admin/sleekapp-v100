@@ -272,21 +272,21 @@ export const ProductManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="gauge">Gauge</Label>
+                  <Label htmlFor="gauge">Gauge/GSM</Label>
                   <Input
                     id="gauge"
                     value={formData.gauge}
                     onChange={(e) => setFormData({ ...formData, gauge: e.target.value })}
-                    placeholder="e.g., 12GG"
+                    placeholder="e.g., 12GG or 180GSM"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="yarn">Yarn</Label>
+                  <Label htmlFor="yarn">Yarn/Fabric</Label>
                   <Input
                     id="yarn"
                     value={formData.yarn}
                     onChange={(e) => setFormData({ ...formData, yarn: e.target.value })}
-                    placeholder="e.g., Cotton Pique"
+                    placeholder="e.g., Cotton Yarn or Cotton Twill Fabric"
                   />
                 </div>
               </div>
