@@ -1,105 +1,55 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { trackBusinessEvent } from "@/lib/analytics";
 import { Link } from "react-router-dom";
-
-import { FloatingGeometryGroup } from "@/components/FloatingGeometry";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { ArrowRight, Star } from "lucide-react";
 
 export const Hero = () => {
-  const handleQuoteClick = () => {
-    trackBusinessEvent.quoteRequest('hero_cta', 0);
-  };
-
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
-
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const videoOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-
   return (
-    <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden bg-slate-900 -mt-16 sm:-mt-16 pt-16 sm:pt-16">
-      {/* Hero Background - Optimized gradient (video removed for performance) */}
-      <motion.div 
-        className="absolute inset-0 -top-16 sm:-top-16 z-0"
-        style={{ scale: videoScale, opacity: videoOpacity }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-          {/* Animated mesh gradient overlay */}
-          <div className="absolute inset-0 opacity-30" 
-            style={{
-              backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--accent) / 0.15) 0%, transparent 50%)',
-              animation: 'pulse 8s ease-in-out infinite'
-            }}
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/70" />
-      </motion.div>
-
-      {/* Floating Geometric Shapes */}
-      <div className="absolute inset-0 z-10 overflow-hidden">
-        <FloatingGeometryGroup />
+    <section className="relative min-h-screen flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop"
+          alt="Custom apparel streetwear"
+          className="w-full h-full object-cover"
+        />
+        {/* Dark gradient overlay from left */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent"></div>
       </div>
-      
-      {/* Content with Parallax - reduced top padding */}
-      <motion.div 
-        style={{ y: contentY }}
-        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 lg:pt-32 pb-16 sm:pb-24 lg:pb-32 z-20"
-      >
-        <motion.div 
-          className="max-w-4xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          {/* Heading */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-4 sm:mb-6 lg:mb-8 text-white">
-            Custom Apparel Manufacturer
-            <span className="block mt-3 sm:mt-4 text-accent font-semibold px-0 py-1 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl leading-relaxed">
-              T-shirts, Hoodies, Sweatshirts, Joggers & More | MOQ from 50 Pieces
-            </span>
-          </h1>
 
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl leading-relaxed font-light tracking-wide">
-            Premium casualwear manufacturing from Bangladesh. Fast production, ethical practices, AI-powered tracking with LoopTrace™ from fabric to finished product.
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-2xl">
+          <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
+            Premium Custom Apparel Manufacturing from 50 Pieces
+          </h1>
+          
+          <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
+            T-shirts, Hoodies, Sweatshirts & Joggers | AI-Tracked, Ethically Made, Delivered Fast
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button 
-              asChild 
-              size="lg" 
-              className="font-semibold shadow-lg w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground transition-transform hover:scale-105 active:scale-95"
-              onClick={handleQuoteClick}
-            >
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto">
               <Link to="/quote-generator">
-                Get Instant AI Quote
+                Get Instant Quote in 60 Seconds
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button 
-              asChild 
-              variant="outline" 
-              size="lg" 
-              className="font-semibold w-full sm:w-auto border-white text-white hover:bg-white/20 bg-white/10 transition-transform hover:scale-105 active:scale-95"
-            >
-              <Link to="/consultation">
-                <Sparkles className="mr-2 h-5 w-5" />
-                Get Expert Consultation
+            
+            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-2 border-white/30 text-white hover:bg-white/10">
+              <Link to="/contact">
+                Schedule Expert Consultation
               </Link>
             </Button>
           </div>
-          
-          <p className="text-sm text-white/70 mt-4">
-            Not sure where to start? <Link to="/consultation" className="text-accent hover:underline font-semibold">Talk to our CEO →</Link>
-          </p>
-        </motion.div>
-      </motion.div>
+
+          <div className="flex items-center gap-2 text-white/90">
+            <Star className="h-5 w-5 fill-accent text-accent" />
+            <span className="text-sm md:text-base font-medium">
+              Trusted by 100+ brands worldwide
+            </span>
+          </div>
+        </div>
+      </div>
     </section>
   );
 };
