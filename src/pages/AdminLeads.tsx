@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { quoteHelpers } from "@/lib/supabaseHelpers";
 import { Loader2, Mail, Phone, MapPin, DollarSign, Package, Calendar, TrendingUp, Search, Filter } from "lucide-react";
 import { LeadFollowupEmailDialog } from "@/components/LeadFollowupEmailDialog";

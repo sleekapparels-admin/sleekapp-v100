@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ArrowLeft, Package, DollarSign, Calendar, TrendingDown } from "lucide-react";
 
 const QuoteDetails = () => {

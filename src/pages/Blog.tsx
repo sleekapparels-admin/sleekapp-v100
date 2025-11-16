@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Calendar, ArrowRight, Eye, Share2 } from "lucide-react";
-import { supabaseInjected as supabase } from "@/integrations/supabase/client.injected";
+import { supabase } from "@/integrations/supabase/client";
 import { LazyImage } from "@/components/LazyImage";
 
 interface BlogPost {
