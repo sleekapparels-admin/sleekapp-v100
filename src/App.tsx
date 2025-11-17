@@ -115,27 +115,6 @@ const Root = () => {
   const location = useLocation();
   const isAdminSubdomain = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.');
 
-  // Initialize Tawk.to live chat
-  useEffect(() => {
-    // Tawk.to script
-    const tawkScript = document.createElement('script');
-    tawkScript.async = true;
-    tawkScript.src = 'https://embed.tawk.to/691a406ddde8a31959180423/1ja78nc05';
-    tawkScript.charset = 'UTF-8';
-    tawkScript.setAttribute('crossorigin', '*');
-    
-    const firstScript = document.getElementsByTagName('script')[0];
-    if (firstScript && firstScript.parentNode) {
-      firstScript.parentNode.insertBefore(tawkScript, firstScript);
-    }
-
-    return () => {
-      // Cleanup if needed
-      if (tawkScript && tawkScript.parentNode) {
-        tawkScript.parentNode.removeChild(tawkScript);
-      }
-    };
-  }, []);
 
   return (
     <AnalyticsProvider 
