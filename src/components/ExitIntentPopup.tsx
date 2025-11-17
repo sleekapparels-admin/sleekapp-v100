@@ -54,24 +54,37 @@ export const ExitIntentPopup = () => {
       return;
     }
 
-    // TODO: Add API call to save lead
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      const { data, error } = await supabase.functions.invoke('submit-sample-request', {
+        body: { name, email }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data.success) {
+        toast({
+          title: "Request Failed",
+          description: data.message || "Something went wrong. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
       
       toast({
         title: "Success! 🎉",
-        description: "We'll send your sample pack details shortly!",
+        description: data.message || "We'll send your sample pack details shortly!",
       });
       
       setIsOpen(false);
-      
-      // Optionally redirect to quote page
-      // window.location.href = '/quote-generator';
     } catch (error) {
+      console.error('Sample request error:', error);
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: "Something went wrong. Please try again or contact us directly.",
         variant: "destructive"
       });
     }
