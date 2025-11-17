@@ -5,7 +5,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
-import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
+
 import { StickyWhatsAppButton } from "@/components/StickyWhatsAppButton";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
@@ -123,7 +123,7 @@ const Root = () => {
     >
       <ScrollToTop />
       <ServiceWorkerStatus />
-      <WhatsAppFloatingButton />
+      
       <StickyWhatsAppButton />
       <ExitIntentPopup />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
