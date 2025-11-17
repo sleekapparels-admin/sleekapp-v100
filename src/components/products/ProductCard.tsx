@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Eye, Heart, ArrowRight, Package } from "lucide-react";
 import type { Product } from "@/hooks/useProducts";
 import { cn } from "@/lib/utils";
+import { useProductAnalytics } from "@/hooks/useProductAnalytics";
 
 interface ProductCardProps {
   product: Product;
@@ -13,12 +14,16 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => {
   const isListView = variant === "list";
+  const { trackHover, trackQuickView, trackWishlist, trackColorSwatch, trackDesignClick, trackQuoteClick, trackViewDetails } = useProductAnalytics();
   
   return (
-    <Card className={cn(
-      "group relative overflow-hidden transition-all duration-500 border-border/50 hover:border-primary/30 hover:shadow-2xl",
-      isListView ? "flex flex-row" : ""
-    )}>
+    <Card 
+      className={cn(
+        "group relative overflow-hidden transition-all duration-500 border-border/50 hover:border-primary/30 hover:shadow-2xl",
+        isListView ? "flex flex-row" : ""
+      )}
+      onMouseEnter={() => trackHover(product.id)}
+    >
       {/* Image Container with Enhanced Hover Overlay */}
       <div className={cn(
         "relative overflow-hidden bg-muted",
@@ -52,6 +57,7 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
               size="icon"
               variant="secondary"
               className="h-10 w-10 rounded-full shadow-lg backdrop-blur-sm bg-white/90 hover:bg-white hover:scale-110 transition-all"
+              onClick={() => trackQuickView(product.id)}
               asChild
             >
               <Link to={`/design-studio?product=${product.id}`} title="Quick View">
@@ -63,6 +69,7 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
               variant="secondary"
               className="h-10 w-10 rounded-full shadow-lg backdrop-blur-sm bg-white/90 hover:bg-white hover:text-red-500 hover:scale-110 transition-all"
               title="Add to Wishlist"
+              onClick={() => trackWishlist(product.id)}
             >
               <Heart className="h-5 w-5" />
             </Button>
@@ -81,6 +88,7 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
             <Button 
               variant="secondary" 
               className="w-full bg-white hover:bg-primary hover:text-primary-foreground text-foreground font-semibold shadow-xl transition-all duration-300" 
+              onClick={() => trackDesignClick(product.id)}
               asChild
             >
               <Link to={`/design-studio?product=${product.id}`}>
@@ -158,6 +166,7 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
                   className="w-6 h-6 rounded-full border-2 border-border shadow-sm hover:scale-125 hover:shadow-md transition-all cursor-pointer ring-offset-2 hover:ring-2 hover:ring-primary"
                   style={{ backgroundColor: color }}
                   title={color}
+                  onClick={() => trackColorSwatch(product.id, color)}
                 />
               ))}
               {product.colors.length > (isListView ? 8 : 5) && (
@@ -194,6 +203,7 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
         <Button 
           variant="default" 
           className="flex-1 font-semibold shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200" 
+          onClick={() => trackDesignClick(product.id)}
           asChild
         >
           <Link to={`/design-studio?product=${product.id}`}>
@@ -203,6 +213,7 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
         <Button 
           variant="outline" 
           className="flex-1 font-semibold hover:bg-secondary/80 hover:scale-105 active:scale-95 hover:border-primary/50 transition-all duration-200" 
+          onClick={() => trackQuoteClick(product.id)}
           asChild
         >
           <Link to={`/contact?product=${product.title}`}>

@@ -1582,6 +1582,60 @@ export type Database = {
         }
         Relationships: []
       }
+      product_interactions: {
+        Row: {
+          additional_data: Json | null
+          id: string
+          interaction_type: Database["public"]["Enums"]["product_interaction_type"]
+          ip_address: string | null
+          product_id: string
+          referrer: string | null
+          session_id: string
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          additional_data?: Json | null
+          id?: string
+          interaction_type: Database["public"]["Enums"]["product_interaction_type"]
+          ip_address?: string | null
+          product_id: string
+          referrer?: string | null
+          session_id: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          additional_data?: Json | null
+          id?: string
+          interaction_type?: Database["public"]["Enums"]["product_interaction_type"]
+          ip_address?: string | null
+          product_id?: string
+          referrer?: string | null
+          session_id?: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_engagement_metrics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "fk_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       production_batches: {
         Row: {
           actual_start_date: string | null
@@ -2913,7 +2967,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      product_engagement_metrics: {
+        Row: {
+          category: string | null
+          color_swatch_count: number | null
+          design_click_count: number | null
+          hover_count: number | null
+          last_interaction: string | null
+          product_id: string | null
+          product_name: string | null
+          quick_view_count: number | null
+          quote_click_count: number | null
+          total_interactions: number | null
+          unique_sessions: number | null
+          view_details_count: number | null
+          wishlist_count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_admin_role: {
@@ -2980,6 +3051,7 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_product_engagement_metrics: { Args: never; Returns: undefined }
       remove_user_role: {
         Args: {
           target_role: Database["public"]["Enums"]["app_role"]
@@ -3024,6 +3096,15 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "on_hold"
+      product_interaction_type:
+        | "hover"
+        | "quick_view_click"
+        | "wishlist_click"
+        | "color_swatch_click"
+        | "design_click"
+        | "quote_click"
+        | "add_to_cart"
+        | "view_details"
       production_stage:
         | "yarn_received"
         | "knitting"
@@ -3189,6 +3270,16 @@ export const Constants = {
         "completed",
         "cancelled",
         "on_hold",
+      ],
+      product_interaction_type: [
+        "hover",
+        "quick_view_click",
+        "wishlist_click",
+        "color_swatch_click",
+        "design_click",
+        "quote_click",
+        "add_to_cart",
+        "view_details",
       ],
       production_stage: [
         "yarn_received",
