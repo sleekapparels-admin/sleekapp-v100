@@ -1,11 +1,15 @@
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Eye, Heart, ArrowRight, Package } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Heart, Eye, Clock, Truck, Palette, Loader2, Package, ArrowRight } from "lucide-react";
 import type { Product } from "@/hooks/useProducts";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { useProductAnalytics } from "@/hooks/useProductAnalytics";
+import { useWishlistContext } from "@/contexts/WishlistContext";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProductCardProps {
   product: Product;
@@ -13,8 +17,52 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => {
+  const [imageError, setImageError] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const isListView = variant === "list";
   const { trackHover, trackQuickView, trackWishlist, trackColorSwatch, trackDesignClick, trackQuoteClick, trackViewDetails } = useProductAnalytics();
+  const { isWishlisted, toggleWishlist } = useWishlistContext();
+  const { toast } = useToast();
+
+  const handleWishlistClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Check authentication
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save items to your wishlist",
+      });
+      return;
+    }
+    
+    setIsWishlistLoading(true);
+    
+    try {
+      await toggleWishlist(product.id);
+      
+      // Track analytics
+      trackWishlist(product.id);
+      
+      // Show success toast
+      toast({
+        title: isWishlisted(product.id) ? "Removed from wishlist" : "Added to wishlist",
+        description: isWishlisted(product.id) 
+          ? `${product.title} removed from your wishlist` 
+          : `${product.title} saved to your wishlist`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update wishlist. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  };
   
   return (
     <Card 
@@ -67,11 +115,23 @@ export const ProductCard = ({ product, variant = "grid" }: ProductCardProps) => 
             <Button
               size="icon"
               variant="secondary"
-              className="h-10 w-10 rounded-full shadow-lg backdrop-blur-sm bg-white/90 hover:bg-white hover:text-red-500 hover:scale-110 transition-all"
-              title="Add to Wishlist"
-              onClick={() => trackWishlist(product.id)}
+              className={cn(
+                "h-10 w-10 rounded-full shadow-lg backdrop-blur-sm transition-all",
+                isWishlisted(product.id)
+                  ? "bg-red-500 text-white hover:bg-red-600"
+                  : "bg-white/90 hover:bg-white hover:text-red-500"
+              )}
+              title={isWishlisted(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+              onClick={handleWishlistClick}
+              disabled={isWishlistLoading}
             >
-              <Heart className="h-5 w-5" />
+              <Heart 
+                className={cn(
+                  "h-5 w-5 transition-all",
+                  isWishlisted(product.id) && "fill-current"
+                )} 
+              />
+              {isWishlistLoading && <Loader2 className="h-4 w-4 animate-spin absolute" />}
             </Button>
           </div>
 

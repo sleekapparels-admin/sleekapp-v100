@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, User, ChevronDown } from "lucide-react";
+import { Menu, X, User, ChevronDown, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/NotificationBell";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { roleHelpers } from "@/lib/supabaseHelpers";
 import { User as SupabaseUser } from "@supabase/supabase-js";
+import { useWishlistContext } from "@/contexts/WishlistContext";
 import sleekLogo from "@/assets/sleek-logo.webp";
 const servicesMenu = [{
   name: "Casualwear Manufacturing",
@@ -81,6 +83,7 @@ export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === "/";
+  const { wishlistCount } = useWishlistContext();
   useEffect(() => {
     const fetchUserRole = async () => {
       const {
@@ -250,6 +253,12 @@ export const Navbar = () => {
               {resourcesMenu.filter(item => userRole !== 'supplier' || item.name !== 'Portfolio Gallery').map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="block px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
                   {item.name}
                 </Link>)}
+              <Link to="/wishlist" className="flex items-center justify-between px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10" onClick={() => setIsOpen(false)}>
+                <span>My Wishlist</span>
+                {wishlistCount > 0 && (
+                  <Badge className="ml-2 bg-primary text-xs">{wishlistCount}</Badge>
+                )}
+              </Link>
             </div>
 
             {userRole !== 'supplier' && <Button asChild variant="default" className="w-full mt-3 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-sm">

@@ -2965,6 +2965,66 @@ export type Database = {
         }
         Relationships: []
       }
+      wishlist_rate_limits: {
+        Row: {
+          action_count: number | null
+          id: string
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          action_count?: number | null
+          id?: string
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          action_count?: number | null
+          id?: string
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_engagement_metrics"
+            referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "wishlists_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       product_engagement_metrics: {
