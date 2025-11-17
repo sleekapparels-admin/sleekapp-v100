@@ -888,6 +888,42 @@ export type Database = {
         }
         Relationships: []
       }
+      exit_intent_sample_requests: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          ip_address: string | null
+          name: string
+          notes: string | null
+          source: string
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: string | null
+          name: string
+          notes?: string | null
+          source?: string
+          status?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: string | null
+          name?: string
+          notes?: string | null
+          source?: string
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       factory_capacity: {
         Row: {
           available_capacity: number | null
