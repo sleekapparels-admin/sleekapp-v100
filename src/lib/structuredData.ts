@@ -54,7 +54,13 @@ export interface ProductSchema {
   };
 }
 
-export const generateProductSchema = (product: ProductSchema) => {
+export interface AggregateRatingSchema {
+  ratingValue: number;
+  reviewCount: number;
+  bestRating?: number;
+}
+
+export const generateProductSchema = (product: ProductSchema & { aggregateRating?: AggregateRatingSchema }) => {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -67,6 +73,14 @@ export const generateProductSchema = (product: ProductSchema) => {
       name: product.brand || 'Sleek Apparels',
     },
     ...(product.category && { category: product.category }),
+    ...(product.aggregateRating && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.aggregateRating.ratingValue,
+        reviewCount: product.aggregateRating.reviewCount,
+        bestRating: product.aggregateRating.bestRating || 5,
+      },
+    }),
     ...(product.offers && {
       offers: {
         '@type': 'Offer',

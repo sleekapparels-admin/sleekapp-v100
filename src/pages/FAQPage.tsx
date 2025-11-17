@@ -5,6 +5,7 @@ import { SEO } from "@/components/SEO";
 import { getPageSEO } from "@/lib/seo";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
+import { generateFAQSchema } from "@/lib/structuredData";
 
 const faqCategories = [
   {
@@ -157,9 +158,24 @@ const faqCategories = [
 ];
 
 const FAQPage = () => {
+  // Generate FAQ schema from all FAQ items
+  const allFAQs = faqCategories.flatMap(category => 
+    category.questions.map(q => ({
+      question: q.q,
+      answer: q.a
+    }))
+  );
+  
+  const faqSchema = generateFAQSchema(allFAQs);
+
   return (
     <>
       <SEO config={getPageSEO('faq')} />
+      
+      {/* FAQ Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(faqSchema)}
+      </script>
       
       <div className="min-h-screen bg-background">
         <Navbar />

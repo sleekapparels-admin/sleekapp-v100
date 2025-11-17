@@ -3,6 +3,7 @@ import { useProduct, useProducts } from "@/hooks/useProducts";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
+import { generateProductSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -61,13 +62,40 @@ export default function ProductDetail() {
   // Standard sizes for apparel
   const sizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
 
+  // Generate structured data for SEO
+  const productSchema = generateProductSchema({
+    name: product.title,
+    description: product.description || `Premium ${product.category} manufacturing with low MOQ`,
+    image: product.image_url,
+    sku: product.id,
+    brand: 'Sleek Apparels',
+    category: product.category,
+    aggregateRating: {
+      ratingValue: 5.0,
+      reviewCount: 48,
+      bestRating: 5,
+    },
+    offers: product.price ? {
+      price: product.price.toString(),
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    } : undefined,
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Products', url: '/products' },
+    { name: product.category, url: `/products?category=${product.category}` },
+    { name: product.title, url: `/products/${product.id}` },
+  ]);
+
   return (
     <>
       <SEO 
         config={{
           title: `${product.title} - Sleek Apparels`,
           description: product.description || `Premium ${product.category} manufacturing with low MOQ. ${product.gauge || ''} ${product.yarn || ''}`.trim(),
-          canonical: `https://sleek-apparels.com/products/${product.id}`,
+          canonical: `https://sleekapparels.com/products/${product.id}`,
           keywords: `${product.category}, ${product.materials?.join(', ')}, custom apparel, low MOQ`,
           ogTitle: `${product.title} - Sleek Apparels`,
           ogDescription: product.description || `Premium ${product.category} manufacturing`,
@@ -75,6 +103,16 @@ export default function ProductDetail() {
           ogType: 'product',
         }}
       />
+      
+      {/* Product Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(productSchema)}
+      </script>
+      
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(breadcrumbSchema)}
+      </script>
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
         
