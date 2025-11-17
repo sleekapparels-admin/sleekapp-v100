@@ -7,7 +7,6 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
 
 import { StickyWhatsAppButton } from "@/components/StickyWhatsAppButton";
-import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -125,7 +124,6 @@ const Root = () => {
       <ServiceWorkerStatus />
       
       <StickyWhatsAppButton />
-      <ExitIntentPopup />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
