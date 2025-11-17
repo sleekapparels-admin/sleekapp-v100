@@ -5,6 +5,8 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
 import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
+import { StickyWhatsAppButton } from "@/components/StickyWhatsAppButton";
+import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -141,6 +143,8 @@ const Root = () => {
       <ScrollToTop />
       <ServiceWorkerStatus />
       <WhatsAppFloatingButton />
+      <StickyWhatsAppButton />
+      <ExitIntentPopup />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
