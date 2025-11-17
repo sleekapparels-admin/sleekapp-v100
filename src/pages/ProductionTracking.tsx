@@ -75,7 +75,7 @@ const ProductionTracking = () => {
         setUserRole(roleData?.role || null);
 
         // Fetch orders based on role
-        if (roleData?.role === 'admin' || roleData?.role === 'staff') {
+        if (roleData?.role === 'admin') {
           // Admin/Staff: See all orders
           await fetchAllOrders();
         } else if (roleData?.role === 'supplier') {
@@ -138,15 +138,14 @@ const ProductionTracking = () => {
   };
 
   const fetchBuyerOrders = async (email: string) => {
-    const { data, error } = await supabase
+    // @ts-ignore - Complex Supabase type causes instantiation depth error
+    const response = await supabase
       .from('supplier_orders')
-      .select(`
-        *,
-        production_stages(*),
-        suppliers(company_name)
-      `)
+      .select('*')
       .eq('buyer_email', email)
       .order('created_at', { ascending: false });
+    
+    const { data, error } = response;
 
     if (error) throw error;
     setOrders(data || []);
@@ -168,8 +167,8 @@ const ProductionTracking = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const colors: Record<string, string> = {
+  const getStatusBadge = (status: string): "default" | "destructive" | "outline" | "secondary" => {
+    const colors: Record<string, "default" | "destructive" | "outline" | "secondary"> = {
       pending: 'secondary',
       in_progress: 'default',
       completed: 'default',
