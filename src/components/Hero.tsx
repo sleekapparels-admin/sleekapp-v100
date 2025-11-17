@@ -1,23 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star } from "lucide-react";
-import heroBackground from "@/assets/hero-knitwear-bg.png";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center">
-      {/* Background Image */}
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={heroBackground}
-          alt="Premium knitwear textile manufacturing quality"
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline
           className="w-full h-full object-cover"
-          width="1920"
-          height="1080"
-          fetchPriority="high"
-        />
-        {/* Dark gradient overlay from left */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent"></div>
+          poster="/placeholder.svg"
+        >
+          <source src="/videos/homepage-hero.webm" type="video/webm" />
+          {/* Fallback for browsers that don't support video */}
+          Your browser does not support the video tag.
+        </video>
+        {/* Dark gradient overlay from left for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/40"></div>
+        {/* Additional subtle vignette effect */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30"></div>
       </div>
 
       {/* Content */}

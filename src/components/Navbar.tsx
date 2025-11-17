@@ -233,8 +233,24 @@ export const Navbar = () => {
       </div>
 
       {/* Mobile Navigation */}
-      {isOpen && <div className="lg:hidden animate-slide-in bg-background backdrop-blur-xl border-t border-border shadow-2xl">
-          <div className="px-3 pt-3 pb-4 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
+      {isOpen && <div className="lg:hidden animate-slide-in border-t border-border shadow-2xl relative overflow-hidden">
+          {/* Video Background for Mobile Menu (only on homepage) */}
+          {isHome && (
+            <div className="absolute inset-0 z-0">
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-full object-cover opacity-30"
+              >
+                <source src="/videos/homepage-hero.webm" type="video/webm" />
+              </video>
+              <div className="absolute inset-0 bg-background/95 backdrop-blur-xl"></div>
+            </div>
+          )}
+          {!isHome && <div className="absolute inset-0 bg-background/98 backdrop-blur-xl"></div>}
+          <div className="px-3 pt-3 pb-4 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto relative z-10">
             {navigation.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${location.pathname === item.href ? "bg-primary text-primary-foreground shadow-sm" : "text-foreground hover:bg-primary/10 active:scale-95"}`}>
                 {item.name}
               </Link>)}
