@@ -4,7 +4,7 @@ import { ArrowRight, Star } from "lucide-react";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
         <video 
