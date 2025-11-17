@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.submit-sample-request]
 verify_jwt = false
+
+[functions.track-product-interaction]
+verify_jwt = false
