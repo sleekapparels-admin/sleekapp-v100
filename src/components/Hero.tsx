@@ -27,6 +27,8 @@ export const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/40"></div>
         {/* Additional subtle vignette effect */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30"></div>
+        {/* Top fade overlay to ensure dark area under navbar */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/80 to-transparent z-10"></div>
       </div>
 
       {/* Content */}
