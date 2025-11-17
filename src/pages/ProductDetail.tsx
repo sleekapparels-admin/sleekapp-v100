@@ -64,8 +64,16 @@ export default function ProductDetail() {
   return (
     <>
       <SEO 
-        metaTitle={`${product.title} - Sleek Apparels`}
-        metaDescription={product.description || `Premium ${product.category} manufacturing with low MOQ. ${product.gauge || ''} ${product.yarn || ''}`}
+        config={{
+          title: `${product.title} - Sleek Apparels`,
+          description: product.description || `Premium ${product.category} manufacturing with low MOQ. ${product.gauge || ''} ${product.yarn || ''}`.trim(),
+          canonical: `https://sleek-apparels.com/products/${product.id}`,
+          keywords: `${product.category}, ${product.materials?.join(', ')}, custom apparel, low MOQ`,
+          ogTitle: `${product.title} - Sleek Apparels`,
+          ogDescription: product.description || `Premium ${product.category} manufacturing`,
+          ogImage: product.image_url,
+          ogType: 'product',
+        }}
       />
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar />

@@ -160,6 +160,7 @@ const router = createBrowserRouter([
       { path: "/", element: <Index /> },
       { path: "/health", element: <Health /> },
       { path: "/products", element: <ProductCatalog /> },
+      { path: "/products/:id", element: <ProductDetail /> },
       { path: "/services", element: <Services /> },
       { path: "/casualwear", element: <Casualwear /> },
       { path: "/activewear", element: <Activewear /> },
