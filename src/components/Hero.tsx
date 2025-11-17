@@ -12,10 +12,14 @@ export const Hero = () => {
           loop 
           muted 
           playsInline
+          preload="auto"
           className="w-full h-full object-cover"
-          poster="/placeholder.svg"
+          poster="/images/hero-poster.jpg"
+          // @ts-ignore - fetchpriority is valid but not in TypeScript types yet
+          fetchpriority="high"
         >
           <source src="/videos/homepage-hero.webm" type="video/webm" />
+          <source src="/videos/homepage-hero.mp4" type="video/mp4" />
           {/* Fallback for browsers that don't support video */}
           Your browser does not support the video tag.
         </video>
