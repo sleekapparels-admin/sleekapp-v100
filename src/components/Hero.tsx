@@ -29,7 +29,7 @@ export const Hero = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-2xl">
           <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
-            Premium Custom Apparel Manufacturing from 50 Pieces
+            Bangladesh Garment Manufacturer | Low MOQ Custom Apparel from 50 Pieces
           </h1>
           
           <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">

@@ -76,7 +76,7 @@ const Services = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl animate-fade-up">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">
-                Apparel Manufacturing Services
+                Full Package Apparel Manufacturing | Custom Clothing Bangladesh
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground leading-relaxed">
                 Complete apparel manufacturing services for global brands. T-shirts, hoodies, sweatshirts, joggers, activewear, and uniforms. MOQ from 50 pieces. Fast sampling 3-7 days. Serving Europe, North America, and worldwide markets. Ethical production, transparent pricing, AQL 2.5 quality.
@@ -88,6 +88,9 @@ const Services = () => {
         {/* Services Grid */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-4xl font-bold mb-12 text-center text-secondary">
+              Our Manufacturing Capabilities
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {serviceDetails.map((service, index) => {
                 const Icon = service.icon;
@@ -102,7 +105,7 @@ const Services = () => {
                         <Icon className="h-8 w-8" />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-bold mb-3 text-secondary">{service.title}</h3>
+                        <h4 className="text-2xl font-bold mb-3 text-secondary">{service.title}</h4>
                         <p className="text-muted-foreground leading-relaxed">{service.description}</p>
                       </div>
                     </div>

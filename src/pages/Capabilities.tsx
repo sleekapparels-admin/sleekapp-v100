@@ -54,7 +54,7 @@ const Capabilities = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-16">
             <h1 className="text-h1-mobile md:text-h1 font-heading font-bold mb-6">
-              Our Manufacturing Capabilities
+              Manufacturing Capabilities | Production, Quality & Certifications
             </h1>
             <p className="text-body-lg text-muted-foreground max-w-3xl mx-auto">
               State-of-the-art facilities and proven processes to deliver quality apparel manufacturing at scale

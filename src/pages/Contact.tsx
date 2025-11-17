@@ -157,7 +157,7 @@ const Contact = () => {
         <section className="py-20 bg-gradient-subtle">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto animate-fade-up">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-6">Request a Quote or Start Your Sample Today</h1>
+              <h1 className="text-4xl sm:text-5xl font-bold mb-6">Contact Sleek Apparels | Request Quote & Samples</h1>
               <p className="text-xl text-muted-foreground">
                 Fill out the form below and our team will provide a detailed quotation within 24 hours.
               </p>

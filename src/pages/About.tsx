@@ -26,7 +26,7 @@ const About = () => {
         <div className="max-w-4xl mx-auto text-center">
           <Badge variant="outline" className="mb-6">Our Story</Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Built to Solve What Bangladesh Gets Wrong
+            About Sleek Apparels | Ethical Apparel Manufacturing Bangladesh
           </h1>
           <p className="text-xl text-muted-foreground mb-4">
             Low MOQ. Real Transparency. Innovative Designs.
@@ -151,6 +151,9 @@ const About = () => {
       {/* Mission & Vision */}
       <section className="py-20 px-4 bg-secondary/10">
         <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Our Mission & Values</h2>
+          </div>
           <div className="grid md:grid-cols-2 gap-12">
             <Card>
               <CardContent className="p-8">

@@ -22,7 +22,7 @@ const Knitwear = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="animate-fade-up">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">
-                  Custom Knitwear Manufacturing | Europe & North America | MOQ 50
+                  Custom Knitwear Manufacturing | Sweaters, Cardigans & Polos from Bangladesh
                 </h1>
                 <p className="text-xl sm:text-2xl text-muted-foreground mb-8 leading-relaxed">
                   Precision knitwear for European and North American brands. Custom sweaters, cardigans, polos. MOQ 50 pieces. Fine gauge (12GG-14GG) to chunky (3GG-7GG). Organic cotton, merino wool, cashmere, bamboo. Fast sampling 3-7 days. Serving Nordic, UK, Germany, Spain, France, USA.
@@ -102,24 +102,24 @@ const Knitwear = () => {
         <section className="py-20 bg-gradient-subtle">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-secondary">Manufacturing Capabilities</h2>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-secondary">Knitwear Manufacturing Capabilities</h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">Advanced flat knitting technology combined with skilled craftsmanship for premium custom knitwear production</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="bg-card border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold mb-3 text-primary">Gauge Range</h3>
+                <h4 className="text-lg font-bold mb-3 text-primary">Gauge Range</h4>
                 <p className="text-muted-foreground">Fine 12GG-14GG for dress sweaters, standard 7GG-9GG for cardigans, chunky 3GG-5GG for fashion knitwear</p>
               </div>
               <div className="bg-card border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold mb-3 text-primary">Premium Yarns</h3>
+                <h4 className="text-lg font-bold mb-3 text-primary">Premium Yarns</h4>
                 <p className="text-muted-foreground">Organic cotton, Merino wool, Bamboo fiber, Viscose, Cashmere blends, RPET recycled polyester</p>
               </div>
               <div className="bg-card border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold mb-3 text-primary">Knit Structures</h3>
+                <h4 className="text-lg font-bold mb-3 text-primary">Knit Structures</h4>
                 <p className="text-muted-foreground">Jersey, Milano rib, Full rib, Jacquard patterns, Intarsia colorwork, Cable knit textures</p>
               </div>
               <div className="bg-card border border-border rounded-lg p-6">
-                <h3 className="text-lg font-bold mb-3 text-primary">Finishing Services</h3>
+                <h4 className="text-lg font-bold mb-3 text-primary">Finishing Services</h4>
                 <p className="text-muted-foreground">Garment washing, precision steaming, professional pressing, seamless linking, ±1cm tolerance guarantee</p>
               </div>
             </div>
