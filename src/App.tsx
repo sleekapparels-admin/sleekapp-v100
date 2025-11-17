@@ -19,6 +19,7 @@ import Health from "./pages/Health";
 
 // Lazy load secondary pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Services = lazy(() => import("./pages/Services"));
 const Casualwear = lazy(() => import("./pages/Casualwear"));
 const Activewear = lazy(() => import("./pages/Activewear"));
