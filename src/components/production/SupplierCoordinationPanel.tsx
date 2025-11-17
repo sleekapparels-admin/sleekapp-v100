@@ -11,8 +11,13 @@ import { format } from "date-fns";
 interface Message {
   id: string;
   message: string;
-  sender_type: string;
+  sender_role: string;
+  sender_id: string;
+  order_id: string;
   created_at: string;
+  attachments: string[] | null;
+  read_by: string[] | null;
+  translated_message: string | null;
   sender_name?: string;
 }
 
@@ -109,7 +114,7 @@ export const SupplierCoordinationPanel = ({ orderId, supplierId }: SupplierCoord
         .insert({
           order_id: orderId,
           message: newMessage,
-          sender_type: senderType,
+          sender_role: senderType,
           sender_id: user.id
         });
 
@@ -204,14 +209,14 @@ export const SupplierCoordinationPanel = ({ orderId, supplierId }: SupplierCoord
                 <div
                   key={message.id}
                   className={`p-3 rounded-lg ${
-                    message.sender_type === 'supplier'
+                    message.sender_role === 'supplier'
                       ? 'bg-muted ml-8'
                       : 'bg-primary/10 mr-8'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-1">
-                    <Badge variant={message.sender_type === 'supplier' ? 'secondary' : 'default'}>
-                      {message.sender_type === 'supplier' ? 'Supplier' : 'You'}
+                    <Badge variant={message.sender_role === 'supplier' ? 'secondary' : 'default'}>
+                      {message.sender_role === 'supplier' ? 'Supplier' : 'You'}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
                       {format(new Date(message.created_at), 'MMM dd, HH:mm')}
