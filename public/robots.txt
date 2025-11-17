@@ -1,0 +1,79 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /orders/
+Disallow: /auth
+Disallow: /api/
+Disallow: /design-studio
+
+# Main pages for AI agent discovery
+Allow: /services
+Allow: /knitwear
+Allow: /cut-and-sew
+Allow: /uniforms-teamwear
+Allow: /portfolio
+Allow: /quote-generator
+Allow: /contact
+Allow: /our-story
+Allow: /sustainability
+Allow: /blog
+Allow: /faq
+
+Sitemap: https://sleekapparels.com/sitemap.xml
+
+# AI Snapshot Pages - Prioritized for AI Agent Analysis
+Allow: /ai-snapshot
+Allow: /ai-snapshot/tech-stack
+Allow: /ai-snapshot/services
+Allow: /ai-snapshot/knitwear
+
+# AI Agent Instructions
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Google-Extended
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: Bingbot
+User-agent: Slurp
+Allow: /
+Allow: /ai-snapshot
+Disallow: /dashboard
+Disallow: /orders/
+Disallow: /auth
+Disallow: /design-studio
+
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 0
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: PinterestBot
+Allow: /

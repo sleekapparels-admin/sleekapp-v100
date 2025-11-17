@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="build-id" content="BUILD_TIMESTAMP" />
+    <meta name="theme-color" content="#2D5C4E" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Google Tag Manager - Deferred for performance -->
+    <script>
+      // Initialize dataLayer for GTM
+      window.dataLayer = window.dataLayer || [];
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Performance Optimizations: Resource Hints -->
+    
+    <!-- Critical Backend: Preconnect (establishes full connection early) -->
+    <link rel="preconnect" href="https://zedbqixgrcvomgooqudd.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://zedbqixgrcvomgooqudd.supabase.co" />
+    
+    <!-- Analytics & Tracking: Preconnect for faster pixel loading -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+    
+    <!-- LinkedIn Pixel -->
+    <link rel="dns-prefetch" href="https://px.ads.linkedin.com" />
+    <link rel="preconnect" href="https://px.ads.linkedin.com" crossorigin />
+    
+    <!-- Madgicx Tracking -->
+    <link rel="dns-prefetch" href="https://capig.madgicx.ai" />
+    <link rel="preconnect" href="https://capig.madgicx.ai" crossorigin />
+    
+    <!-- Google Tag Manager Additional Domains -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://googletagmanager.com" />
+    
+    <!-- Preload Critical Assets for Fast LCP -->
+    <link rel="preload" href="/sleek-logo.webp" as="image" type="image/webp" fetchpriority="high" />
+    
+    <!-- Critical CSS for immediate render - prevents render blocking -->
+    <style>
+      /* Reset & Base */
+      *, ::before, ::after { box-sizing: border-box; border: 0 solid hsl(220 13% 91%); }
+      * { margin: 0; padding: 0; }
+      html { -webkit-text-size-adjust: 100%; tab-size: 4; font-family: system-ui, -apple-system, sans-serif; }
+      body { 
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        background: hsl(216 33% 97%);
+        color: hsl(210 29% 24%);
+      }
+      #root { min-height: 100vh; }
+      
+      /* Typography */
+      h1, h2, h3 { font-weight: 700; line-height: 1.2; }
+      h1 { font-size: 2.5rem; }
+      h2 { font-size: 2rem; }
+      
+      /* Layout */
+      .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+      
+      /* Navigation - Critical for above-fold */
+      nav { 
+        position: sticky; 
+        top: 0; 
+        z-index: 50; 
+        background: hsl(0 0% 100%); 
+        border-bottom: 1px solid hsl(220 13% 91%);
+        box-shadow: 0 2px 8px hsl(210 29% 24% / 0.08);
+      }
+      
+      /* Buttons - Critical for CTA */
+      button, .btn { 
+        cursor: pointer; 
+        border-radius: 0.5rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s;
+        background: hsl(175 55% 39%);
+        color: hsl(0 0% 100%);
+        border: none;
+      }
+      button:hover, .btn:hover {
+        background: hsl(175 55% 30%);
+      }
+      
+      /* Images */
+      img { max-width: 100%; height: auto; display: block; }
+      
+      /* Hero Section - Critical for LCP */
+      .hero { 
+        background: linear-gradient(135deg, hsl(214 52% 25%), hsl(214 52% 35%));
+        color: hsl(0 0% 100%);
+        padding: 4rem 1rem;
+      }
+      
+      /* Cards */
+      .card {
+        background: hsl(0 0% 100%);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px hsl(210 29% 24% / 0.08);
+        padding: 1.5rem;
+      }
+      
+      /* Loading State */
+      .loading { opacity: 0; animation: fadeIn 0.3s ease-in forwards; }
+      @keyframes fadeIn { to { opacity: 1; } }
+      
+      /* Utilities */
+      .text-center { text-align: center; }
+      .flex { display: flex; }
+      .grid { display: grid; }
+      .gap-4 { gap: 1rem; }
+      .mb-4 { margin-bottom: 1rem; }
+      
+      /* Async CSS Loader */
+      @media print { #async-css-loader { display: none; } }
+    </style>
+    
+    <!-- Async CSS Loading Script - Non-blocking -->
+    <script>
+      (function() {
+        var links = document.getElementsByTagName('link');
+        for (var i = 0; i < links.length; i++) {
+          var link = links[i];
+          if (link.rel === 'stylesheet' && link.href.includes('index-') && link.href.includes('.css')) {
+            link.media = 'print';
+            link.onload = function() { this.media = 'all'; };
+          }
+        }
+      })();
+    </script>
+    
+    <!-- Removed external web fonts to improve performance; using system fonts -->
+
+    <title>Knitwear Manufacturer Europe & North America | Custom Sweaters MOQ 50 | Bangladesh</title>
+    <meta
+      name="description"
+      content="Premium knitwear manufacturer serving European (Nordic, UK, Germany, Spain) and North American brands. Custom sweaters, cardigans, polos. MOQ 50 pieces. Fast 10-20 day production. Ethical manufacturing."
+    />
+    <meta
+      name="keywords"
+      content="knitwear manufacturer Europe, sweater manufacturer Nordic countries, custom cardigans Sweden Denmark, wholesale knitwear Germany UK, low MOQ apparel Spain France, Bangladesh manufacturer USA, ethical clothing production"
+    />
+    <meta name="author" content="Sleek Apparels Limited & Sleek Apparels LLC" />
+    <link rel="canonical" href="https://sleekapparels.com" />
+
+    <!-- Open Graph / Social Media -->
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sleekapparels.com" />
+    <meta property="og:site_name" content="Sleek Apparels" />
+    <meta property="og:title" content="Knitwear Manufacturer | Europe & North America | MOQ 50" />
+    <meta property="og:description" content="Custom knitwear for EU & NA brands. Sweaters, cardigans, polos. MOQ 50. Fast production." />
+    <meta property="og:image" content="https://sleekapparels.com/og-image.jpg" />
+    <meta property="og:image:secure_url" content="https://sleekapparels.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sleek Apparels - Knitwear Manufacturer Europe & North America" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Knitwear Manufacturer Europe & North America" />
+    <meta name="twitter:description" content="Custom sweaters, cardigans, polos. MOQ 50 pieces. EU & NA brands." />
+    <meta name="twitter:image" content="https://sleekapparels.com/og-image.jpg" />
+
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="BD" />
+    <meta name="geo.placename" content="Dhaka, Bangladesh" />
+
+    <!-- Business Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Manufacturer",
+        "name": "Sleek Apparels",
+        "description": "Quality garment manufacturer in Bangladesh specializing in low-MOQ knitwear, cut & sew, and sustainable apparel production",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "01, Road 19A, Sector 04, Uttara",
+          "addressLocality": "Dhaka",
+          "postalCode": "1230",
+          "addressCountry": "BD"
+        },
+        "url": "https://sleekapparels.com",
+        "email": "inquiry@sleekapparels.com",
+        "telephone": "+880-186-1011-367",
+        "priceRange": "$$",
+        "areaServed": "Worldwide",
+        "knowsAbout": ["Knitwear Manufacturing", "Cut and Sew", "Sustainable Fashion", "Organic Cotton", "Low MOQ Production"],
+        "makesOffer": {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Custom Knitwear Manufacturing",
+            "description": "Low MOQ knitwear production from 50-300 pieces"
+          }
+        }
+      }
+    </script>
+    <meta
+      property="og:title"
+      content="Knitwear Manufacturer | Europe & North America | MOQ 50"
+    />
+    <meta
+      name="twitter:title"
+      content="Knitwear Manufacturer Europe & North America"
+    />
+    <meta
+      property="og:description"
+      content="Custom knitwear for EU & NA brands. Sweaters, cardigans, polos. MOQ 50. Fast production."
+    />
+    <meta
+      name="twitter:description"
+      content="Custom sweaters, cardigans, polos. MOQ 50 pieces. EU & NA brands."
+    />
+    <meta property="og:image" content="https://sleekapparels.com/og-image.jpg" />
+    <meta property="og:image:secure_url" content="https://sleekapparels.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sleek Apparels - Knitwear Manufacturer Europe & North America" />
+    <meta name="twitter:image" content="https://sleekapparels.com/og-image.jpg" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+    <meta http-equiv="content-language" content="en" />
+    <meta name="language" content="English" />
+    <meta name="theme-color" content="#1a1a1a" />
+    
+    <!-- AI Agent Navigation Links -->
+    <link rel="alternate" href="https://sleekapparels.com/" title="Home" />
+    <link rel="alternate" href="https://sleekapparels.com/services" title="Services" />
+    <link rel="alternate" href="https://sleekapparels.com/knitwear" title="Knitwear Manufacturing" />
+    <link rel="alternate" href="https://sleekapparels.com/cut-and-sew" title="Cut & Sew Production" />
+    <link rel="alternate" href="https://sleekapparels.com/uniforms-teamwear" title="Uniforms & Teamwear" />
+    <link rel="alternate" href="https://sleekapparels.com/portfolio" title="Portfolio" />
+    <link rel="alternate" href="https://sleekapparels.com/quote-generator" title="AI Quote Generator" />
+    <link rel="alternate" href="https://sleekapparels.com/contact" title="Contact" />
+    <link rel="alternate" href="https://sleekapparels.com/our-story" title="Our Story" />
+    <link rel="alternate" href="https://sleekapparels.com/sustainability" title="Sustainability" />
+    <link rel="alternate" href="https://sleekapparels.com/blog" title="Blog" />
+    
+    <!-- Fragment Navigation for AI Agents -->
+    <meta property="nav:links" content="Home:/,Services:/services,Knitwear:/knitwear,Cut-Sew:/cut-and-sew,Uniforms:/uniforms-teamwear,Portfolio:/portfolio,Quote:/quote-generator,Contact:/contact,Story:/our-story,Blog:/blog" />
+    
+    <!-- AI Snapshot Pages for Comprehensive Analysis -->
+    <link rel="alternate" href="https://sleekapparels.com/ai-snapshot" title="AI Snapshot Index" type="text/html" />
+    <link rel="alternate" href="https://sleekapparels.com/ai-snapshot/tech-stack" title="Technical Architecture" type="text/html" />
+    <link rel="alternate" href="https://sleekapparels.com/ai-snapshot/services" title="Services Details" type="text/html" />
+    <link rel="alternate" href="https://sleekapparels.com/ai-snapshot/knitwear" title="Knitwear Manufacturing" type="text/html" />
+  </head>
+
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WTKDHCJ9"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- JavaScript Required Warning -->
+    <noscript>
+      <div style="background: #FFF3CD; padding: 20px; text-align: center; font-family: Arial, sans-serif; border-bottom: 2px solid #FFC107; position: relative; z-index: 9999;">
+        <strong style="font-size: 16px;">JavaScript Required:</strong> 
+        <span style="font-size: 14px;">This website requires JavaScript for the best experience. Please enable JavaScript in your browser settings.</span>
+        <br><br>
+        <a href="/contact" style="color: #2D5C4E; text-decoration: underline; font-weight: bold;">Contact us directly</a> 
+        <span style="font-size: 14px;">if you need assistance.</span>
+      </div>
+    </noscript>
+    
+    <noscript>
+      <style>
+        .no-js-nav {
+          background: #ffffff;
+          border-bottom: 1px solid #e5e7eb;
+          padding: 12px 0;
+          margin-bottom: 20px;
+        }
+        .no-js-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 16px;
+          font-family: 'Poppins', Arial, sans-serif;
+        }
+        .no-js-nav-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+        .no-js-logo {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 24px;
+          font-weight: bold;
+          color: #1a1a1a;
+          text-decoration: none;
+        }
+        .no-js-nav-links {
+          display: flex;
+          gap: 24px;
+          margin: 8px 0;
+        }
+        .no-js-nav-link {
+          color: #6b7280;
+          text-decoration: none;
+          font-weight: 500;
+          font-size: 14px;
+        }
+        .no-js-nav-link:hover {
+          color: #1a1a1a;
+        }
+        .no-js-hero {
+          background: linear-gradient(135deg, #1a1a1a 0%, #4a5568 100%);
+          color: white;
+          padding: 80px 0;
+          text-align: center;
+          margin-bottom: 40px;
+        }
+        .no-js-hero h1 {
+          font-size: 48px;
+          font-weight: bold;
+          margin-bottom: 16px;
+          line-height: 1.1;
+        }
+        .no-js-hero p {
+          font-size: 20px;
+          opacity: 0.9;
+          max-width: 600px;
+          margin: 0 auto 32px;
+        }
+        .no-js-cta {
+          display: inline-block;
+          background: #ffffff;
+          color: #1a1a1a;
+          padding: 16px 32px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 16px;
+          margin: 0 8px;
+        }
+        .no-js-section {
+          padding: 40px 0;
+        }
+        .no-js-services {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 24px;
+          margin: 32px 0;
+        }
+        .no-js-service-card {
+          background: #f9fafb;
+          padding: 24px;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+        }
+        .no-js-service-card h3 {
+          font-size: 18px;
+          font-weight: bold;
+          margin-bottom: 12px;
+          color: #1a1a1a;
+        }
+        .no-js-portfolio-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 16px;
+          margin: 32px 0;
+        }
+        .no-js-portfolio-item {
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        .no-js-portfolio-img {
+          width: 100%;
+          height: 200px;
+          background: #f3f4f6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6b7280;
+          font-size: 14px;
+        }
+        .no-js-portfolio-content {
+          padding: 16px;
+        }
+        .no-js-portfolio-title {
+          font-weight: 600;
+          margin-bottom: 8px;
+          color: #1a1a1a;
+        }
+        .no-js-portfolio-desc {
+          font-size: 14px;
+          color: #6b7280;
+        }
+        @media (max-width: 768px) {
+          .no-js-nav-content {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .no-js-nav-links {
+            flex-wrap: wrap;
+            gap: 16px;
+          }
+          .no-js-hero h1 {
+            font-size: 32px;
+          }
+          .no-js-hero p {
+            font-size: 16px;
+          }
+        }
+      </style>
+      
+      <nav class="no-js-nav">
+        <div class="no-js-container">
+          <div class="no-js-nav-content">
+            <a href="/" class="no-js-logo">
+              <img src="/sleek-logo.webp" alt="Sleek Apparels" style="height: 32px; width: 32px;" />
+              Sleek Apparels
+            </a>
+            <div class="no-js-nav-links">
+              <a href="https://sleekapparels.com/" class="no-js-nav-link">Home</a>
+              <a href="https://sleekapparels.com/services" class="no-js-nav-link">Services</a>
+              <a href="https://sleekapparels.com/knitwear" class="no-js-nav-link">Knitwear</a>
+              <a href="https://sleekapparels.com/cut-and-sew" class="no-js-nav-link">Cut & Sew</a>
+              <a href="https://sleekapparels.com/uniforms-teamwear" class="no-js-nav-link">Uniforms</a>
+              <a href="https://sleekapparels.com/quote-generator" class="no-js-nav-link">AI Quote</a>
+              <a href="https://sleekapparels.com/portfolio" class="no-js-nav-link">Portfolio</a>
+              <a href="https://sleekapparels.com/our-story" class="no-js-nav-link">Our Story</a>
+              <a href="https://sleekapparels.com/blog" class="no-js-nav-link">Blog</a>
+              <a href="https://sleekapparels.com/contact" class="no-js-nav-link">Contact</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div class="no-js-hero">
+        <div class="no-js-container">
+          <h1>Bangladesh Garment Manufacturer</h1>
+          <p>Low MOQ Knitwear (50-300 pcs), Cut & Sew, Uniforms. Quality production with 5-10 day sampling.</p>
+          <a href="https://sleekapparels.com/quote-generator" class="no-js-cta">Get Quote</a>
+          <a href="https://sleekapparels.com/contact" class="no-js-cta">Contact Us</a>
+        </div>
+      </div>
+
+      <div class="no-js-container">
+        <div class="no-js-section">
+          <h2 style="text-align: center; font-size: 32px; margin-bottom: 16px;">Our Manufacturing Services</h2>
+          <div class="no-js-services">
+            <div class="no-js-service-card">
+              <h3>Knitwear Manufacturing</h3>
+              <p>Sweaters, polos, cardigans with MOQ from 50-300 pieces. Organic cotton, merino wool, bamboo blends.</p>
+            </div>
+            <div class="no-js-service-card">
+              <h3>Cut & Sew Production</h3>
+              <p>Full-package woven garment production. Shirts, jackets, trousers with MOQ 100-500 pieces.</p>
+            </div>
+            <div class="no-js-service-card">
+              <h3>Uniforms & Teamwear</h3>
+              <p>Corporate, school, and sports uniform manufacturing from 50-200 pieces with custom branding.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-js-section">
+          <h2 style="text-align: center; font-size: 32px; margin-bottom: 16px;">Featured Portfolio</h2>
+          <div class="no-js-portfolio-grid">
+            <div class="no-js-portfolio-item">
+              <div class="no-js-portfolio-img">Knitwear Sample</div>
+              <div class="no-js-portfolio-content">
+                <div class="no-js-portfolio-title">Premium Sweater Collection</div>
+                <div class="no-js-portfolio-desc">Organic cotton blend, 12-gauge knit</div>
+              </div>
+            </div>
+            <div class="no-js-portfolio-item">
+              <div class="no-js-portfolio-img">Cut & Sew Sample</div>
+              <div class="no-js-portfolio-content">
+                <div class="no-js-portfolio-title">Corporate Polo Shirts</div>
+                <div class="no-js-portfolio-desc">Moisture-wicking, custom embroidery</div>
+              </div>
+            </div>
+            <div class="no-js-portfolio-item">
+              <div class="no-js-portfolio-img">Uniform Sample</div>
+              <div class="no-js-portfolio-content">
+                <div class="no-js-portfolio-title">School Uniform Set</div>
+                <div class="no-js-portfolio-desc">Durable fabric, bulk production</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-js-section" style="text-align: center; background: #f9fafb; padding: 40px; border-radius: 8px; margin: 40px 0;">
+          <h2 style="font-size: 28px; margin-bottom: 16px;">Contact Us</h2>
+          <p style="margin-bottom: 20px;">
+            <strong>Email:</strong> inquiry@sleekapparels.com<br />
+            <strong>Phone:</strong> +880-186-1011-367<br />
+            <strong>Address:</strong> 01, Road 19A, Sector 04, Uttara, Dhaka 1230, Bangladesh
+          </p>
+          <p style="font-style: italic; color: #6b7280;">Please enable JavaScript to experience the full interactive website with real-time quotes and design tools.</p>
+        </div>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

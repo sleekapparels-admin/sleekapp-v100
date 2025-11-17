@@ -1,0 +1,208 @@
+import { useNavigate } from "react-router-dom";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle } from "lucide-react";
+import { SupplierAnalyticsCard } from "@/components/admin/SupplierAnalyticsCard";
+import { Link } from "react-router-dom";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useQueryClient } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { SupplierAssignmentDialog } from "@/components/admin/SupplierAssignmentDialog";
+import type { Order } from "@/types/database";
+import { useAdminStats, useNewOrders, orderKeys } from "@/hooks/queries";
+
+export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { isAdmin, loading } = useAdminAuth();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  
+  // Use React Query hooks
+  const { data: stats } = useAdminStats();
+  const { data: newOrders = [] } = useNewOrders();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    navigate("/");
+    return null;
+  }
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-background pt-24 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage your operations and supplier network</p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Total Orders
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats?.totalOrders || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">Active orders</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-orange-500/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-4 w-4" />
+                    New Orders
+                  </div>
+                  {(newOrders?.length || 0) > 0 && (
+                    <Badge variant="destructive">{newOrders?.length}</Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{newOrders?.length || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">Awaiting assignment</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Suppliers
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats?.verifiedSuppliers || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">Verified suppliers</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">${Math.round(stats?.totalRevenue || 0).toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground mt-1">Total revenue</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* New Orders Queue */}
+          {newOrders && newOrders.length > 0 && (
+            <Card className="mb-8 border-orange-500/20">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 text-orange-500" />
+                      New Orders Need Supplier Assignment
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      These orders are awaiting supplier assignment
+                    </p>
+                  </div>
+                  <Badge variant="destructive" className="text-lg px-3 py-1">
+                    {newOrders.length}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {newOrders.map((order: any) => (
+                    <div key={order.id} className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <div className="font-semibold">Order #{order.order_number}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {order.quantity} × {order.product_type}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Buyer: {order.profiles?.full_name || order.profiles?.email || 'Unknown'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <Button 
+                        onClick={() => setSelectedOrder(order)}
+                        size="sm"
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        Assign Supplier
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="grid gap-6 md:grid-cols-2 mb-8">
+            <SupplierAnalyticsCard />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button asChild className="w-full justify-start">
+                  <Link to="/admin/suppliers">
+                    <Users className="mr-2 h-4 w-4" />
+                    Manage Suppliers
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full justify-start">
+                  <Link to="/admin/analytics">
+                    <TrendingUp className="mr-2 h-4 w-4" />
+                    View Analytics
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full justify-start">
+                  <Link to="/dashboard">
+                    <Package className="mr-2 h-4 w-4" />
+                    View Orders
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+      <Footer />
+      
+      {/* Supplier Assignment Dialog */}
+      {selectedOrder && (
+        <SupplierAssignmentDialog
+          order={selectedOrder}
+          open={!!selectedOrder}
+          onOpenChange={(open) => !open && setSelectedOrder(null)}
+          onSuccess={() => {
+            setSelectedOrder(null);
+            // Invalidate queries to trigger refetch
+            queryClient.invalidateQueries({ queryKey: orderKeys.new() });
+            queryClient.invalidateQueries({ queryKey: orderKeys.adminStats() });
+          }}
+        />
+      )}
+    </>
+  );
+}

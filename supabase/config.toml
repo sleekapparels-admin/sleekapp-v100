@@ -1,0 +1,34 @@
+project_id = "eqpftggctumujhutomom"
+
+[functions.seed-test-users]
+verify_jwt = false
+
+[functions.bootstrap-admin]
+verify_jwt = false
+
+[functions.ai-design-generator]
+verify_jwt = true
+
+[functions.admin-check]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.submit-sample-request]
+verify_jwt = false
+
+[functions.track-product-interaction]
+verify_jwt = false
+
+[functions.wishlist-add]
+verify_jwt = true
+
+[functions.wishlist-remove]
+verify_jwt = true
+
+[functions.wishlist-get]
+verify_jwt = true
+
+[functions.wishlist-check]
+verify_jwt = true

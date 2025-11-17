@@ -1,0 +1,230 @@
+# Automated APK build workflow with version numbering
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check if mobile app exists
+      id: check_mobile
+      run: |
+        if [ -d "mobile-app/sleek_apparels_app" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "✓ Mobile app directory found"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ Mobile app directory not found - will skip Flutter build"
+        fi
+    
+    - name: Setup Java
+      if: steps.check_mobile.outputs.exists == 'true'
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+    
+    - name: Setup Flutter
+      if: steps.check_mobile.outputs.exists == 'true'
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.35.7'
+        channel: 'stable'
+        cache: true
+    
+    - name: Setup Android SDK
+      if: steps.check_mobile.outputs.exists == 'true'
+      uses: android-actions/setup-android@v3
+      with:
+        packages: |-
+          cmdline-tools;latest
+          platforms;android-35
+          build-tools;35.0.0
+          platform-tools
+    
+    - name: Accept Android licenses
+      if: steps.check_mobile.outputs.exists == 'true'
+      run: yes | sdkmanager --licenses || true
+    
+    - name: Configure caches
+      if: steps.check_mobile.outputs.exists == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pub-cache
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-flutter-${{ hashFiles('mobile-app/sleek_apparels_app/pubspec.lock') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+    
+    - name: Increase Gradle memory
+      if: steps.check_mobile.outputs.exists == 'true'
+      run: |
+        mkdir -p ~/.gradle
+        echo "org.gradle.jvmargs=-Xmx3g -Dkotlin.daemon.jvm.options=-Xmx2g" >> ~/.gradle/gradle.properties
+    
+    - name: Print environment versions
+      if: steps.check_mobile.outputs.exists == 'true'
+      run: |
+        flutter --version
+        dart --version
+        java -version
+        sdkmanager --list | head -n 60
+    
+    - name: Install system dependencies
+      if: steps.check_mobile.outputs.exists == 'true'
+      run: sudo apt-get update && sudo apt-get install -y libglu1-mesa
+    
+    - name: Get Flutter dependencies
+      if: steps.check_mobile.outputs.exists == 'true'
+      working-directory: mobile-app/sleek_apparels_app
+      run: flutter pub get
+    
+    - name: Update version number
+      if: steps.check_mobile.outputs.exists == 'true'
+      working-directory: mobile-app/sleek_apparels_app
+      run: |
+        # Update version in pubspec.yaml: 1.0.BUILD_NUMBER+BUILD_NUMBER
+        sed -i "s/^version: .*/version: 1.0.${{ github.run_number }}+${{ github.run_number }}/" pubspec.yaml
+        echo "Updated version to 1.0.${{ github.run_number }}+${{ github.run_number }}"
+    
+    - name: Decode and setup keystore
+      if: steps.check_mobile.outputs.exists == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      env:
+        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        if [ -n "$KEYSTORE_BASE64" ]; then
+          echo "Setting up keystore for signing..."
+          echo "$KEYSTORE_BASE64" | base64 -d > mobile-app/sleek_apparels_app/android/app/release.keystore
+          
+          cat > mobile-app/sleek_apparels_app/android/key.properties << EOF
+        storePassword=$KEYSTORE_PASSWORD
+        keyPassword=$KEY_PASSWORD
+        keyAlias=$KEY_ALIAS
+        storeFile=app/release.keystore
+        EOF
+          
+          echo "✓ Keystore configured successfully"
+        else
+          echo "⚠️ No keystore secrets found. APK will be unsigned."
+          echo "To create signed APKs, add KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, and KEY_PASSWORD to GitHub secrets."
+        fi
+    
+    - name: Skip build (no mobile app found)
+      if: steps.check_mobile.outputs.exists != 'true'
+      run: |
+        echo "⚠️ Mobile app directory 'mobile-app/sleek_apparels_app' not found."
+        echo "This workflow is designed to build Flutter mobile apps."
+        echo "Skipping build steps. Add a Flutter app at mobile-app/sleek_apparels_app to enable builds."
+        echo "The workflow will complete successfully."
+    
+    - name: Generate Changelog
+      if: steps.check_mobile.outputs.exists == 'true'
+      id: changelog
+      run: |
+        git fetch --tags --force || true
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        if [ -z "$PREVIOUS_TAG" ]; then
+          {
+            echo "changelog<<EOF"
+            echo "## Changes"
+            git log --pretty=format:"- %s (%an)" --no-merges -10
+            echo ""
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+        else
+          {
+            echo "changelog<<EOF"
+            echo "## Changes since $PREVIOUS_TAG"
+            git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s (%an)" --no-merges
+            echo ""
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Build APK (release, verbose)
+      if: steps.check_mobile.outputs.exists == 'true'
+      working-directory: mobile-app/sleek_apparels_app
+      run: |
+        if [ -f "android/key.properties" ]; then
+          echo "Building signed release APK..."
+          flutter build apk --release -v
+        else
+          echo "Building unsigned release APK..."
+          flutter build apk --release -v
+        fi
+    
+    - name: Verify APK signing
+      if: steps.check_mobile.outputs.exists == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      working-directory: mobile-app/sleek_apparels_app
+      run: |
+        if [ -f "android/key.properties" ]; then
+          echo "Verifying APK signature..."
+          jarsigner -verify -verbose build/app/outputs/flutter-apk/app-release.apk || echo "⚠️ APK verification failed"
+        else
+          echo "Skipping verification (unsigned APK)"
+        fi
+    
+    - name: Upload APK artifact
+      if: steps.check_mobile.outputs.exists == 'true' && success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: sleek-apparels-release-apk
+        path: mobile-app/sleek_apparels_app/build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+    
+    - name: Upload build diagnostics (on failure)
+      if: steps.check_mobile.outputs.exists == 'true' && failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-build-diagnostics
+        path: |
+          mobile-app/sleek_apparels_app/build/**/*
+          ~/.gradle/daemon/*
+        retention-days: 7
+    
+    - name: Create Release (on main branch push)
+      if: steps.check_mobile.outputs.exists == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: mobile-app/sleek_apparels_app/build/app/outputs/flutter-apk/app-release.apk
+        tag_name: v1.0.${{ github.run_number }}
+        name: Release v1.0.${{ github.run_number }}
+        body: |
+          # Sleek Apparels Mobile App v1.0.${{ github.run_number }}
+          
+          ${{ steps.changelog.outputs.changelog }}
+          
+          ---
+          
+          **Backend:** Lovable Cloud (project configured)
+          
+          **Installation Instructions:**
+          1. Download `app-release.apk` below
+          2. Enable "Install from Unknown Sources" on your Android device
+          3. Install and launch the app
+          4. Sign in with your credentials
+          
+          **Build Info:**
+          - Version: 1.0.${{ github.run_number }}+${{ github.run_number }}
+          - Flutter: 3.35.7
+          - Android SDK: 35
+          - Java: 17
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

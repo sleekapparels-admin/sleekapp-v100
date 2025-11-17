@@ -1,0 +1,292 @@
+export interface SEOConfig {
+  title: string;
+  description: string;
+  keywords?: string;
+  canonical: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+}
+
+const BASE_URL = 'https://sleekapparels.com';
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`;
+
+export const getPageSEO = (page: string): SEOConfig => {
+  const configs: Record<string, SEOConfig> = {
+    home: {
+      title: 'Custom T-Shirt & Hoodie Manufacturer | Low MOQ 50 Pieces | Bangladesh',
+      description: 'Premium custom apparel manufacturing from Bangladesh. T-shirts, hoodies, sweatshirts, joggers from 50 pieces. Fast production, ethical practices, global shipping to Europe, North America & worldwide.',
+      keywords: 't-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, custom apparel, low MOQ, Bangladesh manufacturer, casualwear manufacturer, joggers manufacturer, polo shirts, activewear',
+      canonical: BASE_URL,
+      ogTitle: 'Custom Apparel Manufacturer | T-Shirts, Hoodies & More | MOQ 50',
+      ogDescription: 'Custom t-shirts, hoodies, sweatshirts, and joggers. MOQ 50. Fast production from Bangladesh.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Custom Apparel Manufacturer | Low MOQ 50',
+      twitterDescription: 'T-shirts, hoodies, sweatshirts, joggers. MOQ 50 pieces. Fast global shipping.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    services: {
+      title: 'Apparel Manufacturing Services | T-Shirts, Hoodies, Activewear | Bangladesh',
+      description: 'Complete apparel manufacturing services. T-shirts, hoodies, sweatshirts, joggers, uniforms. MOQ 50-300. Fast sampling. Serving Europe, North America & worldwide. Transparent pricing, ethical production.',
+      keywords: 'apparel manufacturing services, t-shirt manufacturer, hoodie manufacturer, custom apparel, uniform manufacturing, Bangladesh manufacturer, casualwear services, wholesale garments, ethical production',
+      canonical: `${BASE_URL}/services`,
+      ogTitle: 'Apparel Manufacturing Services | Casualwear & Activewear',
+      ogDescription: 'Complete manufacturing services. T-shirts, hoodies, joggers, uniforms. MOQ 50-300.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Apparel Manufacturing Services',
+      twitterDescription: 'T-shirts, hoodies, activewear. Fast sampling, transparent pricing.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    casualwear: {
+      title: 'Custom Casualwear Manufacturer | T-Shirts, Hoodies & Sweatshirts | MOQ 50',
+      description: 'Premium casualwear manufacturing for global brands. Custom t-shirts, hoodies, sweatshirts, polo shirts. MOQ from 50 pieces. Ring-spun cotton, organic fabrics. Fast sampling 3-7 days. Serving Europe, North America & worldwide.',
+      keywords: 't-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, polo shirts, custom casualwear, ring-spun cotton, organic cotton, low MOQ apparel, Bangladesh manufacturer',
+      canonical: `${BASE_URL}/casualwear`,
+      ogTitle: 'Custom Casualwear Manufacturer | T-Shirts, Hoodies | MOQ 50',
+      ogDescription: 'Custom t-shirts, hoodies, sweatshirts, polos. MOQ 50. Fast production.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Casualwear Manufacturer | MOQ 50',
+      twitterDescription: 'Custom casualwear. Fast production for global brands.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    'cut-and-sew': {
+      title: 'Cut & Sew Sourcing | Woven Apparel | Europe & North America | MOQ 300',
+      description: 'Full-package cut & sew sourcing for EU & NA brands. Woven shirts, jackets, trousers. Vetted factory partners. MOQ 300. Quality managed production. Serving Nordic, UK, Germany, Spain, USA.',
+      keywords: 'cut and sew sourcing Europe, woven apparel manufacturer, shirt production Nordic countries, jacket manufacturing UK Germany, trouser production Spain, Bangladesh cut sew USA',
+      canonical: `${BASE_URL}/cut-and-sew`,
+      ogTitle: 'Cut & Sew Sourcing | Woven Apparel | EU & NA',
+      ogDescription: 'Full-package sourcing. Woven shirts, jackets, trousers. MOQ 300. Quality managed.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Cut & Sew Sourcing | EU & NA',
+      twitterDescription: 'Woven apparel sourcing. Quality managed production. MOQ 300.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    'uniforms-teamwear': {
+      title: 'Uniform Manufacturer | Corporate, School, Sports | Europe & North America',
+      description: 'Custom uniform manufacturing for European and North American institutions. Corporate, school, sports uniforms. Bulk production. Embroidery, printing. MOQ 100. Serving Nordic, UK, Germany, Spain, USA.',
+      keywords: 'uniform manufacturer Europe, corporate uniforms Nordic countries, school uniform production UK Germany, sports teamwear Spain, custom jerseys USA, workwear manufacturer',
+      canonical: `${BASE_URL}/uniforms-teamwear`,
+      ogTitle: 'Uniform Manufacturer | Corporate, School, Sports | EU & NA',
+      ogDescription: 'Custom uniforms for corporate, school, sports. Bulk production. Decoration available.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Uniform Manufacturer | EU & NA',
+      twitterDescription: 'Corporate, school, sports uniforms. Custom production for European and North American brands.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    portfolio: {
+      title: 'Portfolio - Our Manufacturing Work | Knitwear, Uniforms, Cut & Sew | Sleek Apparels',
+      description: 'Browse our portfolio of manufactured products: custom knitwear, corporate uniforms, sports teamwear, cut & sew apparel. Real production examples showcasing quality, design capabilities, and manufacturing expertise.',
+      keywords: 'apparel manufacturing portfolio, knitwear samples, custom sweater examples, uniform manufacturing examples, cut sew portfolio, bangladesh manufacturer work, garment production samples, product showcase',
+      canonical: `${BASE_URL}/portfolio`,
+      ogTitle: 'Manufacturing Portfolio | Bangladesh Production Examples',
+      ogDescription: 'Real production samples: knitwear, uniforms, cut & sew. View our quality and capabilities.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Manufacturing Portfolio | Sleek Apparels',
+      twitterDescription: 'View our manufactured knitwear, uniforms, and cut & sew samples.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    about: {
+      title: 'About Sleek Apparels | Ethical Apparel Manufacturing',
+      description: 'Leading Bangladesh apparel manufacturer. Founded by Kh Raj Rahman. Low MOQ, ethical production, transparent sourcing. Direct partnership for sustainable fashion brands.',
+      keywords: 'about Sleek Apparels, ethical manufacturer Bangladesh, sustainable apparel production, Kh Raj Rahman, garment manufacturer company',
+      canonical: `${BASE_URL}/about`,
+      ogTitle: 'About Sleek Apparels | Ethical Manufacturing',
+      ogDescription: 'Leading Bangladesh manufacturer. Low MOQ, ethical production, transparent sourcing.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'About Sleek Apparels | Ethical Manufacturing',
+      twitterDescription: 'Leading Bangladesh manufacturer. Low MOQ, ethical production, transparent sourcing.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    sustainability: {
+      title: 'Sustainable & Ethical Manufacturing - Eco-Friendly Apparel Production | Sleek Apparels',
+      description: 'Committed to sustainable apparel manufacturing in Bangladesh. Eco-friendly materials, ethical labor practices, energy-efficient production, waste reduction. OEKO-TEX certified. Fair wages and safe working conditions.',
+      keywords: 'sustainable clothing manufacturer, ethical apparel production, eco-friendly manufacturing bangladesh, sustainable fashion production, ethical garment factory, organic apparel manufacturer, OEKO-TEX certified, fair trade manufacturing, green apparel production',
+      canonical: `${BASE_URL}/sustainability`,
+      ogTitle: 'Sustainable & Ethical Apparel Manufacturing Bangladesh',
+      ogDescription: 'Eco-friendly materials. Fair labor. OEKO-TEX certified. Ethical production standards.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Sustainable Manufacturing | Sleek Apparels',
+      twitterDescription: 'Ethical production. Eco-friendly materials. Fair labor practices.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    contact: {
+      title: 'Contact Sleek Apparels - Bangladesh Clothing Manufacturer | Get Quote & Samples',
+      description: 'Contact our merchandising team for manufacturing inquiries. Email, WhatsApp, or visit our Dhaka office. Fast response within 24 hours. Discuss MOQ, pricing, samples, and production timelines.',
+      keywords: 'contact bangladesh manufacturer, apparel manufacturer inquiry, garment factory contact bangladesh, manufacturing consultation, sample request, clothing manufacturer contact dhaka',
+      canonical: `${BASE_URL}/contact`,
+      ogTitle: 'Contact Sleek Apparels Bangladesh | Manufacturing Inquiries',
+      ogDescription: 'Get quotes and samples. Fast response within 24 hours. WhatsApp, email, Dhaka office.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Contact Sleek Apparels | Manufacturing Inquiries',
+      twitterDescription: 'Manufacturing quotes and samples. Fast 24hr response.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    'quote-generator': {
+      title: 'AI Quote Generator | Instant Knitwear Pricing | Europe & North America',
+      description: 'Get instant AI-powered manufacturing quotes for knitwear, sweaters, cardigans, polos. Email verification required. Detailed pricing, production timeline. Free for EU & NA brands. Max 4 quotes/day.',
+      keywords: 'apparel quote calculator Europe, knitwear pricing Nordic countries, instant manufacturing quote UK Germany, clothing cost calculator Spain, bulk order quote USA, custom knitwear pricing',
+      canonical: `${BASE_URL}/quote-generator`,
+      ogTitle: 'AI Quote Generator | Instant Knitwear Pricing | EU & NA',
+      ogDescription: 'Instant AI quotes for knitwear. Email verification. Detailed pricing & timeline.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'AI Quote Generator | Instant Pricing',
+      twitterDescription: 'Get instant AI quotes for knitwear manufacturing. Email verification required.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    'design-studio': {
+      title: '3D Garment Design Studio | Virtual Mockup Creator',
+      description: 'Design custom apparel with our 3D virtual studio. Create mockups, choose colors, visualize designs before production. Free online garment design tool.',
+      keywords: '3D garment design, virtual mockup creator, online design tool, custom apparel designer, clothing mockup generator',
+      canonical: `${BASE_URL}/design-studio`,
+      ogTitle: '3D Design Studio | Sleek Apparels',
+      ogDescription: 'Design custom apparel with 3D virtual studio. Free mockup tool.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: '3D Design Studio | Sleek Apparels',
+      twitterDescription: 'Design custom apparel with 3D virtual studio. Free mockup tool.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    blog: {
+      title: 'Blog - Sustainable Fashion & Manufacturing Insights | Sleek Apparels',
+      description: 'Expert articles on sustainable fashion, ethical manufacturing, knitwear trends, styling guides, and apparel industry insights from Bangladesh garment experts.',
+      keywords: 'sustainable fashion blog, ethical manufacturing tips, knitwear trends 2025, garment production insights, fashion industry news Bangladesh',
+      canonical: `${BASE_URL}/blog`,
+      ogTitle: 'Fashion & Manufacturing Blog | Sleek Apparels',
+      ogDescription: 'Expert insights on sustainable fashion, ethical manufacturing, and industry trends.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Fashion & Manufacturing Blog | Sleek Apparels',
+      twitterDescription: 'Expert insights on sustainable fashion, ethical manufacturing, and industry trends.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+    faq: {
+      title: 'FAQ - Manufacturing Questions Answered | Sleek Apparels',
+      description: 'Find answers about MOQ, lead times, quality standards, pricing, shipping, sustainability, and more. Complete guide to working with Sleek Apparels garment manufacturing.',
+      keywords: 'garment manufacturing FAQ, apparel production questions, MOQ explained, manufacturing lead times, quality assurance Bangladesh',
+      canonical: `${BASE_URL}/faq`,
+      ogTitle: 'Manufacturing FAQ | Sleek Apparels',
+      ogDescription: 'All your questions about garment manufacturing, MOQ, quality, and shipping answered.',
+      ogImage: DEFAULT_OG_IMAGE,
+      ogType: 'website',
+      twitterTitle: 'Manufacturing FAQ | Sleek Apparels',
+      twitterDescription: 'All your questions about garment manufacturing, MOQ, quality, and shipping answered.',
+      twitterImage: DEFAULT_OG_IMAGE,
+    },
+  };
+
+  return configs[page] || configs.home;
+};
+
+export const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Manufacturer',
+  name: 'Sleek Apparels',
+  alternateName: 'Sleek Apparels Limited & Sleek Apparels LLC',
+  description: 'Ethical garment manufacturer in Bangladesh specializing in low-MOQ knitwear, cut & sew, and sustainable apparel production',
+  url: BASE_URL,
+  logo: `${BASE_URL}/sleek-logo.webp`,
+  image: DEFAULT_OG_IMAGE,
+  telephone: '+880-186-1011-367',
+  email: 'inquiry@sleekapparels.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '01, Road 19A, Sector 04, Uttara',
+    addressLocality: 'Dhaka',
+    postalCode: '1230',
+    addressCountry: 'BD',
+  },
+  founder: {
+    '@type': 'Person',
+    name: 'Kh Raj Rahman',
+    jobTitle: 'Founder & Managing Director',
+    email: 'raj@sleekapparels.com',
+  },
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      telephone: '+880-186-1011-367',
+      contactType: 'Customer Service',
+      email: 'inquiry@sleekapparels.com',
+      availableLanguage: ['English', 'Bengali'],
+      areaServed: 'Worldwide',
+    },
+    {
+      '@type': 'ContactPoint',
+      email: 'raj@sleekapparels.com',
+      contactType: 'Sales',
+      availableLanguage: ['English', 'Bengali'],
+      areaServed: 'Worldwide',
+    },
+  ],
+  sameAs: [
+    'https://www.linkedin.com/company/sleek-apparels',
+    'https://www.instagram.com/sleekapparels',
+  ],
+  priceRange: '$$',
+  areaServed: {
+    '@type': 'Place',
+    name: 'Worldwide',
+  },
+  knowsAbout: [
+    'Knitwear Manufacturing',
+    'Cut and Sew',
+    'Sustainable Fashion',
+    'Organic Cotton',
+    'Low MOQ Production',
+    'Ethical Manufacturing',
+    'Uniform Production',
+    'Apparel Sourcing',
+  ],
+  makesOffer: [
+    {
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Product',
+        name: 'Custom Knitwear Manufacturing',
+        description: 'Low MOQ knitwear production from 50-300 pieces',
+      },
+    },
+    {
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Product',
+        name: 'Cut & Sew Apparel Manufacturing',
+        description: 'Full-package woven garment production',
+      },
+    },
+    {
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Product',
+        name: 'Uniform & Teamwear Manufacturing',
+        description: 'Corporate, school, and sports uniform production',
+      },
+    },
+  ],
+  hasCredential: [
+    {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'Certification',
+      name: 'GOTS Certified Yarn Sourcing',
+    },
+    {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'Certification',
+      name: 'Ethical Manufacturing Standards',
+    },
+  ],
+};
