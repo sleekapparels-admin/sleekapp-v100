@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Calendar, Eye, Share2 } from "lucide-react";
 import { LazyImage } from "@/components/LazyImage";
 import DOMPurify from "dompurify";
+import { generateArticleSchema, generateBreadcrumbSchema } from "@/lib/structuredData";
 
 interface BlogPost {
   id: string;
@@ -100,6 +101,23 @@ const BlogPost = () => {
     ogType: 'article',
   };
 
+  // Generate structured data
+  const articleSchema = generateArticleSchema({
+    headline: post.title,
+    description: post.excerpt,
+    image: post.featured_image_url,
+    datePublished: post.published_at,
+    dateModified: post.published_at,
+    author: 'Kh Raj Rahman',
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blog' },
+    { name: post.category, url: `/blog?category=${post.category}` },
+    { name: post.title, url: `/blog/${post.slug}` },
+  ]);
+
   return (
     <>
       <SEO 
@@ -107,6 +125,16 @@ const BlogPost = () => {
         publishedTime={post.published_at}
         modifiedTime={post.published_at}
       />
+      
+      {/* Article Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(articleSchema)}
+      </script>
+      
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify(breadcrumbSchema)}
+      </script>
 
       <div className="min-h-screen bg-background">
         <Navbar />
