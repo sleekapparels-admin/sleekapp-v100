@@ -24,7 +24,7 @@ const Casualwear = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="animate-fade-up">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">
-                  Custom Casualwear Manufacturing | T-Shirts, Hoodies & More | MOQ 50
+                  Casualwear Manufacturing | T-Shirts, Hoodies & Sweatshirts MOQ 50
                 </h1>
                 <p className="text-xl sm:text-2xl text-muted-foreground mb-8 leading-relaxed">
                   Premium casualwear manufacturing for global brands. Custom t-shirts, hoodies, sweatshirts, and polo shirts. MOQ from 50 pieces. Ring-spun cotton, organic fabrics, performance blends. Fast sampling 3-7 days. Serving Europe, North America, and worldwide.
@@ -64,7 +64,7 @@ const Casualwear = () => {
         <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl sm:text-5xl font-bold mb-16 text-center text-secondary">
-              Product Categories
+              Product Range
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -231,7 +231,7 @@ const Casualwear = () => {
         <section className="py-20 bg-muted/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl sm:text-5xl font-bold mb-16 text-center text-secondary">
-              Fabric & Customization Options
+              Fabrics & Customization
             </h2>
 
             <div className="grid md:grid-cols-2 gap-12">

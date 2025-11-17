@@ -57,7 +57,7 @@ const UniformsTeamwear = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-up">
                 <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-                  Durable School Uniforms & Custom Teamwear — Made to Order
+                  Corporate & School Uniform Manufacturing | Custom Teamwear Bangladesh
                 </h1>
                 <p className="text-xl text-muted-foreground mb-6">
                   From educational institutions to corporate teams and sports clubs, we deliver quality uniforms with
@@ -102,6 +102,9 @@ const UniformsTeamwear = () => {
         {/* Categories */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-4xl font-bold mb-12 text-center text-secondary">
+              Uniform Solutions
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {categories.map((category, index) => {
                 const Icon = category.icon;
@@ -116,7 +119,7 @@ const UniformsTeamwear = () => {
                         <Icon className="h-6 w-6" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold mb-2">{category.title}</h3>
+                        <h4 className="text-xl font-bold mb-2">{category.title}</h4>
                         <p className="text-muted-foreground">{category.description}</p>
                       </div>
                     </div>

@@ -78,7 +78,9 @@ const Portfolio = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
               <AnimatedSection>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">Our Work in Action — Knitwear, Wovens & Uniforms</h1>
+                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">
+                  Portfolio | Custom Apparel Manufacturing Projects
+                </h1>
               </AnimatedSection>
               <AnimatedSection delay={0.1}>
                 <p className="text-xl sm:text-2xl text-muted-foreground leading-relaxed">

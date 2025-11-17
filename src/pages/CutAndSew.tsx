@@ -82,7 +82,7 @@ const CutAndSew = () => {
             <div className="max-w-2xl animate-fade-up">
               <Badge variant="outline" className="mb-4">Full-Package Sourcing</Badge>
               <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-                Cut & Sew Apparel Sourcing via Vetted Partner Network
+                Full Package Cut & Sew Manufacturing | Woven Garments Bangladesh
               </h1>
               <p className="text-lg text-muted-foreground mb-6">
                 When your project requires woven garments, denim, or outerwear beyond our knitwear capabilities, 
@@ -136,7 +136,7 @@ const CutAndSew = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 animate-fade-up">
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                What We Source
+                Our Cut & Sew Capabilities
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Our partner network specializes in a wide range of cut & sew garments with proven track records.
@@ -195,7 +195,7 @@ const CutAndSew = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-bold">{phase.step}</h3>
+                        <h4 className="text-lg font-bold">{phase.step}</h4>
                         <Badge variant="outline">{phase.timeline}</Badge>
                       </div>
                       <p className="text-muted-foreground">{phase.description}</p>
@@ -224,7 +224,7 @@ const CutAndSew = () => {
                 <div className="inline-flex p-3 rounded-full bg-primary/10 mb-4">
                   <Network className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2">Compliance Audit</h3>
+                <h4 className="font-bold mb-2">Compliance Audit</h4>
                 <p className="text-sm text-muted-foreground">
                   BSCI, WRAP, or equivalent ethical certification verified
                 </p>
@@ -234,7 +234,7 @@ const CutAndSew = () => {
                 <div className="inline-flex p-3 rounded-full bg-primary/10 mb-4">
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2">Quality Systems</h3>
+                <h4 className="font-bold mb-2">Quality Systems</h4>
                 <p className="text-sm text-muted-foreground">
                   In-house QC team with documented inspection procedures
                 </p>
@@ -244,7 +244,7 @@ const CutAndSew = () => {
                 <div className="inline-flex p-3 rounded-full bg-primary/10 mb-4">
                   <Package className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2">Capacity Check</h3>
+                <h4 className="font-bold mb-2">Capacity Check</h4>
                 <p className="text-sm text-muted-foreground">
                   Verified production capacity and on-time delivery record
                 </p>
@@ -254,7 +254,7 @@ const CutAndSew = () => {
                 <div className="inline-flex p-3 rounded-full bg-primary/10 mb-4">
                   <CheckCircle className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2">Trial Order</h3>
+                <h4 className="font-bold mb-2">Trial Order</h4>
                 <p className="text-sm text-muted-foreground">
                   Initial test production to validate quality standards
                 </p>

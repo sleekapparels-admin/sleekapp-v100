@@ -25,7 +25,7 @@ const Activewear = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl animate-fade-up">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 text-secondary leading-tight">
-                Activewear & Performance Apparel Manufacturing
+                Activewear & Joggers Manufacturing | Performance Apparel Bangladesh
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground mb-8 leading-relaxed">
                 Premium activewear and performance wear manufacturing. Joggers, athletic pants, performance t-shirts, and sports basics. Moisture-wicking fabrics, stretch materials, durable construction. MOQ from 100-500 pieces. Fast sampling and production from Bangladesh.
@@ -49,7 +49,7 @@ const Activewear = () => {
         <section className="py-20 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl font-bold mb-12 text-center text-secondary">
-              Performance Features
+              Performance Fabrics & Features
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -92,7 +92,7 @@ const Activewear = () => {
         <section className="py-20 bg-muted/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl font-bold mb-12 text-center text-secondary">
-              Product Range
+              Activewear Product Categories
             </h2>
 
             <div className="grid md:grid-cols-2 gap-8">
