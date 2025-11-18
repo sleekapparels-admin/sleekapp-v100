@@ -25,12 +25,7 @@ const servicesMenu = [{
 }, {
   name: "LoopTrace™ Technology",
   href: "/looptrace-technology",
-  description: "AI-powered production tracking",
-  highlight: true
-}, {
-  name: "Production Tracking",
-  href: "/production-tracking",
-  description: "Track your orders in real-time",
+  description: "AI platform for production visibility & transparency",
   highlight: true
 }, {
   name: "View All Services",
