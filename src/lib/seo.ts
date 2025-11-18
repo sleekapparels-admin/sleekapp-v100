@@ -19,15 +19,15 @@ export const getPageSEO = (page: string): SEOConfig => {
   const configs: Record<string, SEOConfig> = {
     home: {
       title: 'Custom T-Shirt & Hoodie Manufacturer | Low MOQ 50 Pieces | Bangladesh',
-      description: 'Premium custom apparel manufacturing from Bangladesh. T-shirts, hoodies, sweatshirts, joggers from 50 pieces. Fast production, ethical practices, global shipping to Europe, North America & worldwide.',
-      keywords: 't-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, custom apparel, low MOQ, Bangladesh manufacturer, casualwear manufacturer, joggers manufacturer, polo shirts, activewear',
+      description: 'Premium custom apparel manufacturing from Bangladesh. T-shirts, hoodies, sweatshirts, joggers from 50 pieces. LoopTrace™ platform access for real-time tracking. Fast production, ethical practices, global shipping to Europe, North America & worldwide.',
+      keywords: 't-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, custom apparel, low MOQ, Bangladesh manufacturer, casualwear manufacturer, joggers manufacturer, polo shirts, activewear, LoopTrace platform',
       canonical: BASE_URL,
       ogTitle: 'Custom Apparel Manufacturer | T-Shirts, Hoodies & More | MOQ 50',
-      ogDescription: 'Custom t-shirts, hoodies, sweatshirts, and joggers. MOQ 50. Fast production from Bangladesh.',
+      ogDescription: 'Custom t-shirts, hoodies, sweatshirts, and joggers. MOQ 50. LoopTrace™ platform access. Fast production from Bangladesh.',
       ogImage: DEFAULT_OG_IMAGE,
       ogType: 'website',
       twitterTitle: 'Custom Apparel Manufacturer | Low MOQ 50',
-      twitterDescription: 'T-shirts, hoodies, sweatshirts, joggers. MOQ 50 pieces. Fast global shipping.',
+      twitterDescription: 'T-shirts, hoodies, sweatshirts, joggers. MOQ 50. LoopTrace™ tracking platform. Fast global shipping.',
       twitterImage: DEFAULT_OG_IMAGE,
     },
     services: {

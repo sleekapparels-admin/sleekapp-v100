@@ -3,7 +3,7 @@ import { Check, X } from "lucide-react";
 export const ComparisonTable = () => {
   const comparisons = [
     { feature: "Minimum Order", sleek: "50 pieces", traditional: "500-1000 pieces", isBetter: true },
-    { feature: "Production Tracking", sleek: "Real-time AI", traditional: "Manual email updates", isBetter: true },
+    { feature: "Production Tracking", sleek: "LoopTrace™ Platform", traditional: "Manual email updates", isBetter: true },
     { feature: "Sampling Time", sleek: "5-10 days", traditional: "3-4 weeks", isBetter: true },
     { feature: "Digital Integration", sleek: "Full ERP System", traditional: "Excel sheets", isBetter: true },
     { feature: "Founder Background", sleek: "Internationally Educated", traditional: "Local only", isBetter: true },
