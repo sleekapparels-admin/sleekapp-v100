@@ -1,13 +1,37 @@
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { FloatingContactWidget } from "@/components/FloatingContactWidget";
 import { CTASection } from "@/components/CTASection";
 import { SEO } from "@/components/SEO";
-import { Activity, Bell, Camera, TrendingUp, Eye, Lock } from "lucide-react";
+import { Activity, Bell, Camera, TrendingUp, Eye, Lock, UserPlus, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 
 const LoopTraceTechnology = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+      setIsLoading(false);
+    };
+    checkAuth();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsAuthenticated(!!session?.user);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   const features = [
     {
       icon: Activity,
@@ -127,6 +151,81 @@ const LoopTraceTechnology = () => {
             </div>
           </div>
         </section>
+
+        {/* Registration Gate / Platform Access */}
+        {!isLoading && (
+          <section className="py-16 bg-gradient-to-br from-primary/10 via-background to-primary/5">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              {!isAuthenticated ? (
+                <Card className="border-2 border-primary/20 shadow-xl">
+                  <CardContent className="p-12 text-center">
+                    <div className="mb-6">
+                      <div className="inline-block p-4 rounded-2xl bg-primary/10 text-primary mb-4">
+                        <UserPlus className="h-12 w-12" />
+                      </div>
+                      <h2 className="text-3xl font-bold mb-4 text-secondary">Get Free Access to LoopTrace™ Platform</h2>
+                      <p className="text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
+                        Register now to unlock the full LoopTrace™ experience. Track your orders, receive real-time updates, and access AI-powered production insights.
+                      </p>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-6 mb-8 text-left">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                        <div>
+                          <h4 className="font-semibold mb-1 text-secondary">Free During Launch</h4>
+                          <p className="text-sm text-muted-foreground">Lock in lifetime free access as an early adopter</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                        <div>
+                          <h4 className="font-semibold mb-1 text-secondary">Full Platform Access</h4>
+                          <p className="text-sm text-muted-foreground">Real-time tracking, AI insights, and transparency reports</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                        <div>
+                          <h4 className="font-semibold mb-1 text-secondary">Priority Support</h4>
+                          <p className="text-sm text-muted-foreground">Direct line to production team via dashboard messaging</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button asChild size="lg" className="text-lg px-8">
+                        <Link to="/auth">Register for Free Access</Link>
+                      </Button>
+                      <Button asChild variant="outline" size="lg" className="text-lg px-8">
+                        <Link to="/auth">Sign In</Link>
+                      </Button>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground mt-6">
+                      No credit card required • Free forever for early adopters • Upgrade options coming soon
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="border-2 border-primary/40 shadow-xl bg-primary/5">
+                  <CardContent className="p-8 text-center">
+                    <div className="inline-block p-3 rounded-xl bg-primary/10 text-primary mb-4">
+                      <CheckCircle className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2 text-secondary">You Have Platform Access</h3>
+                    <p className="text-muted-foreground mb-6">
+                      You're registered on LoopTrace™. Once you place an order, you'll get instant access to track it here.
+                    </p>
+                    <Button asChild size="lg">
+                      <Link to="/contact">Request a Quote to Get Started</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Features Grid */}
         <section className="py-20">
