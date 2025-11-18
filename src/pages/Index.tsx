@@ -14,6 +14,7 @@ import { ResourcesSection } from "@/components/ResourcesSection";
 import { FinalCTA } from "@/components/FinalCTA";
 import { StatsCounter } from "@/components/home/StatsCounter";
 import { CertificationBadges } from "@/components/home/CertificationBadges";
+import { HowItWorks } from "@/components/home/HowItWorks";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -50,25 +51,28 @@ function Index() {
         {/* Section 5: Certification Badges - NEW */}
         <CertificationBadges />
         
-        {/* Section 6: Main Services */}
+        {/* Section 6: How It Works - NEW */}
+        <HowItWorks />
+        
+        {/* Section 7: Main Services */}
         <ServicesSection />
         
-        {/* Section 7: Portfolio Gallery */}
+        {/* Section 8: Portfolio Gallery */}
         <PortfolioGallery />
         
-        {/* Section 8: Competitive Advantage */}
+        {/* Section 9: Competitive Advantage */}
         <ComparisonTable />
         
-        {/* Section 9: Founder Message */}
+        {/* Section 10: Founder Message */}
         <FounderMessage />
         
-        {/* Section 10: Testimonials */}
+        {/* Section 11: Testimonials */}
         <Testimonials />
         
-        {/* Section 11: Resources */}
+        {/* Section 12: Resources */}
         <ResourcesSection />
         
-        {/* Section 12: Final CTA */}
+        {/* Section 13: Final CTA */}
         <FinalCTA />
         
         <Footer />
