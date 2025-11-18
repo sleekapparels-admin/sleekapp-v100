@@ -3,8 +3,8 @@ import { Settings, Package, Shield } from "lucide-react";
 const features = [
   {
     icon: Settings,
-    title: "AI-Powered Production Transparency",
-    description: "Real-time tracking from cutting to shipping. AI quality predictions, compliance alerts, and live photo documentation. No more black boxes—see exactly what's happening with your order, every step of the way.",
+    title: "LoopTrace™ Platform: Production Visibility",
+    description: "Proprietary AI platform for real-time tracking from cutting to shipping. Get AI quality predictions, compliance alerts, and live photo documentation. Full transparency with your exclusive production dashboard.",
   },
   {
     icon: Package,

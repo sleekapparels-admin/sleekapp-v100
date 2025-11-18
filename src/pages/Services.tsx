@@ -53,12 +53,12 @@ const serviceDetails = [
     icon: Shield,
     title: "Quality Assurance & Fast Production",
     description:
-      "Industry-leading production times with AQL 2.5 quality standards. Complete quality control at every stage. First samples in 3-7 days. Bulk production in 10-20 days. LoopTrace™ AI tracking for complete transparency. OEKO-TEX certified materials available. International compliance documentation.",
+      "Industry-leading production times with AQL 2.5 quality standards. Complete quality control at every stage. First samples in 3-7 days. Bulk production in 10-20 days. LoopTrace™ Platform for complete transparency. OEKO-TEX certified materials available. International compliance documentation.",
     features: [
       "Fast sampling: 3-7 business days for first samples",
       "Quick production: 10-20 days bulk production after approval",
       "Quality control: AQL 2.5 inspection, measurement verification",
-      "Tracking: Real-time LoopTrace™ AI-powered production tracking",
+      "Tracking: LoopTrace™ Platform with real-time production visibility",
     ],
   },
 ];
@@ -225,7 +225,7 @@ const Services = () => {
                   </tr>
                   <tr className="border-b border-border bg-muted/30">
                     <td className="p-4 font-semibold">Production Transparency</td>
-                    <td className="p-4 text-center text-green-600 font-bold">LoopTrace™ Real-Time</td>
+                    <td className="p-4 text-center text-green-600 font-bold">LoopTrace™ Platform</td>
                     <td className="p-4 text-center text-muted-foreground">Weekly Updates</td>
                     <td className="p-4 text-center text-muted-foreground">Minimal Updates</td>
                   </tr>

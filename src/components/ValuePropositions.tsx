@@ -20,8 +20,8 @@ export const ValuePropositions = () => {
     },
     {
       icon: Monitor,
-      title: "AI-Tracked Transparency",
-      description: "Track your order 24/7 with real-time AI tracking. No more email chasing."
+      title: "LoopTrace™ Platform Access",
+      description: "Exclusive access to our AI production platform. Real-time tracking, transparency reports, and direct team communication."
     }
   ];
 

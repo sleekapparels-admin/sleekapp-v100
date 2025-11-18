@@ -29,7 +29,7 @@ const WhySleekApparels = () => {
     },
     {
       feature: "Transparency",
-      sleek: "Real-time production tracking",
+      sleek: "LoopTrace™ Platform",
       traditional: "Weekly status updates",
       chinese: "Limited visibility",
     },

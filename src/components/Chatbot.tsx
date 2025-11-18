@@ -145,7 +145,7 @@ export const Chatbot = () => {
         if (lowerMessage.includes('schedule') || lowerMessage.includes('call')) {
           addBotMessage("Perfect! You can book a call at your convenience: [Calendly Link]. Our team will contact you within 2 hours with your quote. Thanks for choosing Sleek Apparels!");
         } else if (lowerMessage.includes('looptrace')) {
-          addBotMessage("LoopTrace™ is our upcoming production tracking platform that gives you real-time visibility into your order. You'll see exactly when cutting starts, sewing progress, quality checks, and shipping updates. Want to join the beta waitlist?", ['Yes, add me to waitlist', 'Tell me more', 'Just the quote please']);
+          addBotMessage("LoopTrace™ is our proprietary AI production platform that gives you real-time visibility into your order. See exactly when cutting starts, sewing progress, quality checks, and shipping updates. Access is included free for all clients - just register to unlock your dashboard!", ['Tell me more', 'How do I register?', 'Just the quote please']);
         } else {
           addBotMessage("Great! Keep an eye on your inbox for the detailed quote. Feel free to reach out if you have any questions. Have a wonderful day!");
         }
