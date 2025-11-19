@@ -12,9 +12,6 @@ import { FounderMessage } from "@/components/FounderMessage";
 import { Testimonials } from "@/components/Testimonials";
 import { ResourcesSection } from "@/components/ResourcesSection";
 import { FinalCTA } from "@/components/FinalCTA";
-import { StatsCounter } from "@/components/home/StatsCounter";
-import { CertificationBadges } from "@/components/home/CertificationBadges";
-import { HowItWorks } from "@/components/home/HowItWorks";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -42,37 +39,28 @@ function Index() {
         {/* Section 2: Trust Badge Bar */}
         <TrustBadgeBar />
         
-        {/* Section 3: Stats Counter - NEW */}
-        <StatsCounter />
-        
-        {/* Section 4: Value Propositions - ENHANCED */}
+        {/* Section 3: Value Propositions */}
         <ValuePropositions />
         
-        {/* Section 5: Certification Badges - NEW */}
-        <CertificationBadges />
-        
-        {/* Section 6: How It Works - NEW */}
-        <HowItWorks />
-        
-        {/* Section 7: Main Services */}
+        {/* Section 4: Main Services */}
         <ServicesSection />
         
-        {/* Section 8: Portfolio Gallery */}
+        {/* Section 5: Portfolio Gallery */}
         <PortfolioGallery />
         
-        {/* Section 9: Competitive Advantage */}
+        {/* Section 6: Competitive Advantage */}
         <ComparisonTable />
         
-        {/* Section 10: Founder Message */}
+        {/* Section 7: Founder Message */}
         <FounderMessage />
         
-        {/* Section 11: Testimonials */}
+        {/* Section 8: Testimonials */}
         <Testimonials />
         
-        {/* Section 12: Resources */}
+        {/* Section 9: Resources */}
         <ResourcesSection />
         
-        {/* Section 13: Final CTA */}
+        {/* Section 10: Final CTA */}
         <FinalCTA />
         
         <Footer />
