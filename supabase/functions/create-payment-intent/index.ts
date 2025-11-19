@@ -40,20 +40,55 @@ serve(async (req) => {
       throw new Error('Order not found');
     }
 
+    // Security: Validate price integrity before payment processing
+    const orderPrice = order.buyer_price || order.total_price;
+    
+    if (!orderPrice || orderPrice <= 0) {
+      console.error(`[${new Date().toISOString()}] ❌ Invalid order price - Order: ${orderId}, Price: ${orderPrice}`);
+      throw new Error('Invalid order price - payment cannot be processed');
+    }
+
+    // Log if order was recently modified (potential tampering detection)
+    if (order.updated_at) {
+      const updatedAt = new Date(order.updated_at);
+      const createdAt = new Date(order.created_at);
+      const timeSinceUpdate = Date.now() - updatedAt.getTime();
+      const timeSinceCreation = Date.now() - createdAt.getTime();
+      
+      // Alert if order was modified within 5 minutes before payment
+      if (timeSinceUpdate < 5 * 60 * 1000 && timeSinceCreation > timeSinceUpdate) {
+        console.warn(`[${new Date().toISOString()}] ⚠️ Order recently modified - Order: ${orderId}, Updated: ${order.updated_at}`);
+      }
+    }
+
+    // Verify order is in valid state for payment
+    if (order.payment_status === 'paid') {
+      console.error(`[${new Date().toISOString()}] ❌ Order already paid - Order: ${orderId}`);
+      throw new Error('Order has already been paid');
+    }
+
     // Calculate amount based on payment type
     let amount: number;
     let description: string;
 
     if (paymentType === 'deposit') {
-      amount = Math.round((order.buyer_price || order.total_price) * 0.30 * 100); // 30% deposit in cents
+      amount = Math.round(orderPrice * 0.30 * 100); // 30% deposit in cents
       description = `Deposit payment for order ${order.order_number}`;
     } else if (paymentType === 'balance') {
-      amount = Math.round((order.buyer_price || order.total_price) * 0.70 * 100); // 70% balance in cents
+      amount = Math.round(orderPrice * 0.70 * 100); // 70% balance in cents
       description = `Balance payment for order ${order.order_number}`;
     } else {
-      amount = Math.round((order.buyer_price || order.total_price) * 100); // Full payment in cents
+      amount = Math.round(orderPrice * 100); // Full payment in cents
       description = `Payment for order ${order.order_number}`;
     }
+
+    // Final validation: ensure amount is reasonable
+    if (amount < 100) { // Minimum $1.00
+      console.error(`[${new Date().toISOString()}] ❌ Payment amount too low - Order: ${orderId}, Amount: ${amount}`);
+      throw new Error('Payment amount is too low');
+    }
+
+    console.log(`[${new Date().toISOString()}] 💳 Creating payment intent - Order: ${orderId}, Amount: $${(amount/100).toFixed(2)}, Type: ${paymentType}`);
 
     // Create or retrieve Stripe customer
     let customerId = order.stripe_customer_id;

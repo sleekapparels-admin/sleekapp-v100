@@ -27,7 +27,66 @@ serve(async (req) => {
   }
 
   try {
-    const payload: ResendWebhookPayload = await req.json();
+    // Security: Verify webhook signature from Resend
+    const webhookSecret = Deno.env.get('RESEND_WEBHOOK_SECRET');
+    if (!webhookSecret) {
+      console.error(`[${new Date().toISOString()}] ❌ RESEND_WEBHOOK_SECRET not configured`);
+      return new Response(
+        JSON.stringify({ error: 'Webhook secret not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const signature = req.headers.get('svix-signature');
+    const timestamp = req.headers.get('svix-timestamp');
+    const svixId = req.headers.get('svix-id');
+
+    if (!signature || !timestamp || !svixId) {
+      console.error(`[${new Date().toISOString()}] ❌ Missing webhook signature headers`);
+      return new Response(
+        JSON.stringify({ error: 'Missing signature headers' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify signature using HMAC SHA-256
+    const payloadString = await req.text();
+    const signedContent = `${svixId}.${timestamp}.${payloadString}`;
+    
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(webhookSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const signatureBytes = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(signedContent)
+    );
+    
+    const expectedSignature = btoa(String.fromCharCode(...new Uint8Array(signatureBytes)));
+    
+    // Svix sends multiple signatures separated by spaces, check if any match
+    const signatures = signature.split(' ');
+    const isValid = signatures.some(sig => {
+      const [, sigValue] = sig.split(',');
+      return sigValue === expectedSignature;
+    });
+
+    if (!isValid) {
+      console.error(`[${new Date().toISOString()}] ❌ Invalid webhook signature`);
+      return new Response(
+        JSON.stringify({ error: 'Invalid signature' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Parse verified payload
+    const payload: ResendWebhookPayload = JSON.parse(payloadString);
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
