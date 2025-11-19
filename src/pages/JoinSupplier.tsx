@@ -84,6 +84,7 @@ export default function JoinSupplier() {
 
     setIsLoading(true);
     try {
+      // Step 1: Verify OTP
       const { data, error } = await supabase.functions.invoke('verify-otp', {
         body: { type: 'email-supplier', email, otp }
       });
@@ -91,7 +92,24 @@ export default function JoinSupplier() {
       if (error) throw error;
 
       if (data?.verified) {
-        toast.success("Email verified successfully!");
+        // Step 2: Auto-confirm email to eliminate redundant confirmation
+        const { data: confirmData, error: confirmError } = await supabase.functions.invoke('auto-confirm-supplier', {
+          body: { email }
+        });
+
+        if (confirmError) {
+          console.error('Error auto-confirming email:', confirmError);
+          toast.error("Email verified but confirmation failed. Please contact support.");
+          return;
+        }
+
+        if (!confirmData?.success) {
+          console.error('Auto-confirm failed:', confirmData);
+          toast.error("Email verified but confirmation failed. Please contact support.");
+          return;
+        }
+
+        toast.success("Email verified and confirmed successfully!");
         setStep('details');
       } else {
         toast.error(data?.error || "Invalid verification code");
