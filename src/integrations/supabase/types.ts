@@ -3071,6 +3071,30 @@ export type Database = {
         Returns: Json
       }
       generate_invoice_number: { Args: never; Returns: string }
+      get_product_engagement_metrics: {
+        Args: never
+        Returns: {
+          category: string | null
+          color_swatch_count: number | null
+          design_click_count: number | null
+          hover_count: number | null
+          last_interaction: string | null
+          product_id: string | null
+          product_name: string | null
+          quick_view_count: number | null
+          quote_click_count: number | null
+          total_interactions: number | null
+          unique_sessions: number | null
+          view_details_count: number | null
+          wishlist_count: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "product_engagement_metrics"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
