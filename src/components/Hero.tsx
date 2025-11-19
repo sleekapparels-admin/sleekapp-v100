@@ -14,7 +14,6 @@ export const Hero = () => {
           playsInline
           preload="auto"
           className="w-full h-full object-cover"
-          poster="/images/hero-poster.jpg"
           // @ts-ignore - fetchpriority is valid but not in TypeScript types yet
           fetchpriority="high"
         >
