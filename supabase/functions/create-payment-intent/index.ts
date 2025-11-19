@@ -48,6 +48,29 @@ serve(async (req) => {
       throw new Error('Invalid order price - payment cannot be processed');
     }
 
+    // SECURITY FIX: Validate payment amount against original quote
+    if (order.quote_id) {
+      const quoteResponse = await fetch(`${supabaseUrl}/rest/v1/quotes?id=eq.${order.quote_id}&select=total_price`, {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      });
+      const quotes = await quoteResponse.json();
+      const quote = quotes[0];
+
+      if (quote) {
+        // Allow small variance for currency rounding (0.5%)
+        const maxAllowedPrice = quote.total_price * 1.005;
+        const minAllowedPrice = quote.total_price * 0.995;
+
+        if (orderPrice < minAllowedPrice || orderPrice > maxAllowedPrice) {
+          console.error(`[${new Date().toISOString()}] ❌ Price mismatch - Order: ${orderId}, Order price: ${orderPrice}, Quote price: ${quote.total_price}`);
+          throw new Error('Order price does not match quote. Please refresh and try again.');
+        }
+      }
+    }
+
     // Log if order was recently modified (potential tampering detection)
     if (order.updated_at) {
       const updatedAt = new Date(order.updated_at);

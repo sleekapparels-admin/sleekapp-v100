@@ -140,19 +140,24 @@ export default function JoinSupplier() {
         throw new Error("Failed to create user account");
       }
 
-      // Auto-confirm email to establish session immediately (non-blocking)
-      try {
-        const { data: confirmData, error: confirmError } = await supabase.functions.invoke('auto-confirm-supplier', {
-          body: { email }
-        });
-        if (confirmError || !confirmData?.success) {
-          console.error('Auto-confirm failed:', confirmError || confirmData);
-          // Don't throw - account is created, just log the issue
+      // SECURITY FIX: Auto-confirm email with proper authentication (blocking)
+      const { data: confirmData, error: confirmError } = await supabase.functions.invoke(
+        'auto-confirm-supplier',
+        {
+          headers: {
+            Authorization: `Bearer ${authData.session?.access_token}`,
+          },
         }
-      } catch (confirmError) {
-        console.error('Auto-confirm error:', confirmError);
-        // Continue anyway - non-blocking
+      );
+
+      if (confirmError) {
+        console.error('Auto-confirm failed:', confirmError);
+        toast.error('Registration succeeded but email confirmation failed. Please contact support.');
+        setIsLoading(false);
+        return;
       }
+
+      console.log('Email auto-confirmed successfully');
 
       // Ensure session is fully established before database operations
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
