@@ -27,7 +27,7 @@ export const loadTrackingScripts = () => {
       j.async = true;
       j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
       f.parentNode?.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', 'GTM-WTKDHCJ9');
+    })(window, document, 'script', 'dataLayer', 'GTM-NSTT3GTQ');
   }, 5000); // Load after 5 seconds - video takes priority
 };
 
