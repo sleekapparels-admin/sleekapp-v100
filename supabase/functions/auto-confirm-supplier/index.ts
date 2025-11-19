@@ -47,7 +47,24 @@ serve(async (req) => {
       }
     );
 
-    // SECURITY: Validate one-time token from database
+    // SECURITY FIX: Rate limiting FIRST - check before token validation to prevent bypass
+    // Max 5 attempts per IP or email per hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { data: recentAttempts } = await supabaseAdmin
+      .from('email_verification_otps')
+      .select('id')
+      .or(`ip_address.eq.${clientIP},email.eq.${email}`)
+      .gte('created_at', oneHourAgo);
+
+    if (recentAttempts && recentAttempts.length > 5) {
+      console.error('Rate limit exceeded for IP/email:', clientIP, email);
+      return new Response(
+        JSON.stringify({ error: 'Too many confirmation attempts. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // SECURITY: Validate one-time token from database (AFTER rate limiting)
     const { data: otpRecord, error: otpError } = await supabaseAdmin
       .from('email_verification_otps')
       .select('*')
@@ -63,22 +80,6 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Invalid or expired confirmation token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // SECURITY: Rate limiting - max 5 attempts per IP per hour
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const { data: recentAttempts } = await supabaseAdmin
-      .from('email_verification_otps')
-      .select('id')
-      .eq('ip_address', clientIP)
-      .gte('created_at', oneHourAgo);
-
-    if (recentAttempts && recentAttempts.length > 5) {
-      console.error('Rate limit exceeded for IP:', clientIP);
-      return new Response(
-        JSON.stringify({ error: 'Too many confirmation attempts. Please try again later.' }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -100,23 +101,6 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'User not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Validate email
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return new Response(
-        JSON.stringify({ error: 'Valid email is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // SECURITY FIX: Only allow users to confirm their own email
-    if (!email) {
-      console.error('User has no email address');
-      return new Response(
-        JSON.stringify({ error: 'User email not found' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
