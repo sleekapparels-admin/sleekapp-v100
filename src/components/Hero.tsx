@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Star, Eye, Zap, Shield } from "lucide-react";
 
 export const Hero = () => {
   return (
@@ -24,7 +24,7 @@ export const Hero = () => {
           Your browser does not support the video tag.
         </video>
         {/* Dark gradient overlay from left for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/40"></div>
         {/* Additional subtle vignette effect */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30"></div>
         {/* Top fade overlay to ensure dark area under navbar */}
@@ -33,35 +33,78 @@ export const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
+          {/* New Badge/Label for LoopTrace™ */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full mb-6">
+            <Eye className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-white">
+              Introducing LoopTrace™ - AI-Powered Production Transparency
+            </span>
+          </div>
+
           <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
-            Bangladesh Garment Manufacturer | Low MOQ Custom Apparel from 50 Pieces
+            Premium Knitwear Manufacturing from Bangladesh
+            <span className="block text-primary mt-2">Starting from Just 50 Pieces</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
-            T-shirts, Hoodies, Sweatshirts & Joggers | LoopTrace™ Platform Access, Ethically Made, Delivered Fast
+          <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed font-medium">
+            Real-Time Production Tracking • AI-Powered Quotes • 10-20 Day Delivery
           </p>
 
+          <p className="text-base md:text-lg text-white/75 mb-8 leading-relaxed">
+            Break free from high MOQs and zero visibility. Watch your order progress through every stage with our revolutionary LoopTrace™ technology. From yarn to finished garment, full transparency guaranteed.
+          </p>
+
+          {/* Key Features - Quick Scan */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div className="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+              <Zap className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+              <div>
+                <div className="text-white font-semibold text-sm">Low MOQ</div>
+                <div className="text-white/70 text-xs">From 50 pieces</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+              <Eye className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <div className="text-white font-semibold text-sm">Live Tracking</div>
+                <div className="text-white/70 text-xs">LoopTrace™ AI</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+              <Shield className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <div className="text-white font-semibold text-sm">Certified</div>
+                <div className="text-white/70 text-xs">ISO • WRAP • GOTS</div>
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto">
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
               <Link to="/quote-generator">
-                Get Instant Quote in 60 Seconds
+                Get AI-Powered Quote Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-2 border-white/30 text-white hover:bg-white/10">
-              <Link to="/contact">
-                Schedule Expert Consultation
+            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50">
+              <Link to="/production-tracking">
+                See Live Tracking Demo
               </Link>
             </Button>
           </div>
 
-          <div className="flex items-center gap-2 text-white/90">
-            <Star className="h-5 w-5 fill-accent text-accent" />
-            <span className="text-sm md:text-base font-medium">
-              Trusted by 100+ brands worldwide
-            </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 text-white/90">
+            <div className="flex items-center gap-2">
+              <Star className="h-5 w-5 fill-accent text-accent" />
+              <span className="text-sm md:text-base font-medium">
+                50+ Brands • 15+ Countries
+              </span>
+            </div>
+            <div className="text-sm md:text-base text-white/70">
+              <span className="font-semibold text-white">98.5%</span> On-Time Delivery Rate
+            </div>
           </div>
         </div>
       </div>
