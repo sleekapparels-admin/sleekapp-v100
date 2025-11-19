@@ -13,19 +13,17 @@ serve(async (req) => {
   }
 
   try {
-    const { email } = await req.json();
-
-    // Validate email
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    // SECURITY FIX: Get authenticated user from JWT token
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('No authorization header provided');
       return new Response(
-        JSON.stringify({ error: 'Valid email is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Unauthorized: Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log(`Auto-confirming email for supplier: ${email}`);
-
-    // Create admin client with service role key
+    // Create client with service role for admin operations
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -37,26 +35,38 @@ serve(async (req) => {
       }
     );
 
-    // Get user by email
-    const { data: { users }, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
+    // Verify the JWT and get user
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
     
-    if (getUserError) {
-      console.error('Error fetching users:', getUserError);
+    if (authError || !user) {
+      console.error('Invalid token or user not found:', authError);
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch user data' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const user = users?.find(u => u.email === email);
+    const email = user.email;
 
-    if (!user) {
-      console.error(`User not found for email: ${email}`);
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return new Response(
-        JSON.stringify({ error: 'User not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Valid email is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // SECURITY FIX: Only allow users to confirm their own email
+    if (!email) {
+      console.error('User has no email address');
+      return new Response(
+        JSON.stringify({ error: 'User email not found' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`Auto-confirming email for supplier: ${email} (user: ${user.id})`);
 
     // Update user to confirm email
     const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
