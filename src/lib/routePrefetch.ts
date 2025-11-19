@@ -44,27 +44,11 @@ const prefetchRoute = (path: string, priority: 'high' | 'low' = 'low') => {
 
 /**
  * Prefetch JavaScript chunks for lazy-loaded routes
+ * Note: Disabled because Vite's dynamic chunk naming makes static prefetching unreliable
  */
 const prefetchChunks = (routeName: string) => {
-  // Map routes to their likely chunk names
-  const chunkMap: Record<string, string[]> = {
-    '/services': ['ui-vendor', 'animation-vendor'],
-    '/contact': ['forms', 'ui-vendor'],
-    '/about': ['animation-vendor'],
-    '/portfolio': ['ui-vendor', 'animation-vendor'],
-    '/products': ['ui-vendor', 'query-vendor'],
-  };
-
-  const chunks = chunkMap[routeName];
-  if (!chunks) return;
-
-  chunks.forEach((chunk) => {
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.as = 'script';
-    link.href = `/assets/js/${chunk}-[hash].js`; // Vite will resolve the hash
-    document.head.appendChild(link);
-  });
+  // Disabled to prevent 404 errors from hardcoded chunk names
+  return;
 };
 
 /**
