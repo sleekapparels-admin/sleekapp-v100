@@ -37,18 +37,16 @@ serve(async (req) => {
       }
     );
 
-    // Get user by email
-    const { data: { users }, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
+    // Get user by email directly
+    const { data: { user }, error: getUserError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
     
     if (getUserError) {
-      console.error('Error fetching users:', getUserError);
+      console.error('Error fetching user:', getUserError);
       return new Response(
         JSON.stringify({ error: 'Failed to fetch user data' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const user = users?.find(u => u.email === email);
 
     if (!user) {
       console.error(`User not found for email: ${email}`);
