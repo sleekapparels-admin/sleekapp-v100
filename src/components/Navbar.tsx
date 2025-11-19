@@ -11,21 +11,21 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useWishlistContext } from "@/contexts/WishlistContext";
 import sleekLogo from "@/assets/sleek-logo.webp";
 const servicesMenu = [{
-  name: "Casualwear Manufacturing",
+  name: "Casualwear",
   href: "/casualwear",
   description: "T-shirts, hoodies, sweatshirts, joggers"
 }, {
-  name: "Activewear & Performance",
+  name: "Activewear",
   href: "/activewear",
   description: "Performance wear and athletic basics"
 }, {
-  name: "Uniforms & Teamwear",
+  name: "Team Uniforms",
   href: "/uniforms-teamwear",
   description: "Bulk orders for schools & teams"
 }, {
-  name: "LoopTrace™ Technology",
+  name: "LoopTrace™ Platform",
   href: "/looptrace-technology",
-  description: "AI platform for production visibility & transparency",
+  description: "AI-powered production tracking & transparency",
   highlight: true
 }, {
   name: "View All Services",
