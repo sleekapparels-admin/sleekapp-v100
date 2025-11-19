@@ -54,11 +54,11 @@ export const DesignEditor = memo(({ onDesignGenerated, onTextChange }: DesignEdi
 
       if (error) {
         console.error('Edge function error:', error);
-        throw new Error(error.message || 'Failed to generate design');
+        throw new Error(error.message || 'Failed to generate design. Please try again or contact support.');
       }
 
       if (!data?.pattern?.imageUrl) {
-        throw new Error('No image URL received from AI generator');
+        throw new Error('No image URL received from AI generator. The service might be temporarily unavailable.');
       }
 
       onDesignGenerated({

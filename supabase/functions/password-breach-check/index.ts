@@ -14,7 +14,9 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'lovableproject.com', // Allow all Lovable preview domains
-  'lovable.app' // Allow all deployed Lovable apps
+  'lovable.app', // Allow all deployed Lovable apps
+  'netlify.app',
+  'vercel.app'
 ];
 
 async function sha1Hex(input: string): Promise<string> {
@@ -38,23 +40,42 @@ serve(async (req) => {
   
   if (!isDevelopment && origin) {
     try {
-      const originHostname = new URL(origin).hostname;
+      const url = new URL(origin);
+      const originHostname = url.hostname;
+      const originHost = url.host; // Includes port if present
+
       const isAllowedOrigin = allowedOrigins.some(allowed => {
-        // Remove protocol if present in allowed list
-        const allowedHostname = allowed.replace(/^https?:\/\//, '');
-        // Check exact match or proper suffix match
-        return originHostname === allowedHostname || 
-               originHostname.endsWith('.' + allowedHostname);
+        // Remove protocol if present
+        const allowedDomain = allowed.replace(/^https?:\/\//, '');
+
+        // If allowed domain has a port (contains colon), match against host (with port)
+        if (allowedDomain.includes(':')) {
+          return originHost === allowedDomain;
+        }
+
+        // Otherwise match against hostname (subdomains allowed)
+        return originHostname === allowedDomain ||
+               originHostname.endsWith('.' + allowedDomain);
       });
       
       let isAllowedReferer = false;
       if (referer) {
-        const refererHostname = new URL(referer).hostname;
-        isAllowedReferer = allowedOrigins.some(allowed => {
-          const allowedHostname = allowed.replace(/^https?:\/\//, '');
-          return refererHostname === allowedHostname || 
-                 refererHostname.endsWith('.' + allowedHostname);
-        });
+        try {
+          const refererUrl = new URL(referer);
+          const refererHostname = refererUrl.hostname;
+          const refererHost = refererUrl.host;
+
+          isAllowedReferer = allowedOrigins.some(allowed => {
+            const allowedDomain = allowed.replace(/^https?:\/\//, '');
+            if (allowedDomain.includes(':')) {
+              return refererHost === allowedDomain;
+            }
+            return refererHostname === allowedDomain ||
+                   refererHostname.endsWith('.' + allowedDomain);
+          });
+        } catch {
+          // Ignore invalid referer
+        }
       }
       
       if (!isAllowedOrigin && !isAllowedReferer) {
