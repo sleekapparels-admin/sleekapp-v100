@@ -134,7 +134,23 @@ export default function JoinSupplier() {
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        // Handle rate limiting specifically
+        if (authError.message.includes('429') || authError.message.includes('rate limit')) {
+          toast.error('Too many signup attempts. Please wait 1-2 minutes and try again.');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Handle user already exists
+        if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
+          toast.error('This email is already registered. Please sign in instead.');
+          setIsLoading(false);
+          return;
+        }
+        
+        throw authError;
+      }
 
       if (!authData.user) {
         throw new Error("Failed to create user account");
@@ -171,7 +187,18 @@ export default function JoinSupplier() {
 
       if (confirmError) {
         console.error('Email confirmation failed:', confirmError);
-        toast.error('Registration succeeded but email confirmation failed. Please contact support.');
+        
+        // Provide more specific error messages
+        if (confirmError.message?.includes('Invalid or expired')) {
+          toast.error('Email confirmation token expired. Please contact support.');
+        } else if (confirmError.message?.includes('Rate limit')) {
+          toast.error('Too many confirmation attempts. Please wait and try again.');
+        } else if (confirmError.message?.includes('User not found')) {
+          toast.error('Account created but confirmation failed. Please contact support with your email.');
+        } else {
+          toast.error('Registration succeeded but email confirmation failed. Please contact support.');
+        }
+        
         setIsLoading(false);
         return;
       }
@@ -215,7 +242,19 @@ export default function JoinSupplier() {
       navigate("/supplier-dashboard");
     } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error(error.message || "Failed to complete registration");
+      
+      // Provide more specific error messages based on the error
+      if (error.message?.includes('duplicate') || error.message?.includes('already exists')) {
+        toast.error('This email or company is already registered. Please sign in or use a different email.');
+      } else if (error.message?.includes('Token generation failed')) {
+        toast.error('Registration successful but confirmation setup failed. Please contact support.');
+      } else if (error.message?.includes('Session not established')) {
+        toast.error('Registration completed but session setup failed. Please try signing in.');
+      } else if (error.message?.includes('rate limit') || error.message?.includes('429')) {
+        toast.error('Too many attempts. Please wait a few minutes and try again.');
+      } else {
+        toast.error(error.message || "Failed to complete registration. Please try again or contact support.");
+      }
     } finally {
       setIsLoading(false);
     }
