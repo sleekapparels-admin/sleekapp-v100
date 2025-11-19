@@ -140,18 +140,37 @@ export default function JoinSupplier() {
         throw new Error("Failed to create user account");
       }
 
-      // SECURITY FIX: Auto-confirm email with proper authentication (blocking)
-      const { data: confirmData, error: confirmError } = await supabase.functions.invoke(
-        'auto-confirm-supplier',
-        {
-          headers: {
-            Authorization: `Bearer ${authData.session?.access_token}`,
-          },
+      // Step 5: Generate one-time confirmation token and auto-confirm
+      console.log('Step 5: Generating confirmation token...');
+      const confirmationToken = crypto.randomUUID();
+      
+      // Store the token in the OTP table for validation
+      const { error: tokenError } = await supabase
+        .from('email_verification_otps')
+        .update({ 
+          session_id: confirmationToken,
+          verified: false // Will be set to true after confirmation
+        })
+        .eq('email', email)
+        .eq('verified', true) // Find the OTP record we just verified
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (tokenError) {
+        console.error('Token generation failed:', tokenError);
+        throw new Error('Registration succeeded but confirmation token generation failed.');
+      }
+
+      console.log('Step 6: Auto-confirming email with token...');
+      const { error: confirmError } = await supabase.functions.invoke('auto-confirm-supplier', {
+        body: {
+          email: email,
+          token: confirmationToken
         }
-      );
+      });
 
       if (confirmError) {
-        console.error('Auto-confirm failed:', confirmError);
+        console.error('Email confirmation failed:', confirmError);
         toast.error('Registration succeeded but email confirmation failed. Please contact support.');
         setIsLoading(false);
         return;

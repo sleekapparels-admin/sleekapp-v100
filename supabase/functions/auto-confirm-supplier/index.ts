@@ -13,15 +13,27 @@ serve(async (req) => {
   }
 
   try {
-    // SECURITY FIX: Get authenticated user from JWT token
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      console.error('No authorization header provided');
+    // Parse request body
+    const { email, token } = await req.json();
+
+    // Validate required fields
+    if (!email || !token) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Authentication required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Email and token are required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid email format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
 
     // Create client with service role for admin operations
     const supabaseAdmin = createClient(
@@ -35,19 +47,61 @@ serve(async (req) => {
       }
     );
 
-    // Verify the JWT and get user
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-    
-    if (authError || !user) {
-      console.error('Invalid token or user not found:', authError);
+    // SECURITY: Validate one-time token from database
+    const { data: otpRecord, error: otpError } = await supabaseAdmin
+      .from('email_verification_otps')
+      .select('*')
+      .eq('email', email)
+      .eq('session_id', token)
+      .eq('verified', false) // Token must not have been used yet
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (otpError || !otpRecord) {
+      console.error('Invalid or expired token:', otpError);
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
+        JSON.stringify({ error: 'Invalid or expired confirmation token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const email = user.email;
+    // SECURITY: Rate limiting - max 5 attempts per IP per hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { data: recentAttempts } = await supabaseAdmin
+      .from('email_verification_otps')
+      .select('id')
+      .eq('ip_address', clientIP)
+      .gte('created_at', oneHourAgo);
+
+    if (recentAttempts && recentAttempts.length > 5) {
+      console.error('Rate limit exceeded for IP:', clientIP);
+      return new Response(
+        JSON.stringify({ error: 'Too many confirmation attempts. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Find the user by email
+    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (listError) {
+      console.error('Error listing users:', listError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to find user' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const user = users.find(u => u.email === email);
+    
+    if (!user) {
+      console.error('User not found for email:', email);
+      return new Response(
+        JSON.stringify({ error: 'User not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Validate email
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -83,6 +137,12 @@ serve(async (req) => {
     }
 
     console.log(`Email confirmed successfully for user: ${user.id}`);
+
+    // SECURITY: Mark token as used (set verified to true to prevent reuse)
+    await supabaseAdmin
+      .from('email_verification_otps')
+      .update({ verified: true })
+      .eq('id', otpRecord.id);
 
     return new Response(
       JSON.stringify({ 
