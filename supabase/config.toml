@@ -35,3 +35,6 @@ verify_jwt = true
 
 [functions.resend-webhook]
 verify_jwt = false
+
+[functions.auto-confirm-supplier]
+verify_jwt = false
