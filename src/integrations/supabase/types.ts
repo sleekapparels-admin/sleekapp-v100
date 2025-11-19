@@ -826,33 +826,45 @@ export type Database = {
         Row: {
           attempt_count: number | null
           created_at: string | null
+          delivery_error: string | null
+          delivery_status: string | null
           email: string
+          email_sent_at: string | null
           expires_at: string
           id: string
           ip_address: string | null
           otp: string
+          resend_email_id: string | null
           session_id: string | null
           verified: boolean | null
         }
         Insert: {
           attempt_count?: number | null
           created_at?: string | null
+          delivery_error?: string | null
+          delivery_status?: string | null
           email: string
+          email_sent_at?: string | null
           expires_at: string
           id?: string
           ip_address?: string | null
           otp: string
+          resend_email_id?: string | null
           session_id?: string | null
           verified?: boolean | null
         }
         Update: {
           attempt_count?: number | null
           created_at?: string | null
+          delivery_error?: string | null
+          delivery_status?: string | null
           email?: string
+          email_sent_at?: string | null
           expires_at?: string
           id?: string
           ip_address?: string | null
           otp?: string
+          resend_email_id?: string | null
           session_id?: string | null
           verified?: boolean | null
         }
