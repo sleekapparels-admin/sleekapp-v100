@@ -34,13 +34,16 @@ export const ProductEngagementMetrics = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('product_engagement_metrics')
-        .select('*')
-        .order('total_interactions', { ascending: false })
-        .limit(10);
+        .rpc('get_product_engagement_metrics');
 
       if (error) throw error;
-      setMetrics(data || []);
+      
+      // Sort and limit on client side since RPC doesn't support order/limit
+      const sortedData = (data || [])
+        .sort((a: ProductMetrics, b: ProductMetrics) => b.total_interactions - a.total_interactions)
+        .slice(0, 10);
+      
+      setMetrics(sortedData);
     } catch (err) {
       console.error('Failed to fetch product metrics:', err);
       setError('Failed to load engagement metrics');
