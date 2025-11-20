@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle } from "lucide-react";
+import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle, LayoutGrid, CheckCircle } from "lucide-react";
 import { SupplierAnalyticsCard } from "@/components/admin/SupplierAnalyticsCard";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -11,14 +11,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { SupplierAssignmentDialog } from "@/components/admin/SupplierAssignmentDialog";
+import { OrderStatusBoard } from "@/components/admin/OrderStatusBoard";
+import { OrderDetailsDialog } from "@/components/admin/OrderDetailsDialog";
 import type { Order } from "@/types/database";
 import { useAdminStats, useNewOrders, orderKeys } from "@/hooks/queries";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { isAdmin, loading } = useAdminAuth();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderForDetails, setSelectedOrderForDetails] = useState<Order | null>(null);
   
   // Use React Query hooks
   const { data: stats } = useAdminStats();
@@ -106,8 +110,34 @@ export default function AdminDashboard() {
             </Card>
           </div>
 
-          {/* New Orders Queue */}
-          {newOrders && newOrders.length > 0 && (
+          {/* Main Content Tabs */}
+          <Tabs defaultValue="board" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="board" className="flex items-center gap-2">
+                <LayoutGrid className="h-4 w-4" />
+                Order Board
+              </TabsTrigger>
+              <TabsTrigger value="queue" className="flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                New Orders Queue
+                {newOrders && newOrders.length > 0 && (
+                  <Badge variant="destructive" className="ml-2">{newOrders.length}</Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="suppliers" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Suppliers
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="board">
+              <OrderStatusBoard 
+                onOrderClick={(order) => setSelectedOrderForDetails(order)}
+              />
+            </TabsContent>
+
+            <TabsContent value="queue">
+              {newOrders && newOrders.length > 0 ? (
             <Card className="mb-8 border-orange-500/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -154,10 +184,20 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
-          )}
+              ) : (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">All Caught Up!</h3>
+                    <p className="text-muted-foreground">No new orders awaiting supplier assignment</p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
 
-          <div className="grid gap-6 md:grid-cols-2 mb-8">
-            <SupplierAnalyticsCard />
+            <TabsContent value="suppliers">
+              <div className="grid gap-6 md:grid-cols-2 mb-8">
+                <SupplierAnalyticsCard />
 
             <Card>
               <CardHeader>
@@ -184,7 +224,9 @@ export default function AdminDashboard() {
                 </Button>
               </CardContent>
             </Card>
-          </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       <Footer />
@@ -200,6 +242,20 @@ export default function AdminDashboard() {
             // Invalidate queries to trigger refetch
             queryClient.invalidateQueries({ queryKey: orderKeys.new() });
             queryClient.invalidateQueries({ queryKey: orderKeys.adminStats() });
+            queryClient.invalidateQueries({ queryKey: orderKeys.all });
+          }}
+        />
+      )}
+
+      {/* Order Details Dialog */}
+      {selectedOrderForDetails && (
+        <OrderDetailsDialog
+          order={selectedOrderForDetails}
+          open={!!selectedOrderForDetails}
+          onOpenChange={(open) => !open && setSelectedOrderForDetails(null)}
+          onUpdate={() => {
+            queryClient.invalidateQueries({ queryKey: orderKeys.all });
+            queryClient.invalidateQueries({ queryKey: orderKeys.new() });
           }}
         />
       )}
