@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle, LayoutGrid, CheckCircle } from "lucide-react";
+import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle, LayoutGrid, CheckCircle, Edit } from "lucide-react";
 import { SupplierAnalyticsCard } from "@/components/admin/SupplierAnalyticsCard";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -13,6 +13,8 @@ import { useState } from "react";
 import { SupplierAssignmentDialog } from "@/components/admin/SupplierAssignmentDialog";
 import { OrderStatusBoard } from "@/components/admin/OrderStatusBoard";
 import { OrderDetailsDialog } from "@/components/admin/OrderDetailsDialog";
+import { QuoteApprovalPanel } from "@/components/admin/QuoteApprovalPanel";
+import { CMSManagementPanel } from "@/components/admin/CMSManagementPanel";
 import type { Order } from "@/types/database";
 import { useAdminStats, useNewOrders, orderKeys } from "@/hooks/queries";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -124,6 +126,14 @@ export default function AdminDashboard() {
                   <Badge variant="destructive" className="ml-2">{newOrders.length}</Badge>
                 )}
               </TabsTrigger>
+              <TabsTrigger value="quotes" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Quote Approval
+              </TabsTrigger>
+              <TabsTrigger value="cms" className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                CMS
+              </TabsTrigger>
               <TabsTrigger value="suppliers" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Suppliers
@@ -193,6 +203,22 @@ export default function AdminDashboard() {
                   </CardContent>
                 </Card>
               )}
+            </TabsContent>
+
+            <TabsContent value="quotes">
+              <QuoteApprovalPanel />
+            </TabsContent>
+
+            <TabsContent value="cms">
+              <CMSManagementPanel />
+            </TabsContent>
+
+            <TabsContent value="quotes">
+              <QuoteApprovalPanel />
+            </TabsContent>
+
+            <TabsContent value="cms">
+              <CMSManagementPanel />
             </TabsContent>
 
             <TabsContent value="suppliers">
