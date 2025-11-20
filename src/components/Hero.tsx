@@ -1,22 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star, Eye, Zap, Shield } from "lucide-react";
-
 export const Hero = () => {
-  return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
+  return <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        <video 
-          autoPlay 
-          loop 
-          muted 
-          playsInline
-          preload="auto"
-          className="w-full h-full object-cover"
-          // @ts-ignore - fetchpriority is valid but not in TypeScript types yet
-          fetchpriority="high"
-        >
+        <video autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover"
+      // @ts-ignore - fetchpriority is valid but not in TypeScript types yet
+      fetchpriority="high">
           <source src="/videos/homepage-hero.webm" type="video/webm" />
           <source src="/videos/homepage-hero.mp4" type="video/mp4" />
           {/* Fallback for browsers that don't support video */}
@@ -42,7 +33,8 @@ export const Hero = () => {
           </div>
 
           <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
-            Premium Knitwear Manufacturing from Bangladesh
+            Bangladesh's First AI Powered Apparel Sourcing Platform
+           
             <span className="block text-primary mt-2">Starting from Just 50 Pieces</span>
           </h1>
           
@@ -107,6 +99,5 @@ export const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
