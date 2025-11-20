@@ -16,14 +16,13 @@ export const SocialShareButtons = ({ postId, title, slug, excerpt }: SocialShare
 
   const trackShare = async (platform: string) => {
     try {
-      // Track the share
-      await supabase.from('social_shares').insert({
-        post_id: postId,
-        platform,
+      // Track share via edge function (with rate limiting and validation)
+      await supabase.functions.invoke('track-social-share', {
+        body: {
+          post_id: postId,
+          platform,
+        }
       });
-
-      // Increment share count
-      await supabase.rpc('increment_blog_post_shares', { post_id_param: postId });
     } catch (error) {
       console.error('Error tracking share:', error);
     }

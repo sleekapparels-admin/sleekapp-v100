@@ -160,13 +160,14 @@ export default function JoinSupplier() {
       console.log('Step 5: Generating confirmation token...');
       const confirmationToken = crypto.randomUUID();
       
-      // Store the confirmation token in a new record
+      // Store the confirmation token in a new record with user_id for efficient lookup
       const { error: tokenError } = await supabase
         .from('email_verification_otps')
         .insert({ 
           email: email,
           otp: 'CONFIRMATION_TOKEN', // Placeholder, not used for validation
           session_id: confirmationToken,
+          user_id: authData.user.id, // Store user_id for efficient lookup (security fix)
           verified: false, // Will be set to true after auto-confirm succeeds
           expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
           ip_address: null
