@@ -328,7 +328,7 @@ export const AIQuoteGeneratorWithOTP = () => {
       console.error('Error verifying OTP:', error);
       
       // Show friendly error with options
-      const errorMessage = error instanceof Error ? error.message : 'Failed to generate quote';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate quote. Please try again later.';
       
       toast({
         title: "Quote Generation Failed",
