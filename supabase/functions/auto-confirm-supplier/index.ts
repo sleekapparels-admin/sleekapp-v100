@@ -71,6 +71,7 @@ serve(async (req) => {
       .eq('email', email)
       .eq('session_id', token)
       .eq('verified', false) // Token must not have been used yet
+      .gt('expires_at', new Date().toISOString()) // SECURITY FIX: Check token hasn't expired
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
@@ -83,21 +84,20 @@ serve(async (req) => {
       );
     }
 
-    // Find the user by email
-    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-    
-    if (listError) {
-      console.error('Error listing users:', listError);
+    // SECURITY FIX: Use user_id from token record instead of listing all users
+    // This prevents performance issues as user base grows
+    if (!otpRecord.user_id) {
+      console.error('Token record missing user_id');
       return new Response(
-        JSON.stringify({ error: 'Failed to find user' }),
+        JSON.stringify({ error: 'Invalid token record' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const user = users.find(u => u.email === email);
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.getUserById(otpRecord.user_id);
     
-    if (!user) {
-      console.error('User not found for email:', email);
+    if (userError || !user) {
+      console.error('User not found:', userError);
       return new Response(
         JSON.stringify({ error: 'User not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

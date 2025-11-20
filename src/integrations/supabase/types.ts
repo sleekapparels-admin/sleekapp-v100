@@ -836,6 +836,7 @@ export type Database = {
           otp: string
           resend_email_id: string | null
           session_id: string | null
+          user_id: string | null
           verified: boolean | null
         }
         Insert: {
@@ -851,6 +852,7 @@ export type Database = {
           otp: string
           resend_email_id?: string | null
           session_id?: string | null
+          user_id?: string | null
           verified?: boolean | null
         }
         Update: {
@@ -866,6 +868,7 @@ export type Database = {
           otp?: string
           resend_email_id?: string | null
           session_id?: string | null
+          user_id?: string | null
           verified?: boolean | null
         }
         Relationships: []
@@ -2275,6 +2278,7 @@ export type Database = {
       social_shares: {
         Row: {
           id: string
+          ip_address: string | null
           platform: string
           post_id: string
           session_id: string | null
@@ -2283,6 +2287,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          ip_address?: string | null
           platform: string
           post_id: string
           session_id?: string | null
@@ -2291,6 +2296,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          ip_address?: string | null
           platform?: string
           post_id?: string
           session_id?: string | null
