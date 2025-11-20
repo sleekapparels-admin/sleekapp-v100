@@ -18,6 +18,7 @@ import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Health from "./pages/Health";
+import { SmartDashboardRouter } from "./components/SmartDashboardRouter";
 
 // Lazy load secondary pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
@@ -155,6 +156,7 @@ const router = createBrowserRouter([
       { path: "/sustainability", element: <Sustainability /> },
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
+      { path: "/dashboard-router", element: <SmartDashboardRouter /> },
       { path: "/dashboard", element: <Dashboard /> },
       { path: "/admin", element: <AdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },

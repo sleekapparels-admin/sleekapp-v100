@@ -241,7 +241,7 @@ export default function Auth() {
       }
 
       toast.success("Signed in successfully");
-      navigate("/dashboard");
+      navigate("/dashboard-router");
     } catch (error: any) {
       if (error.message === "Failed to fetch" || error.message?.includes('fetch')) {
         toast.error(

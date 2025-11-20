@@ -211,7 +211,7 @@ export const Navbar = () => {
 
             {user ? <>
                 <NotificationBell className={`relative ${isHome ? "text-white hover:bg-white/10" : ""}`} />
-                <Button onClick={() => navigate("/dashboard")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
+                <Button onClick={() => navigate("/dashboard-router")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
                   <User className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
@@ -287,7 +287,7 @@ export const Navbar = () => {
                   <NotificationBell />
                 </div>
                 <Button onClick={() => {
-            navigate("/dashboard");
+            navigate("/dashboard-router");
             setIsOpen(false);
           }} variant="outline" className="w-full mt-2">
                   <User className="mr-2 h-4 w-4" />
