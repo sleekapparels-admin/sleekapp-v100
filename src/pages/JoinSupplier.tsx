@@ -621,7 +621,7 @@ export default function JoinSupplier() {
                     <ReCAPTCHA
                       ref={recaptchaRef}
                       size="invisible"
-                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                      sitekey="6LcP_RMsAAAAAAyzUVk22XySYyE5zhKuWMotskop"
                     />
                   </div>
 
