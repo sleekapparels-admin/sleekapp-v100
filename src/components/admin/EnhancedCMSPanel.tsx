@@ -3,6 +3,7 @@ import { CMSManagementPanel } from './CMSManagementPanel';
 import { BlogEditor } from '@/components/blog/BlogEditor';
 import { ProductDescriptionGenerator } from './ProductDescriptionGenerator';
 import { FileText, Sparkles, Package } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 export const EnhancedCMSPanel = () => {
   return (
@@ -33,7 +34,7 @@ export const EnhancedCMSPanel = () => {
         </TabsContent>
 
         <TabsContent value="blog">
-          <BlogEditor onSave={() => toast.success('Blog post saved')} />
+          <BlogEditor onSave={() => toast({ title: "Success", description: "Blog post saved" })} />
         </TabsContent>
 
         <TabsContent value="products">
@@ -43,5 +44,3 @@ export const EnhancedCMSPanel = () => {
     </div>
   );
 };
-
-const toast = { success: (msg: string) => console.log(msg) };
