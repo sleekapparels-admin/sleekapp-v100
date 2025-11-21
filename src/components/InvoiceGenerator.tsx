@@ -26,7 +26,8 @@ export const InvoiceGenerator = ({ orderId, order }: InvoiceGeneratorProps) => {
         ? order.balance_amount || order.buyer_price * 0.5
         : order.buyer_price;
 
-      const { data, error } = await supabase
+      // Create invoice record
+      const { data: invoiceData, error } = await supabase
         .from('invoices')
         .insert({
           order_id: orderId,
@@ -41,12 +42,21 @@ export const InvoiceGenerator = ({ orderId, order }: InvoiceGeneratorProps) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Invoice Generated",
-        description: `${type.charAt(0).toUpperCase() + type.slice(1)} invoice created successfully`,
+      // Generate and send invoice PDF via edge function
+      const { error: generateError } = await supabase.functions.invoke('generate-invoice', {
+        body: { invoice_id: invoiceData.id }
       });
 
-      return data;
+      if (generateError) {
+        console.error('Error generating invoice PDF:', generateError);
+      }
+
+      toast({
+        title: "Invoice Generated",
+        description: `${type.charAt(0).toUpperCase() + type.slice(1)} invoice created and sent successfully`,
+      });
+
+      return invoiceData;
     } catch (error: any) {
       console.error('Error generating invoice:', error);
       toast({
