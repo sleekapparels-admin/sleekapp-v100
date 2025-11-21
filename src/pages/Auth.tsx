@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles, Crown, Check } from "lucide-react";
 import { z } from "zod";
 
 const signupSchema = z.object({
@@ -29,7 +29,13 @@ export default function Auth() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState("login");
+  
+  // Detect beta intent from URL parameter
+  const searchParams = new URLSearchParams(window.location.search);
+  const intent = searchParams.get('intent');
+  const isBetaIntent = intent === 'beta';
+  
+  const [activeTab, setActiveTab] = useState(isBetaIntent ? "signup" : "login");
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [phoneOtp, setPhoneOtp] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -261,9 +267,14 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-3">
           <div className="text-center">
-            <CardTitle className="text-2xl">Sleek Apparels</CardTitle>
+            <CardTitle className="text-2xl">
+              {isBetaIntent ? '🚀 Join Beta Access' : 'Sleek Apparels'}
+            </CardTitle>
             <CardDescription className="text-base">
-              Manufacturer & Sourcing Partner
+              {isBetaIntent 
+                ? 'Free access until December 31, 2025 • Growth & Scale tiers launching Jan 2026'
+                : 'Manufacturer & Sourcing Partner'
+              }
             </CardDescription>
           </div>
         </CardHeader>
@@ -300,7 +311,9 @@ export default function Auth() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signup">
+                {isBetaIntent ? 'Join Beta 🚀' : 'Sign Up'}
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4 mt-4">
@@ -455,14 +468,42 @@ export default function Auth() {
                     )}
                   </div>
                 </div>
+                
+                {isBetaIntent && (
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
+                    <h4 className="text-sm font-semibold text-primary flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" />
+                      🎁 Beta User Benefits
+                    </h4>
+                    <ul className="text-xs text-muted-foreground space-y-1.5">
+                      <li className="flex items-start gap-2">
+                        <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Unlimited AI quote generations until Dec 31, 2025</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Full LoopTrace™ order tracking access</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Priority support & real-time analytics</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Crown className="h-3.5 w-3.5 text-accent mt-0.5 flex-shrink-0" />
+                        <span className="font-semibold text-accent">Lifetime discount on Growth & Scale tiers</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+                
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                      {isBetaIntent ? 'Securing your beta spot...' : 'Creating account...'}
                     </>
                   ) : (
-                    "Create Account"
+                    isBetaIntent ? 'Join Beta - Free' : 'Create Account'
                   )}
                 </Button>
               </form>
