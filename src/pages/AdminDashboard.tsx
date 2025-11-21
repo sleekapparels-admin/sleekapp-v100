@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle, LayoutGrid, CheckCircle, Edit } from "lucide-react";
+import { Loader2, Package, Users, TrendingUp, DollarSign, Bell, AlertCircle, LayoutGrid, CheckCircle, Edit, Shield } from "lucide-react";
 import { SupplierAnalyticsCard } from "@/components/admin/SupplierAnalyticsCard";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -23,6 +23,7 @@ import { AutomationRulesManager } from "@/components/admin/AutomationRulesManage
 import { EnhancedCMSPanel } from "@/components/admin/EnhancedCMSPanel";
 import { ProductDescriptionGenerator } from "@/components/admin/ProductDescriptionGenerator";
 import { BlogEditor } from "@/components/blog/BlogEditor";
+import { RateLimitMonitoringDashboard } from "@/components/admin/RateLimitMonitoringDashboard";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -150,6 +151,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="suppliers" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Suppliers
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Security
               </TabsTrigger>
             </TabsList>
 
@@ -280,6 +285,10 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="security">
+              <RateLimitMonitoringDashboard />
             </TabsContent>
           </Tabs>
         </div>

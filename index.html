@@ -10,6 +10,23 @@
     <meta name="build-id" content="BUILD_TIMESTAMP" />
     <meta name="theme-color" content="#2D5C4E" />
     
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      img-src 'self' data: blob: https: http:;
+      font-src 'self' data: https://fonts.gstatic.com;
+      connect-src 'self' https://eqpftggctumujhutomom.supabase.co wss://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://api.lovable.dev;
+      media-src 'self' blob: data:;
+      object-src 'none';
+      frame-src 'self';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'self';
+      upgrade-insecure-requests;
+    " />
+    
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
     
