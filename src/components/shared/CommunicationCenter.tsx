@@ -92,11 +92,30 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
   };
 
   const sendMessage = async () => {
+    // Input validation
     if (!newMessage.message.trim() || !newMessage.recipient_id) {
       toast({
         variant: "destructive",
         title: "Error",
         description: "Please fill in all required fields"
+      });
+      return;
+    }
+
+    if (newMessage.message.length > 5000) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Message too long (max 5000 characters)"
+      });
+      return;
+    }
+
+    if (newMessage.subject && newMessage.subject.length > 200) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Subject too long (max 200 characters)"
       });
       return;
     }

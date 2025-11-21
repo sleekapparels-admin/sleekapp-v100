@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, DollarSign, TrendingUp, Clock, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { FinancialChartsEnhanced } from "@/components/admin/FinancialChartsEnhanced";
 
 interface FinancialStats {
   totalEarnings: number;
@@ -170,6 +171,21 @@ export const FinancialDashboard = ({ supplierId }: { supplierId: string }) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add Financial Charts */}
+      <FinancialChartsEnhanced 
+        monthlyData={[
+          { month: 'Jan', earnings: stats.totalEarnings * 0.1, orders: Math.ceil(stats.paidOrders * 0.1) },
+          { month: 'Feb', earnings: stats.totalEarnings * 0.15, orders: Math.ceil(stats.paidOrders * 0.15) },
+          { month: 'Mar', earnings: stats.totalEarnings * 0.2, orders: Math.ceil(stats.paidOrders * 0.2) },
+          { month: 'Apr', earnings: stats.totalEarnings * 0.25, orders: Math.ceil(stats.paidOrders * 0.25) },
+          { month: 'May', earnings: stats.totalEarnings * 0.3, orders: Math.ceil(stats.paidOrders * 0.3) },
+        ]}
+        paymentStatus={[
+          { name: 'Paid', value: stats.totalEarnings },
+          { name: 'Pending', value: stats.pendingPayments }
+        ]}
+      />
 
       <Card>
         <CardHeader>

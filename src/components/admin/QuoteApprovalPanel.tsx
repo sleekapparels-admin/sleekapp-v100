@@ -52,6 +52,22 @@ export const QuoteApprovalPanel = () => {
   };
 
   const approveQuote = async (quoteId: string) => {
+    // Input validation
+    if (adminMarkup < 0) {
+      toast.error("Markup cannot be negative");
+      return;
+    }
+
+    if (selectedQuote && adminMarkup > selectedQuote.total_price * 2) {
+      toast.error("Markup seems excessive (>200% of base price)");
+      return;
+    }
+
+    if (notes.length > 1000) {
+      toast.error("Notes too long (max 1000 characters)");
+      return;
+    }
+
     try {
       setProcessing(true);
       
