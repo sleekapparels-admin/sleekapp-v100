@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Send, Paperclip, Search } from "lucide-react";
+import { Loader2, Send, Paperclip, Search, X, FileText } from "lucide-react";
 import { format } from "date-fns";
 
 interface Message {
@@ -37,6 +37,8 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -91,6 +93,56 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files).slice(0, 5 - selectedFiles.length);
+      setSelectedFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async (userId: string): Promise<string[]> => {
+    if (selectedFiles.length === 0) return [];
+
+    setUploadingFiles(true);
+    const uploadedUrls: string[] = [];
+
+    try {
+      for (const file of selectedFiles) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('message-attachments')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('message-attachments')
+          .getPublicUrl(fileName);
+
+        uploadedUrls.push(publicUrl);
+      }
+
+      return uploadedUrls;
+    } catch (error: any) {
+      console.error('Error uploading files:', error);
+      toast({
+        variant: "destructive",
+        title: "Upload Error",
+        description: error.message || "Failed to upload files",
+      });
+      return [];
+    } finally {
+      setUploadingFiles(false);
+    }
+  };
+
   const sendMessage = async () => {
     // Input validation
     if (!newMessage.message.trim() || !newMessage.recipient_id) {
@@ -126,6 +178,8 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
       
       if (!user) return;
 
+      const attachmentUrls = await uploadFiles(user.id);
+
       const { error } = await supabase
         .from('messages')
         .insert({
@@ -133,7 +187,8 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
           recipient_id: newMessage.recipient_id,
           subject: newMessage.subject,
           message: newMessage.message,
-          order_id: newMessage.order_id
+          order_id: newMessage.order_id,
+          attachments: attachmentUrls.length > 0 ? attachmentUrls : null
         });
 
       if (error) throw error;
@@ -149,6 +204,7 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
         message: '',
         order_id: orderFilter || null
       });
+      setSelectedFiles([]);
 
       fetchMessages();
     } catch (error: any) {
@@ -264,14 +320,20 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
               <CardContent>
                 <div className="whitespace-pre-wrap">{selectedMessage.message}</div>
                 {selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
-                  <div className="mt-4">
+                  <div className="mt-4 pt-4 border-t">
                     <p className="text-sm font-semibold mb-2">Attachments:</p>
-                    <div className="flex gap-2">
-                      {selectedMessage.attachments.map((att, i) => (
-                        <Button key={i} size="sm" variant="outline">
-                          <Paperclip className="h-4 w-4 mr-2" />
-                          File {i + 1}
-                        </Button>
+                    <div className="flex flex-col gap-2">
+                      {selectedMessage.attachments.map((url, i) => (
+                        <a
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          <FileText className="h-4 w-4" />
+                          Attachment {i + 1}
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -312,14 +374,44 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
                     rows={8}
                   />
                 </div>
+                
+                {selectedFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedFiles.map((file, index) => (
+                      <Badge key={index} variant="secondary" className="flex items-center gap-2">
+                        <FileText className="h-3 w-3" />
+                        <span className="text-xs max-w-[150px] truncate">{file.name}</span>
+                        <X 
+                          className="h-3 w-3 cursor-pointer hover:text-destructive" 
+                          onClick={() => removeFile(index)}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                <input
+                  type="file"
+                  id="file-upload"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileSelect}
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.xlsx,.xls"
+                />
+
                 <div className="flex gap-2">
-                  <Button onClick={sendMessage} disabled={sending}>
+                  <Button onClick={sendMessage} disabled={sending || uploadingFiles}>
                     <Send className="h-4 w-4 mr-2" />
-                    {sending ? 'Sending...' : 'Send Message'}
+                    {sending || uploadingFiles ? 'Sending...' : 'Send Message'}
                   </Button>
-                  <Button variant="outline">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                    disabled={selectedFiles.length >= 5}
+                  >
                     <Paperclip className="h-4 w-4 mr-2" />
-                    Attach File
+                    Attach File {selectedFiles.length > 0 && `(${selectedFiles.length}/5)`}
                   </Button>
                 </div>
               </CardContent>
