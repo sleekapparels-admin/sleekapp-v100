@@ -67,17 +67,34 @@ export default function JoinSupplier() {
       return;
     }
 
-    // Send OTP after form validation
+    // Send OTP after form validation with timeout
     setIsLoading(true);
+    
     try {
-      const { data, error } = await supabase.functions.invoke('send-otp', {
+      // Add timeout to prevent indefinite waiting
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timed out. Please check your connection and try again.')), 30000)
+      );
+      
+      const otpPromise = supabase.functions.invoke('send-otp', {
         body: { type: 'email-supplier', email: formData.email }
       });
+
+      const { data, error } = await Promise.race([otpPromise, timeoutPromise]) as any;
 
       if (error) throw error;
 
       if (data?.error) {
-        toast.error(data.error);
+        // Handle specific error cases
+        if (data.error.includes('wait 5 minutes')) {
+          toast.error("Please wait 5 minutes before requesting another code");
+        } else if (data.error.includes('already exists')) {
+          toast.error("A supplier with this email already exists. Please sign in instead.");
+        } else if (data.error.includes('Disposable email')) {
+          toast.error("Please use a permanent business email address");
+        } else {
+          toast.error(data.error);
+        }
         return;
       }
 
@@ -85,7 +102,14 @@ export default function JoinSupplier() {
       setStep('verify');
     } catch (error: any) {
       console.error('Error sending OTP:', error);
-      toast.error(error.message || "Failed to send verification code");
+      
+      if (error.message?.includes('timed out')) {
+        toast.error("Request timed out. The system may be under load. Please try again.");
+      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('network')) {
+        toast.error("Network error. Please check your connection and try again.");
+      } else {
+        toast.error(error.message || "Failed to send verification code. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
