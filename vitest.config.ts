@@ -23,7 +23,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@/integrations/supabase/client': path.resolve(__dirname, './src/integrations/supabase/client.injected.ts'),
     },
   },
 });
