@@ -15,6 +15,7 @@ import { FinalCTA } from "@/components/FinalCTA";
 import { StatsCounter } from "@/components/home/StatsCounter";
 import { CertificationBadges } from "@/components/home/CertificationBadges";
 import { HowItWorks } from "@/components/home/HowItWorks";
+import { SupplierCTASection } from "@/components/home/SupplierCTASection";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -54,7 +55,10 @@ function Index() {
         {/* Section 6: How It Works - NEW */}
         <HowItWorks />
         
-        {/* Section 7: Main Services */}
+        {/* Section 7: Supplier CTA - NEW */}
+        <SupplierCTASection />
+        
+        {/* Section 8: Main Services */}
         <ServicesSection />
         
         {/* Section 8: Portfolio Gallery */}
