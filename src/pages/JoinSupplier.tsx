@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,14 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Loader2, Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function JoinSupplier() {
   const navigate = useNavigate();
   const [step, setStep] = useState<'details' | 'verify'>('details');
   const [isLoading, setIsLoading] = useState(false);
   const [otp, setOtp] = useState("");
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   
   // Form state - email is now part of formData
   const [formData, setFormData] = useState({
@@ -67,6 +69,13 @@ export default function JoinSupplier() {
       return;
     }
 
+    // Verify reCAPTCHA
+    const captchaToken = await recaptchaRef.current?.executeAsync();
+    if (!captchaToken) {
+      toast.error("Please complete the CAPTCHA verification");
+      return;
+    }
+
     // Send OTP after form validation with timeout
     setIsLoading(true);
     
@@ -77,7 +86,7 @@ export default function JoinSupplier() {
       );
       
       const otpPromise = supabase.functions.invoke('send-otp', {
-        body: { type: 'email-supplier', email: formData.email }
+        body: { type: 'email-supplier', email: formData.email, captchaToken }
       });
 
       const { data, error } = await Promise.race([otpPromise, timeoutPromise]) as any;
@@ -100,6 +109,7 @@ export default function JoinSupplier() {
 
       toast.success(`Verification code sent to ${formData.email}!`);
       setStep('verify');
+      recaptchaRef.current?.reset();
     } catch (error: any) {
       console.error('Error sending OTP:', error);
       
@@ -606,8 +616,17 @@ export default function JoinSupplier() {
                     </div>
                   </div>
 
+                  {/* reCAPTCHA */}
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      size="invisible"
+                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                    />
+                  </div>
+
                   {/* Submit Button */}
-                  <Button 
+                  <Button
                     type="submit" 
                     disabled={isLoading}
                     className="w-full"
