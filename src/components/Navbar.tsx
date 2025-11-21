@@ -206,7 +206,7 @@ export const Navbar = () => {
             </NavigationMenu>
 
             {userRole !== 'supplier' && <Button asChild variant={isHome ? "outline" : "default"} size="sm" className={`ml-2 font-semibold ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm" : "bg-accent hover:bg-accent/90 text-accent-foreground"}`}>
-                <Link to="/quote-generator">Get AI Quote</Link>
+                <Link to="/auth?intent=beta">Join Beta - Free</Link>
               </Button>}
 
             {user ? <>
@@ -275,8 +275,8 @@ export const Navbar = () => {
             </div>
 
             {userRole !== 'supplier' && <Button asChild variant="default" className="w-full mt-3 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-sm">
-                <Link to="/quote-generator" onClick={() => setIsOpen(false)}>
-                  Get AI Quote
+                <Link to="/auth?intent=beta" onClick={() => setIsOpen(false)}>
+                  Join Beta - Free
                 </Link>
               </Button>}
             {user ? <>
