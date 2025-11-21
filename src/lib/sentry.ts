@@ -23,7 +23,59 @@ export const initSentry = () => {
       release: import.meta.env.VITE_APP_VERSION || "unknown",
       // Before send - filter sensitive data
       beforeSend(event, hint) {
-        // Remove sensitive data from events
+        // Helper function to sanitize objects for PII
+        const sanitizeObject = (obj: Record<string, any>): Record<string, any> => {
+          const sanitized: Record<string, any> = {};
+          
+          for (const [key, value] of Object.entries(obj)) {
+            // Check if key name suggests sensitive data
+            const keyLower = key.toLowerCase();
+            const isSensitiveKey = 
+              keyLower.includes('email') ||
+              keyLower.includes('password') ||
+              keyLower.includes('token') ||
+              keyLower.includes('secret') ||
+              keyLower.includes('key') ||
+              keyLower.includes('auth') ||
+              keyLower.includes('credential') ||
+              keyLower.includes('api') ||
+              keyLower.includes('bearer') ||
+              keyLower.includes('jwt') ||
+              keyLower.includes('session') ||
+              keyLower.includes('cookie');
+            
+            if (isSensitiveKey) {
+              sanitized[key] = '[REDACTED]';
+            } else if (typeof value === 'string') {
+              // Check if value looks like an email
+              if (value.includes('@') && /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/.test(value)) {
+                sanitized[key] = '[REDACTED_EMAIL]';
+              }
+              // Check if value looks like a JWT token
+              else if (value.split('.').length === 3 && value.length > 100) {
+                sanitized[key] = '[REDACTED_TOKEN]';
+              }
+              // Check if value looks like an API key
+              else if (value.length > 20 && /^[A-Za-z0-9_-]+$/.test(value) && 
+                       (value.startsWith('sk_') || value.startsWith('pk_') || 
+                        value.startsWith('api_') || value.startsWith('key_'))) {
+                sanitized[key] = '[REDACTED_KEY]';
+              }
+              else {
+                sanitized[key] = value;
+              }
+            } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+              // Recursively sanitize nested objects
+              sanitized[key] = sanitizeObject(value);
+            } else {
+              sanitized[key] = value;
+            }
+          }
+          
+          return sanitized;
+        };
+
+        // Remove sensitive data from request
         if (event.request) {
           delete event.request.cookies;
           // Remove authorization headers
@@ -31,6 +83,16 @@ export const initSentry = () => {
             delete event.request.headers['Authorization'];
             delete event.request.headers['authorization'];
           }
+        }
+        
+        // Sanitize custom contexts
+        if (event.contexts?.custom) {
+          event.contexts.custom = sanitizeObject(event.contexts.custom as Record<string, any>);
+        }
+        
+        // Sanitize extra data
+        if (event.extra) {
+          event.extra = sanitizeObject(event.extra as Record<string, any>);
         }
         
         // Filter out network errors that are not actionable
@@ -43,6 +105,39 @@ export const initSentry = () => {
         }
         
         return event;
+      },
+      // Sanitize breadcrumbs (console logs, user actions)
+      beforeBreadcrumb(breadcrumb) {
+        // Sanitize console log breadcrumbs
+        if (breadcrumb.category === 'console' && breadcrumb.message) {
+          // Redact email addresses in console logs
+          breadcrumb.message = breadcrumb.message.replace(
+            /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+            '[EMAIL_REDACTED]'
+          );
+          // Redact JWT tokens in console logs
+          breadcrumb.message = breadcrumb.message.replace(
+            /eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*/g,
+            '[TOKEN_REDACTED]'
+          );
+        }
+        
+        // Sanitize data in breadcrumb
+        if (breadcrumb.data) {
+          const sanitized: Record<string, any> = {};
+          for (const [key, value] of Object.entries(breadcrumb.data)) {
+            const keyLower = key.toLowerCase();
+            if (keyLower.includes('email') || keyLower.includes('token') || 
+                keyLower.includes('password') || keyLower.includes('secret')) {
+              sanitized[key] = '[REDACTED]';
+            } else {
+              sanitized[key] = value;
+            }
+          }
+          breadcrumb.data = sanitized;
+        }
+        
+        return breadcrumb;
       },
     });
   }
