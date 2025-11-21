@@ -25,7 +25,7 @@ const servicesMenu = [{
 }, {
   name: "LoopTrace™ Platform",
   href: "/looptrace-technology",
-  description: "AI-powered production tracking & transparency",
+  description: "AI-powered instant quotes & production tracking with full transparency",
   highlight: true
 }, {
   name: "View All Services",
@@ -203,7 +203,7 @@ export const Navbar = () => {
             </NavigationMenu>
 
             {userRole !== 'supplier' && <Button asChild variant={isHome ? "outline" : "default"} size="sm" className={`ml-2 font-semibold ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm" : "bg-accent hover:bg-accent/90 text-accent-foreground"}`}>
-                <Link to="/auth?intent=beta">Get LoopTrace™ Free</Link>
+                <Link to="/get-started">Get LoopTrace™ Free</Link>
               </Button>}
 
             {user ? <>
@@ -272,7 +272,7 @@ export const Navbar = () => {
             </div>
 
             {userRole !== 'supplier' && <Button asChild variant="default" className="w-full mt-3 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-sm">
-                <Link to="/auth?intent=beta" onClick={() => setIsOpen(false)}>
+                <Link to="/get-started" onClick={() => setIsOpen(false)}>
                   Get LoopTrace™ Free
                 </Link>
               </Button>}

@@ -73,7 +73,7 @@ export const Hero = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
-              <Link to="/auth?intent=beta">
+              <Link to="/get-started">
                 Get Free LoopTrace™ Access
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
