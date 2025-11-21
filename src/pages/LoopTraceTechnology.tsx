@@ -195,7 +195,7 @@ const LoopTraceTechnology = () => {
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button asChild size="lg" className="text-lg px-8">
-                        <Link to="/auth">Register for Free Access</Link>
+                        <Link to="/auth?intent=beta">Get Free LoopTrace™ Access</Link>
                       </Button>
                       <Button asChild variant="outline" size="lg" className="text-lg px-8">
                         <Link to="/auth">Sign In</Link>

@@ -28,14 +28,14 @@ export const Hero = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full mb-6">
             <Eye className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-white">
-              🚀 BETA ACCESS - Free until December 31, 2025
+              🚀 LoopTrace™ BETA - Free Access Until December 31, 2025
             </span>
           </div>
 
           <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
             Bangladesh's First AI Powered Apparel Sourcing Platform
            
-            <span className="block text-primary mt-2">Join Beta - Free Access Until Dec 31, 2025</span>
+            <span className="block text-primary mt-2">Powered by LoopTrace™ Technology</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed font-medium">
@@ -74,7 +74,7 @@ export const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
               <Link to="/auth?intent=beta">
-                Join Beta - Start Free
+                Get Free LoopTrace™ Access
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
