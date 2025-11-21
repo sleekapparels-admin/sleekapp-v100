@@ -13,6 +13,16 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    strictPort: false,
+    hmr: {
+      clientPort: 8081,
+    },
+    allowedHosts: [
+      '.sandbox.novita.ai',
+      '8082-is1xlb799wil11nelt1jp-b237eb32.sandbox.novita.ai',
+      '8081-is1xlb799wil11nelt1jp-b237eb32.sandbox.novita.ai',
+      '8080-is1xlb799wil11nelt1jp-b237eb32.sandbox.novita.ai',
+    ],
   },
   plugins: [
     react(),

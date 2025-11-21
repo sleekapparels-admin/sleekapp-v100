@@ -7,6 +7,7 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
 
 import { StickyWhatsAppButton } from "@/components/StickyWhatsAppButton";
+import { AIAssistantChat } from "@/components/AIAssistantChat";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -66,6 +67,7 @@ const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const SupplierVerification = lazy(() => import("./pages/admin/SupplierVerification"));
 const GetStarted = lazy(() => import("./pages/GetStarted"));
+const InstantQuote = lazy(() => import("./pages/InstantQuote"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const OrderManagement = lazy(() => import("./pages/admin/OrderManagement"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
@@ -126,6 +128,7 @@ const Root = () => {
       <ServiceWorkerStatus />
       
       <StickyWhatsAppButton />
+      <AIAssistantChat />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
@@ -158,6 +161,7 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
       { path: "/get-started", element: <GetStarted /> },
+      { path: "/instant-quote", element: <InstantQuote /> },
       { path: "/dashboard-router", element: <SmartDashboardRouter /> },
       { path: "/dashboard", element: <Dashboard /> },
       { path: "/admin", element: <AdminDashboard /> },

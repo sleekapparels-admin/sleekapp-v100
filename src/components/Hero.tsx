@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star, Eye, Zap, Shield } from "lucide-react";
+import { ArrowRight, Star, Eye, Zap, Shield, Calculator } from "lucide-react";
 export const Hero = () => {
   return <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
       {/* Background Video */}
@@ -72,16 +72,17 @@ export const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
-              <Link to="/get-started">
-                Get Free LoopTrace™ Access
-                <ArrowRight className="ml-2 h-5 w-5" />
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg shadow-primary/20">
+              <Link to="/instant-quote">
+                <Calculator className="mr-2 h-5 w-5" />
+                Get Instant Quote (30s)
               </Link>
             </Button>
             
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50">
-              <Link to="/production-tracking">
-                See Live Tracking Demo
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+              <Link to="/get-started">
+                Start Your Project
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
