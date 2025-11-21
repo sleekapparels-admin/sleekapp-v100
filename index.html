@@ -10,10 +10,10 @@
     <meta name="build-id" content="BUILD_TIMESTAMP" />
     <meta name="theme-color" content="#2D5C4E" />
     
-    <!-- Content Security Policy - Strict Configuration (No unsafe-inline/unsafe-eval) -->
+    <!-- Content Security Policy - Strict Configuration with inline script hash -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com;
+      script-src 'self' 'sha256-VVbZragXBoCq3xNCSykFl0fLOdZu5q7ku7+o78P0Zn8=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       img-src 'self' data: blob: https://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://fonts.googleapis.com;
       font-src 'self' data: https://fonts.gstatic.com;
@@ -37,8 +37,13 @@
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <!-- Google Tag Manager - Deferred for performance -->
-    <script src="/init-critical.js"></script>
+    <!-- Google Tag Manager - Initialize dataLayer before GTM loads -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+    </script>
+    
+    <!-- Load CSS optimizer after DOM ready -->
+    <script src="/init-critical.js" defer></script>
     <!-- End Google Tag Manager -->
 
     <!-- Performance Optimizations: Resource Hints -->
