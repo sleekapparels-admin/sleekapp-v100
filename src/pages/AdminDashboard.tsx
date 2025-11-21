@@ -18,6 +18,11 @@ import { CMSManagementPanel } from "@/components/admin/CMSManagementPanel";
 import type { Order } from "@/types/database";
 import { useAdminStats, useNewOrders, orderKeys } from "@/hooks/queries";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SmartSupplierAssignment } from "@/components/admin/SmartSupplierAssignment";
+import { AutomationRulesManager } from "@/components/admin/AutomationRulesManager";
+import { EnhancedCMSPanel } from "@/components/admin/EnhancedCMSPanel";
+import { ProductDescriptionGenerator } from "@/components/admin/ProductDescriptionGenerator";
+import { BlogEditor } from "@/components/blog/BlogEditor";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -134,6 +139,14 @@ export default function AdminDashboard() {
                 <Edit className="h-4 w-4" />
                 CMS
               </TabsTrigger>
+              <TabsTrigger value="blog" className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                Blog
+              </TabsTrigger>
+              <TabsTrigger value="automation" className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Automation
+              </TabsTrigger>
               <TabsTrigger value="suppliers" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Suppliers
@@ -167,28 +180,41 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {newOrders.map((order: any) => (
-                    <div key={order.id} className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <div className="font-semibold">Order #{order.order_number}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {order.quantity} × {order.product_type}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              Buyer: {order.profiles?.full_name || order.profiles?.email || 'Unknown'}
+                   {newOrders.map((order: any) => (
+                    <div key={order.id} className="space-y-4 p-4 bg-secondary/50 rounded-lg border">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3">
+                            <div>
+                              <div className="font-semibold">Order #{order.order_number}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {order.quantity} × {order.product_type}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                Buyer: {order.profiles?.full_name || order.profiles?.email || 'Unknown'}
+                              </div>
                             </div>
                           </div>
                         </div>
+                        <Button 
+                          onClick={() => setSelectedOrder(order)}
+                          size="sm"
+                          className="bg-primary hover:bg-primary/90"
+                        >
+                          Assign Manually
+                        </Button>
                       </div>
-                      <Button 
-                        onClick={() => setSelectedOrder(order)}
-                        size="sm"
-                        className="bg-primary hover:bg-primary/90"
-                      >
-                        Assign Supplier
-                      </Button>
+                      <SmartSupplierAssignment 
+                        orderId={order.id}
+                        productType={order.product_type}
+                        quantity={order.quantity}
+                        requirements={order.notes}
+                        onSupplierSelected={(supplierId) => {
+                          // Refresh data after supplier assignment
+                          queryClient.invalidateQueries({ queryKey: orderKeys.new() });
+                          queryClient.invalidateQueries({ queryKey: orderKeys.all });
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -210,15 +236,18 @@ export default function AdminDashboard() {
             </TabsContent>
 
             <TabsContent value="cms">
-              <CMSManagementPanel />
+              <div className="space-y-6">
+                <EnhancedCMSPanel />
+                <ProductDescriptionGenerator />
+              </div>
             </TabsContent>
 
-            <TabsContent value="quotes">
-              <QuoteApprovalPanel />
+            <TabsContent value="blog">
+              <BlogEditor />
             </TabsContent>
 
-            <TabsContent value="cms">
-              <CMSManagementPanel />
+            <TabsContent value="automation">
+              <AutomationRulesManager />
             </TabsContent>
 
             <TabsContent value="suppliers">

@@ -68,3 +68,6 @@ verify_jwt = true
 
 [functions.create-payment-intent]
 verify_jwt = true
+
+[functions.predict-delivery-timeline]
+verify_jwt = true
