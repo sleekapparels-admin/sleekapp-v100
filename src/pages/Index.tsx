@@ -16,6 +16,7 @@ import { StatsCounter } from "@/components/home/StatsCounter";
 import { CertificationBadges } from "@/components/home/CertificationBadges";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { SupplierCTASection } from "@/components/home/SupplierCTASection";
+import { BetaPricingSection } from "@/components/home/BetaPricingSection";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -76,7 +77,10 @@ function Index() {
         {/* Section 12: Resources */}
         <ResourcesSection />
         
-        {/* Section 13: Final CTA */}
+        {/* Section 13: Beta Pricing */}
+        <BetaPricingSection />
+        
+        {/* Section 14: Final CTA */}
         <FinalCTA />
         
         <Footer />
