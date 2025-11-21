@@ -58,7 +58,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.execute-automation-rules]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-product-description]
 verify_jwt = true
