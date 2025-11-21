@@ -10,13 +10,13 @@ export const BetaPricingSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <Badge variant="outline" className="mb-4 text-primary border-primary">
-            🚀 Beta Launch Pricing
+            🚀 LoopTrace™ Platform Pricing
           </Badge>
           <h2 className="text-h2-mobile md:text-h2 font-heading font-bold mb-4">
-            Simple, Transparent Pricing
+            LoopTrace™ Platform Tiers
           </h2>
           <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
-            Join our beta program and get free access to all features until December 31, 2025
+            Get free access to the LoopTrace™ platform until December 31, 2025
           </p>
         </div>
 
@@ -29,13 +29,13 @@ export const BetaPricingSection = () => {
             <CardHeader>
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                <CardTitle className="text-2xl">Beta Access</CardTitle>
+                <CardTitle className="text-2xl">LoopTrace™ Beta Access</CardTitle>
               </div>
               <div className="mb-2">
                 <span className="text-4xl font-bold">FREE</span>
                 <span className="text-muted-foreground ml-2">until Dec 31, 2025</span>
               </div>
-              <CardDescription>Full platform access for early adopters</CardDescription>
+              <CardDescription>Full LoopTrace™ platform access for early adopters</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3 mb-6">
@@ -148,8 +148,8 @@ export const BetaPricingSection = () => {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            <strong>Note:</strong> All beta users will retain access to a free tier after launch, with core features included. 
-            Beta users will also receive exclusive lifetime discounts on Growth and Scale subscription tiers.
+            <strong>Note:</strong> All beta users will retain access to a LoopTrace™ free tier after launch, with core features included. 
+            Beta users will also receive exclusive lifetime discounts on LoopTrace™ Growth and Scale subscription tiers.
           </p>
         </div>
       </div>
