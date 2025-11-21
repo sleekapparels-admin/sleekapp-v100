@@ -7,12 +7,23 @@ export type AuditAction =
   | 'blog_post_published'
   | 'blog_post_unpublished'
   | 'user_role_assigned'
-  | 'user_role_revoked';
+  | 'user_role_revoked'
+  | 'order_created'
+  | 'order_updated'
+  | 'order_status_changed'
+  | 'payment_initiated'
+  | 'payment_completed'
+  | 'quote_approved'
+  | 'supplier_assigned';
 
 export type AuditResourceType = 
   | 'blog_post'
   | 'user_role'
-  | 'user';
+  | 'user'
+  | 'order'
+  | 'payment'
+  | 'quote'
+  | 'supplier';
 
 interface LogAdminActionParams {
   action: AuditAction;
