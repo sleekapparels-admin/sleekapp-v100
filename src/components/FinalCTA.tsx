@@ -15,7 +15,7 @@ export const FinalCTA = () => {
         </p>
         
         <p className="text-base mb-8 opacity-75">
-          After launch: Flexible Pro & Pro Plus tiers • Beta users get lifetime discounts
+          After launch: Flexible Growth & Scale tiers • Beta users get lifetime discounts
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

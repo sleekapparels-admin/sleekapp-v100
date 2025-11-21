@@ -109,7 +109,7 @@ export const BetaPricingSection = () => {
             <CardHeader>
               <div className="flex items-center gap-2 mb-2">
                 <Crown className="h-5 w-5 text-accent" />
-                <CardTitle className="text-2xl">Pro & Pro Plus</CardTitle>
+                <CardTitle className="text-2xl">Growth & Scale</CardTitle>
               </div>
               <div className="mb-2">
                 <span className="text-4xl font-bold">TBD</span>
@@ -149,7 +149,7 @@ export const BetaPricingSection = () => {
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
             <strong>Note:</strong> All beta users will retain access to a free tier after launch, with core features included. 
-            Beta users will also receive exclusive lifetime discounts on Pro and Pro Plus subscription tiers.
+            Beta users will also receive exclusive lifetime discounts on Growth and Scale subscription tiers.
           </p>
         </div>
       </div>

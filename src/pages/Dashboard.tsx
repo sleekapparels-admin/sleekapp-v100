@@ -19,7 +19,7 @@ export default function Dashboard() {
               <div>
                 <h3 className="text-lg font-semibold text-primary mb-1">🎉 Welcome to Beta Access!</h3>
                 <p className="text-sm text-muted-foreground">
-                  You have full free access until December 31, 2025. After launch, beta users get lifetime discounts on Pro & Pro Plus tiers.
+                  You have full free access until December 31, 2025. After launch, beta users get lifetime discounts on Growth & Scale tiers.
                 </p>
               </div>
             </div>
