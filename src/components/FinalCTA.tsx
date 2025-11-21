@@ -25,7 +25,7 @@ export const FinalCTA = () => {
             variant="secondary"
             className="text-lg px-8 py-6 h-auto bg-background text-foreground hover:bg-background/90"
           >
-            <Link to="/auth?intent=beta">
+            <Link to="/get-started">
               Get Free LoopTrace™ Access
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>

@@ -65,6 +65,7 @@ const Consultation = lazy(() => import("./pages/Consultation"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const SupplierVerification = lazy(() => import("./pages/admin/SupplierVerification"));
+const GetStarted = lazy(() => import("./pages/GetStarted"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const OrderManagement = lazy(() => import("./pages/admin/OrderManagement"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
@@ -156,6 +157,7 @@ const router = createBrowserRouter([
       { path: "/sustainability", element: <Sustainability /> },
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
+      { path: "/get-started", element: <GetStarted /> },
       { path: "/dashboard-router", element: <SmartDashboardRouter /> },
       { path: "/dashboard", element: <Dashboard /> },
       { path: "/admin", element: <AdminDashboard /> },

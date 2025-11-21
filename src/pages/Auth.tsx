@@ -33,7 +33,9 @@ export default function Auth() {
   // Detect beta intent from URL parameter
   const searchParams = new URLSearchParams(window.location.search);
   const intent = searchParams.get('intent');
+  const role = searchParams.get('role');
   const isBetaIntent = intent === 'beta';
+  const isBuyerRole = role === 'buyer';
   
   const [activeTab, setActiveTab] = useState(isBetaIntent ? "signup" : "login");
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
@@ -268,7 +270,7 @@ export default function Auth() {
         <CardHeader className="space-y-3">
           <div className="text-center">
         <CardTitle className="text-2xl">
-          {isBetaIntent ? '🚀 Get Free LoopTrace™ Access' : 'Sleek Apparels'}
+          {isBetaIntent && isBuyerRole ? '🚀 Join LoopTrace™ - Buyer Registration' : isBetaIntent ? '🚀 Get Free LoopTrace™ Access' : 'Sleek Apparels'}
         </CardTitle>
         <CardDescription className="text-base">
           {isBetaIntent 
@@ -312,7 +314,7 @@ export default function Auth() {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">
-            {isBetaIntent ? 'Get LoopTrace™ 🚀' : 'Sign Up'}
+            {isBetaIntent ? 'Join Early Access 🚀' : 'Sign Up'}
           </TabsTrigger>
             </TabsList>
             <TabsContent value="login">

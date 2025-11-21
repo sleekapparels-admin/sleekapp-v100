@@ -144,16 +144,15 @@ const BecomeSupplier = () => {
           <div className="container mx-auto px-4 max-w-6xl">
             {/* Hero Section */}
             <div className="text-center mb-12">
-              <Badge className="mb-4" variant="secondary">
-                <Factory className="w-4 h-4 mr-2" />
-                Supplier Registration
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+                🚀 Includes Free LoopTrace™ Platform Access
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 Join Our Vetted Supplier Network
               </h1>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Connect with global buyers seeking quality manufacturers. Access low-MOQ orders, 
-                transparent pricing, and managed service support.
+                Connect with global buyers seeking quality manufacturers. Manage orders with LoopTrace™ 
+                real-time tracking, access low-MOQ opportunities, and grow your business with transparent pricing.
               </p>
             </div>
 
