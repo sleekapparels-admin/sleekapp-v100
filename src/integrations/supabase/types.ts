@@ -142,6 +142,7 @@ export type Database = {
           specialty_sourcing_required: boolean | null
           status: string | null
           total_price: number
+          user_id: string | null
         }
         Insert: {
           additional_requirements?: string | null
@@ -171,6 +172,7 @@ export type Database = {
           specialty_sourcing_required?: boolean | null
           status?: string | null
           total_price: number
+          user_id?: string | null
         }
         Update: {
           additional_requirements?: string | null
@@ -200,6 +202,7 @@ export type Database = {
           specialty_sourcing_required?: boolean | null
           status?: string | null
           total_price?: number
+          user_id?: string | null
         }
         Relationships: [
           {
