@@ -71,3 +71,9 @@ verify_jwt = true
 
 [functions.predict-delivery-timeline]
 verify_jwt = true
+
+[functions.log-audit-action]
+verify_jwt = true
+
+[functions.create-database-backup]
+verify_jwt = true
