@@ -44,3 +44,27 @@ verify_jwt = false
 
 [functions.auto-confirm-supplier]
 verify_jwt = false
+
+[functions.initialize-production-stages]
+verify_jwt = true
+
+[functions.ai-supplier-assignment]
+verify_jwt = true
+
+[functions.predict-quality-risks]
+verify_jwt = true
+
+[functions.send-notification-email]
+verify_jwt = true
+
+[functions.execute-automation-rules]
+verify_jwt = false
+
+[functions.generate-product-description]
+verify_jwt = true
+
+[functions.ai-blog-assistant]
+verify_jwt = true
+
+[functions.create-payment-intent]
+verify_jwt = true

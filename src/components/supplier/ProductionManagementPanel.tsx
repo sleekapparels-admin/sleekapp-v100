@@ -108,9 +108,41 @@ export const ProductionManagementPanel = ({ supplierId }: { supplierId: string }
         .order('stage_number', { ascending: true });
 
       if (error) throw error;
-      setStages(data || []);
+      
+      // If no stages exist, initialize them
+      if (!data || data.length === 0) {
+        const selectedOrderData = orders.find(o => o.id === supplierOrderId);
+        if (selectedOrderData) {
+          await initializeProductionStages(supplierOrderId, selectedOrderData.orders.product_type);
+          // Fetch again after initialization
+          const { data: newData } = await supabase
+            .from('production_stages')
+            .select('*')
+            .eq('supplier_order_id', supplierOrderId)
+            .order('stage_number', { ascending: true });
+          setStages(newData || []);
+        }
+      } else {
+        setStages(data);
+      }
     } catch (error: any) {
       console.error('Error fetching stages:', error);
+    }
+  };
+
+  const initializeProductionStages = async (supplierOrderId: string, productType: string) => {
+    try {
+      console.log('Initializing production stages...');
+      const { data, error } = await supabase.functions.invoke('initialize-production-stages', {
+        body: { supplier_order_id: supplierOrderId, product_type: productType }
+      });
+
+      if (error) throw error;
+      console.log('Production stages initialized:', data);
+      toast.success('Production stages initialized');
+    } catch (error: any) {
+      console.error('Error initializing stages:', error);
+      toast.error('Failed to initialize production stages');
     }
   };
 
