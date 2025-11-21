@@ -13,16 +13,16 @@
     <!-- Content Security Policy - Strict Configuration with inline script hash -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'sha256-VVbZragXBoCq3xNCSykFl0fLOdZu5q7ku7+o78P0Zn8=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com;
+      script-src 'self' 'sha256-VVbZragXBoCq3xNCSykFl0fLOdZu5q7ku7+o78P0Zn8=' 'sha256-W7CSJa1fR5YqXKxqCXwxhv0EkR+n5xE5PXE2wvxvmyI=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       img-src 'self' data: blob: https://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://fonts.googleapis.com https://images.unsplash.com https://c.clarity.ms https://www.facebook.com https://px.ads.linkedin.com;
       font-src 'self' data: https://fonts.gstatic.com;
       connect-src 'self' https://eqpftggctumujhutomom.supabase.co wss://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://api.lovable.dev https://c.clarity.ms https://www.facebook.com https://px.ads.linkedin.com;
       media-src 'self' blob: data:;
       object-src 'none';
-      frame-src 'self';
+      frame-src 'self' https://www.facebook.com;
       base-uri 'self';
-      form-action 'self';
+      form-action 'self' https://www.facebook.com;
       frame-ancestors 'self';
       upgrade-insecure-requests;
     " />
