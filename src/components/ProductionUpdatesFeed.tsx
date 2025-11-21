@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Image as ImageIcon, MessageSquare, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -45,6 +46,89 @@ export const ProductionUpdatesFeed = ({
   useEffect(() => {
     fetchUpdates();
   }, [orderId, refreshTrigger]);
+
+  // Real-time subscription for order updates
+  useEffect(() => {
+    if (!orderId) return;
+
+    // Subscribe to order_updates changes
+    const channel = supabase
+      .channel('order-updates-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'order_updates',
+          filter: `order_id=eq.${orderId}`
+        },
+        async (payload) => {
+          console.log('New order update received:', payload);
+          
+          const newUpdate = payload.new as Update;
+          
+          // Fetch profile data for the new update
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name")
+            .eq("id", newUpdate.created_by)
+            .single();
+
+          const updateWithProfile = {
+            ...newUpdate,
+            profiles: profile || { full_name: "Unknown User" },
+          };
+          
+          // Show toast notification
+          toast.success('New Production Update', {
+            description: `${stageLabels[newUpdate.stage]}: ${newUpdate.message || `${newUpdate.completion_percentage}% complete`}`,
+            duration: 5000,
+          });
+          
+          // Add new update to the beginning of the list
+          setUpdates(prev => [updateWithProfile as Update, ...prev]);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'order_updates',
+          filter: `order_id=eq.${orderId}`
+        },
+        async (payload) => {
+          console.log('Order update modified:', payload);
+          
+          const updatedUpdate = payload.new as Update;
+          
+          // Fetch profile data
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name")
+            .eq("id", updatedUpdate.created_by)
+            .single();
+
+          const updateWithProfile = {
+            ...updatedUpdate,
+            profiles: profile || { full_name: "Unknown User" },
+          };
+          
+          // Update the existing update in the list
+          setUpdates(prev => 
+            prev.map(update => 
+              update.id === updatedUpdate.id ? updateWithProfile as Update : update
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    // Cleanup on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [orderId]);
 
   const fetchUpdates = async () => {
     try {

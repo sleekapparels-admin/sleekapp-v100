@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Loader2, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 import { format } from "date-fns";
 
 interface ProductionStage {
@@ -52,6 +53,69 @@ export const LoopTraceOrderTracking = () => {
     if (selectedOrder) {
       fetchProductionStages(selectedOrder);
     }
+  }, [selectedOrder]);
+
+  // Real-time subscription for production stages
+  useEffect(() => {
+    if (!selectedOrder) return;
+
+    // Get supplier_order_id for the selected order
+    const getSupplierOrderId = async () => {
+      const { data: supplierOrderData } = await supabase
+        .from('supplier_orders')
+        .select('id')
+        .eq('buyer_order_id', selectedOrder)
+        .maybeSingle();
+      
+      return supplierOrderData?.id;
+    };
+
+    const setupRealtimeSubscription = async () => {
+      const supplierOrderId = await getSupplierOrderId();
+      if (!supplierOrderId) return;
+
+      // Subscribe to production_stages changes
+      const channel = supabase
+        .channel('production-stages-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Listen to INSERT, UPDATE, DELETE
+            schema: 'public',
+            table: 'production_stages',
+            filter: `supplier_order_id=eq.${supplierOrderId}`
+          },
+          (payload) => {
+            console.log('Production stage updated:', payload);
+            
+            // Show toast notification
+            if (payload.eventType === 'UPDATE') {
+              const stage = payload.new as ProductionStage;
+              sonnerToast.success('Production Update', {
+                description: `${stage.stage_name}: ${stage.completion_percentage}% complete`,
+                duration: 5000,
+              });
+            } else if (payload.eventType === 'INSERT') {
+              const stage = payload.new as ProductionStage;
+              sonnerToast.info('New Production Stage', {
+                description: `${stage.stage_name} has started`,
+                duration: 5000,
+              });
+            }
+            
+            // Refresh stages data
+            fetchProductionStages(selectedOrder);
+          }
+        )
+        .subscribe();
+
+      // Cleanup on unmount
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    };
+
+    setupRealtimeSubscription();
   }, [selectedOrder]);
 
   const fetchOrders = async () => {
