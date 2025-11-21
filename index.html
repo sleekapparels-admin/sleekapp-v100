@@ -10,12 +10,12 @@
     <meta name="build-id" content="BUILD_TIMESTAMP" />
     <meta name="theme-color" content="#2D5C4E" />
     
-    <!-- Content Security Policy -->
+    <!-- Content Security Policy - Strict Configuration (No unsafe-inline/unsafe-eval) -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com;
+      script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      img-src 'self' data: blob: https: http:;
+      img-src 'self' data: blob: https://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://fonts.googleapis.com;
       font-src 'self' data: https://fonts.gstatic.com;
       connect-src 'self' https://eqpftggctumujhutomom.supabase.co wss://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://api.lovable.dev;
       media-src 'self' blob: data:;
@@ -38,10 +38,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- Google Tag Manager - Deferred for performance -->
-    <script>
-      // Initialize dataLayer for GTM
-      window.dataLayer = window.dataLayer || [];
-    </script>
+    <script src="/init-critical.js"></script>
     <!-- End Google Tag Manager -->
 
     <!-- Performance Optimizations: Resource Hints -->
@@ -143,19 +140,7 @@
       @media print { #async-css-loader { display: none; } }
     </style>
     
-    <!-- Async CSS Loading Script - Non-blocking -->
-    <script>
-      (function() {
-        var links = document.getElementsByTagName('link');
-        for (var i = 0; i < links.length; i++) {
-          var link = links[i];
-          if (link.rel === 'stylesheet' && link.href.includes('index-') && link.href.includes('.css')) {
-            link.media = 'print';
-            link.onload = function() { this.media = 'all'; };
-          }
-        }
-      })();
-    </script>
+    <!-- Async CSS Loading Script moved to external file for CSP compliance -->
     
     <!-- Removed external web fonts to improve performance; using system fonts -->
 
