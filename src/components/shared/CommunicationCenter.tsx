@@ -44,20 +44,46 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
   useEffect(() => {
     fetchMessages();
     
-    // Subscribe to real-time message updates
-    const subscription = supabase
-      .channel('messages')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'messages'
-      }, () => {
-        fetchMessages();
-      })
-      .subscribe();
+    const setupRealtimeSubscriptions = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Subscribe to messages where user is the sender
+      const senderChannel = supabase
+        .channel('messages-sent')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${user.id}`
+        }, () => {
+          fetchMessages();
+        })
+        .subscribe();
+
+      // Subscribe to messages where user is the recipient
+      const recipientChannel = supabase
+        .channel('messages-received')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${user.id}`
+        }, () => {
+          fetchMessages();
+        })
+        .subscribe();
+
+      return () => {
+        senderChannel.unsubscribe();
+        recipientChannel.unsubscribe();
+      };
+    };
+
+    const cleanup = setupRealtimeSubscriptions();
 
     return () => {
-      subscription.unsubscribe();
+      cleanup.then(cleanupFn => cleanupFn?.());
     };
   }, [orderFilter]);
 
