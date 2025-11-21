@@ -57,47 +57,53 @@ export const LoopTraceOrderTracking = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const userRes: any = await supabase.auth.getUser();
-      const user = userRes.data?.user;
+      const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) return;
 
-      const ordersRes: any = await supabase
+      // Fetch orders
+      const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
         .select('id, order_number, product_type, quantity, workflow_status, expected_delivery_date')
         .eq('buyer_id', user.id)
         .in('workflow_status', ['bulk_production', 'qc_inspection', 'completed', 'shipped'])
         .order('created_at', { ascending: false });
 
-      if (ordersRes.error) throw ordersRes.error;
+      if (ordersError) throw ordersError;
+      if (!ordersData) {
+        setOrders([]);
+        return;
+      }
 
       const result: OrderWithTracking[] = [];
       
-      for (const order of (ordersRes.data || [])) {
-        const soRes: any = await supabase
+      for (const order of ordersData) {
+        // Fetch supplier order using buyer_order_id
+        const { data: supplierOrderData } = await supabase
           .from('supplier_orders')
           .select('id, supplier_id')
-          .eq('order_id', order.id)
+          .eq('buyer_order_id', order.id)
           .maybeSingle();
 
         let supplierInfo = { company_name: 'Unknown' };
-        if (soRes.data) {
-          const sRes: any = await supabase
+        if (supplierOrderData?.supplier_id) {
+          // Fetch supplier info
+          const { data: supplierData } = await supabase
             .from('suppliers')
             .select('company_name')
-            .eq('id', soRes.data.supplier_id)
+            .eq('id', supplierOrderData.supplier_id)
             .maybeSingle();
           
-          if (sRes.data) {
-            supplierInfo = sRes.data;
+          if (supplierData) {
+            supplierInfo = supplierData;
           }
         }
 
         result.push({
           ...order,
-          supplier_orders: soRes.data ? [{
-            id: soRes.data.id,
-            supplier_id: soRes.data.supplier_id,
+          supplier_orders: supplierOrderData ? [{
+            id: supplierOrderData.id,
+            supplier_id: supplierOrderData.supplier_id,
             suppliers: supplierInfo
           }] : []
         });
@@ -120,11 +126,21 @@ export const LoopTraceOrderTracking = () => {
 
   const fetchProductionStages = async (orderId: string) => {
     try {
-      const ordersRes: any = await supabase.from('supplier_orders').select('id').eq('order_id', orderId);
-      if (!ordersRes.data?.[0]) return;
+      const { data: supplierOrderData } = await supabase
+        .from('supplier_orders')
+        .select('id')
+        .eq('buyer_order_id', orderId)
+        .maybeSingle();
+      
+      if (!supplierOrderData) return;
 
-      const stagesRes: any = await supabase.from('production_stages').select('*').eq('supplier_order_id', ordersRes.data[0].id).order('stage_number', { ascending: true });
-      setStages(stagesRes.data || []);
+      const { data: stagesData } = await supabase
+        .from('production_stages')
+        .select('*')
+        .eq('supplier_order_id', supplierOrderData.id)
+        .order('stage_number', { ascending: true });
+      
+      setStages(stagesData || []);
     } catch (error: any) {
       console.error('Error fetching stages:', error);
     }

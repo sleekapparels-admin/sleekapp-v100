@@ -59,7 +59,7 @@ export const ProductionManagementPanel = ({ supplierId }: { supplierId: string }
       // Fetch supplier orders
       const { data: supplierOrdersData, error } = await supabase
         .from('supplier_orders')
-        .select('id, status')
+        .select('id, buyer_order_id, status, product_type, quantity')
         .eq('supplier_id', supplierId)
         .in('status', ['accepted', 'in_production'])
         .order('created_at', { ascending: false });
@@ -71,15 +71,19 @@ export const ProductionManagementPanel = ({ supplierId }: { supplierId: string }
         (supplierOrdersData || []).map(async (so) => {
           const { data: orderData } = await supabase
             .from('orders')
-            .select('order_number, product_type, quantity')
-            .eq('id', so.id)
+            .select('order_number')
+            .eq('id', so.buyer_order_id)
             .maybeSingle();
 
           return {
             id: so.id,
-            order_id: so.id,
+            order_id: so.buyer_order_id,
             status: so.status,
-            orders: orderData || { order_number: 'N/A', product_type: 'Unknown', quantity: 0 }
+            orders: {
+              order_number: orderData?.order_number || 'N/A',
+              product_type: so.product_type || 'Unknown',
+              quantity: so.quantity || 0
+            }
           };
         })
       );
