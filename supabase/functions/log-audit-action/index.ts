@@ -19,13 +19,35 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Get JWT token from Authorization header for user validation
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Missing token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create client with service role for database operations
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get request body
-    const { action, resource_type, resource_id, details, user_id }: AuditLogRequest = await req.json();
+    // Validate JWT and extract user ID (server-side validation)
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.error('Invalid JWT token:', userError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Get request body (user_id from body is now ignored - we use JWT-validated user.id)
+    const { action, resource_type, resource_id, details }: AuditLogRequest = await req.json();
 
     // Capture IP address and user agent from headers
     const ipAddress = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
@@ -33,13 +55,13 @@ Deno.serve(async (req) => {
                       'unknown';
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
-    console.log('Logging audit action:', { action, resource_type, resource_id, user_id, ipAddress });
+    console.log('Logging audit action:', { action, resource_type, resource_id, user_id: user.id, ipAddress });
 
-    // Insert audit log with server-side captured IP
+    // Insert audit log with server-validated user ID (not from request body)
     const { data, error } = await supabaseClient
       .from('admin_audit_logs')
       .insert({
-        admin_id: user_id,
+        admin_id: user.id,  // Use JWT-validated user ID, not from request body
         action,
         resource_type,
         resource_id: resource_id || null,
