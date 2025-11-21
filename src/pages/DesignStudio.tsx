@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { getPageSEO } from "@/lib/seo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GarmentSelector, type Garment } from "@/components/design-studio/GarmentSelector";
-import { DesignEditor } from "@/components/design-studio/DesignEditor";
-import { GarmentPreview } from "@/components/design-studio/GarmentPreview";
+import { GarmentPreviewSkeleton } from "@/components/design-studio/GarmentPreviewSkeleton";
+import { DesignEditorSkeleton } from "@/components/design-studio/DesignEditorSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, ShoppingCart, Palette } from "lucide-react";
+
+// Lazy load heavy 3D components for better Core Web Vitals
+const DesignEditor = lazy(() => import("@/components/design-studio/DesignEditor").then(m => ({ default: m.DesignEditor })));
+const GarmentPreview = lazy(() => import("@/components/design-studio/GarmentPreview").then(m => ({ default: m.GarmentPreview })));
 
 const PRESET_COLORS = [
   { name: "Black", value: "#000000" },
@@ -135,20 +139,24 @@ const DesignStudio = () => {
                     </Card>
 
                     {/* Design Editor */}
-                    <DesignEditor
-                      onDesignGenerated={handleDesignGenerated}
-                      onTextChange={handleTextChange}
-                    />
+                    <Suspense fallback={<DesignEditorSkeleton />}>
+                      <DesignEditor
+                        onDesignGenerated={handleDesignGenerated}
+                        onTextChange={handleTextChange}
+                      />
+                    </Suspense>
                   </div>
 
                   {/* Right Panel - Preview and Actions */}
                   <div className="lg:col-span-2 space-y-6">
-                    <GarmentPreview
-                      garmentType={selectedGarment.type}
-                      baseColor={baseColor}
-                      designImage={designImage}
-                      textOverlay={textOverlay}
-                    />
+                    <Suspense fallback={<GarmentPreviewSkeleton />}>
+                      <GarmentPreview
+                        garmentType={selectedGarment.type}
+                        baseColor={baseColor}
+                        designImage={designImage}
+                        textOverlay={textOverlay}
+                      />
+                    </Suspense>
 
                     {/* Action Card */}
                     <Card>
