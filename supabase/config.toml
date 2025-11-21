@@ -1,5 +1,11 @@
 project_id = "eqpftggctumujhutomom"
 
+[functions.generate-invoice]
+verify_jwt = true
+
+[functions.generate-work-order]
+verify_jwt = true
+
 [functions.seed-test-users]
 verify_jwt = false
 
