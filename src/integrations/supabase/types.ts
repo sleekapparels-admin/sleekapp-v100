@@ -465,6 +465,27 @@ export type Database = {
         }
         Relationships: []
       }
+      bootstrap_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string
+          success: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address: string
+          success?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string
+          success?: boolean
+        }
+        Relationships: []
+      }
       capacity_utilization_logs: {
         Row: {
           created_at: string | null

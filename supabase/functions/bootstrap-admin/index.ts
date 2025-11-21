@@ -11,6 +11,11 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
     const { email, token } = await req.json();
 
     if (!email || !token) {
@@ -20,20 +25,68 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Verify bootstrap token
+    // Capture client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                     req.headers.get('x-real-ip') || 
+                     'unknown';
+
+    // Check rate limit: max 3 attempts per IP per hour
+    const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
+    const { data: recentAttempts, error: rateLimitError } = await supabaseClient
+      .from('bootstrap_attempts')
+      .select('*')
+      .eq('ip_address', clientIP)
+      .gte('created_at', oneHourAgo);
+
+    if (rateLimitError) {
+      console.error('Error checking rate limit:', rateLimitError);
+    }
+
+    if (recentAttempts && recentAttempts.length >= 3) {
+      // Log rate limit violation
+      await supabaseClient.from('bootstrap_attempts').insert({
+        ip_address: clientIP,
+        success: false
+      });
+
+      console.warn(`⚠️ SECURITY: Rate limit exceeded for bootstrap admin from IP: ${clientIP}`);
+      
+      return new Response(
+        JSON.stringify({ error: 'Too many attempts. Try again in 1 hour.' }),
+        { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 429 }
+      );
+    }
+
+    // Verify bootstrap token using constant-time comparison
     const ADMIN_BOOTSTRAP_TOKEN = Deno.env.get('ADMIN_BOOTSTRAP_TOKEN');
-    if (!ADMIN_BOOTSTRAP_TOKEN || token !== ADMIN_BOOTSTRAP_TOKEN) {
-      console.error('Invalid bootstrap token provided');
+    if (!ADMIN_BOOTSTRAP_TOKEN) {
+      console.error('ADMIN_BOOTSTRAP_TOKEN not configured');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
+      );
+    }
+
+    // Constant-time comparison to prevent timing attacks
+    let isValidToken = token.length === ADMIN_BOOTSTRAP_TOKEN.length;
+    for (let i = 0; i < token.length; i++) {
+      isValidToken = isValidToken && (token.charCodeAt(i) === ADMIN_BOOTSTRAP_TOKEN.charCodeAt(i));
+    }
+
+    if (!isValidToken) {
+      // Log failed attempt
+      await supabaseClient.from('bootstrap_attempts').insert({
+        ip_address: clientIP,
+        success: false
+      });
+
+      console.error(`⚠️ SECURITY: Invalid bootstrap token attempt from IP: ${clientIP}`);
+      
       return new Response(
         JSON.stringify({ error: 'Invalid token' }),
         { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 403 }
       );
     }
-
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
 
     // Check if any admin exists
     const { data: existingAdmins, error: checkError } = await supabaseClient
@@ -84,13 +137,26 @@ Deno.serve(async (req) => {
 
     if (insertError) {
       console.error('Error assigning admin role:', insertError);
+      
+      // Log failed attempt
+      await supabaseClient.from('bootstrap_attempts').insert({
+        ip_address: clientIP,
+        success: false
+      });
+      
       return new Response(
         JSON.stringify({ error: 'Failed to assign admin role' }),
         { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
       );
     }
 
-    console.log(`✓ Admin role assigned to user: ${email}`);
+    // Log successful bootstrap
+    await supabaseClient.from('bootstrap_attempts').insert({
+      ip_address: clientIP,
+      success: true
+    });
+
+    console.log(`✓ Admin role assigned to user: ${email} from IP: ${clientIP}`);
 
     return new Response(
       JSON.stringify({ 
