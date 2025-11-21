@@ -77,3 +77,6 @@ verify_jwt = true
 
 [functions.create-database-backup]
 verify_jwt = true
+
+[functions.submit-blog-comment]
+verify_jwt = false
