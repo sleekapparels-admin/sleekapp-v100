@@ -203,7 +203,7 @@ export const Navbar = () => {
             </NavigationMenu>
 
             {userRole !== 'supplier' && <Button asChild variant={isHome ? "outline" : "default"} size="sm" className={`ml-2 font-semibold ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm" : "bg-accent hover:bg-accent/90 text-accent-foreground"}`}>
-                <Link to="/get-started">Get LoopTrace™ Free</Link>
+                <Link to="/get-started">Start Your Project</Link>
               </Button>}
 
             {user ? <>
@@ -273,7 +273,7 @@ export const Navbar = () => {
 
             {userRole !== 'supplier' && <Button asChild variant="default" className="w-full mt-3 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-sm">
                 <Link to="/get-started" onClick={() => setIsOpen(false)}>
-                  Get LoopTrace™ Free
+                  Start Your Project
                 </Link>
               </Button>}
             {user ? <>
