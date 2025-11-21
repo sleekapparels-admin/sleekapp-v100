@@ -216,9 +216,6 @@ export const Navbar = () => {
                   Dashboard
                 </Button>
               </> : <>
-                <Button asChild variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
-                  <Link to="/join-supplier">Join as Supplier</Link>
-                </Button>
                 <Button onClick={() => navigate("/auth")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
                   Sign In
                 </Button>
@@ -294,11 +291,6 @@ export const Navbar = () => {
                   Dashboard
                 </Button>
               </> : <>
-                <Button asChild variant="outline" className="w-full mt-2">
-                  <Link to="/join-supplier" onClick={() => setIsOpen(false)}>
-                    Join as Supplier
-                  </Link>
-                </Button>
                 <Button onClick={() => {
             navigate("/auth");
             setIsOpen(false);
