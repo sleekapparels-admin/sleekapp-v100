@@ -8,14 +8,8 @@ import { RootErrorBoundary } from "@/components/RootErrorBoundary";
 checkReactDuplication();
 
 import { initPerformanceOptimizations } from "./lib/performanceOptimizer";
-import { registerServiceWorker } from "./lib/cacheConfig";
 import { getPerformanceMonitor } from "./lib/performanceMonitor";
 import { initRoutePrefetching } from "./lib/routePrefetch";
-
-// Register service worker ASAP for caching (production only)
-if (import.meta.env.PROD) {
-  registerServiceWorker().catch(console.error);
-}
 
 // Initialize performance optimizations
 initPerformanceOptimizations();
