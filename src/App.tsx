@@ -74,6 +74,8 @@ const ModernAdminDashboard = lazy(() => import("./pages/ModernAdminDashboard"));
 const OrderManagement = lazy(() => import("./pages/admin/OrderManagement"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
 const ProductUpload = lazy(() => import("./pages/supplier/ProductUpload"));
+const ProductApproval = lazy(() => import("./pages/admin/ProductApproval"));
+const ProductReview = lazy(() => import("./pages/admin/ProductReview"));
 const BuyerOrderTracking = lazy(() => import("./pages/BuyerOrderTracking"));
 const UserSettings = lazy(() => import("./pages/UserSettings"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
@@ -173,6 +175,8 @@ const router = createBrowserRouter([
       { path: "/admin", element: <ModernAdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },
       { path: "/admin/orders", element: <OrderManagement /> },
+      { path: "/admin/products/approval", element: <ProductApproval /> },
+      { path: "/admin/products/:productId/review", element: <ProductReview /> },
       { path: "/orders/:orderId/track", element: <BuyerOrderTracking /> },
       { path: "/orders/:orderId", element: <OrderDetails /> },
       { path: "/orders", element: <Orders /> },

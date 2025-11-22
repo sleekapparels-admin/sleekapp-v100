@@ -4,7 +4,7 @@ import { Upload, X, ZoomIn, Image as ImageIcon, AlertCircle, Loader2, Check } fr
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
 interface ImageUploaderProps {

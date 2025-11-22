@@ -34,9 +34,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUploader } from '@/components/marketplace/ImageUploader';
 import { SpecificationsBuilder } from '@/components/marketplace/SpecificationsBuilder';
-import { useSupplierByUser } from '@/hooks/useSuppliers';
+import { useSupplierByUser } from '@/hooks/queries/useSuppliers';
 import { useCreateProduct, useSaveDraft } from '@/hooks/useMarketplace';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { ProductStatus } from '@/types/marketplace';
 
 const productSchema = z.object({
