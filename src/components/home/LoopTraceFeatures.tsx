@@ -399,6 +399,7 @@ export function LoopTraceFeatures() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+            onClick={() => window.location.href = '/ai-quote-generator'}
           >
             Try AI Quote Generator
             <ArrowRight className="ml-2 h-5 w-5" />

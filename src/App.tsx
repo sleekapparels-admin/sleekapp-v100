@@ -33,6 +33,7 @@ const Portfolio = lazy(() => import("./pages/Portfolio"));
 const About = lazy(() => import("./pages/About"));
 const Sustainability = lazy(() => import("./pages/Sustainability"));
 const Auth = lazy(() => import("./pages/Auth"));
+const AIQuoteGenerator = lazy(() => import("./components/AIQuoteGenerator").then(m => ({ default: m.AIQuoteGenerator })));
 
 const OrderDetails = lazy(() => import("./pages/OrderDetails"));
 const Orders = lazy(() => import("./pages/Orders"));
@@ -164,6 +165,7 @@ const router = createBrowserRouter([
       { path: "/auth", element: <Auth /> },
       { path: "/get-started", element: <GetStarted /> },
       { path: "/instant-quote", element: <InstantQuote /> },
+      { path: "/ai-quote-generator", element: <AIQuoteGenerator /> },
       { path: "/dashboard-router", element: <SmartDashboardRouter /> },
       { path: "/dashboard", element: <ModernBuyerDashboard /> },
       { path: "/buyer-dashboard-modern", element: <ModernBuyerDashboard /> },
