@@ -166,6 +166,12 @@ const router = createBrowserRouter([
       { path: "/get-started", element: <GetStarted /> },
       { path: "/instant-quote", element: <InstantQuote /> },
       { path: "/ai-quote-generator", element: <AIQuoteGenerator /> },
+      
+      // Route aliases for SEO/legacy URLs (prevent 404s)
+      { path: "/sign-in", element: <Navigate to="/auth" replace /> },
+      { path: "/looptrace", element: <Navigate to="/looptrace-technology" replace /> },
+      { path: "/uniforms", element: <Navigate to="/uniforms-teamwear" replace /> },
+      
       { path: "/dashboard-router", element: <SmartDashboardRouter /> },
       { path: "/dashboard", element: <ModernBuyerDashboard /> },
       { path: "/buyer-dashboard-modern", element: <ModernBuyerDashboard /> },

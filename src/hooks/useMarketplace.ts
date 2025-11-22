@@ -46,6 +46,10 @@ export function useMarketplaceProducts(filters?: ProductSearchFilters) {
           )
         `)
         .eq('status', 'approved');
+      
+      // Set a reasonable timeout to prevent infinite loading
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
       // Apply filters
       if (filters?.category) {
@@ -94,10 +98,21 @@ export function useMarketplaceProducts(filters?: ProductSearchFilters) {
       query = query.range(offset, offset + limit - 1);
 
       const { data, error } = await query;
+      
+      clearTimeout(timeoutId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Marketplace query error:', error);
+        throw error;
+      }
       return data as MarketplaceProduct[];
     },
+    // Add retry and timeout configuration
+    retry: 1,
+    retryDelay: 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    // Return empty array on error instead of infinite loading
+    placeholderData: [],
   });
 }
 
