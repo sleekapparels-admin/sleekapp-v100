@@ -142,7 +142,11 @@ Deno.serve(async (req) => {
     'https://sleekapparels.com',
     'https://www.sleekapparels.com',
     'http://localhost:5173',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'lovableproject.com',
+    'lovable.app',
+    'netlify.app',
+    'vercel.app'
   ];
   
   const origin = req.headers.get('origin');
@@ -150,13 +154,48 @@ Deno.serve(async (req) => {
   
   // Only enforce origin validation in production for POST requests
   if (!isDevelopment && req.method === 'POST' && origin) {
-    const isAllowedOrigin = allowedOrigins.some(allowed => origin.startsWith(allowed));
-    const isAllowedReferer = referer && allowedOrigins.some(allowed => referer.startsWith(allowed));
-    
-    if (!isAllowedOrigin && !isAllowedReferer) {
-      console.warn(`Blocked request from unauthorized origin: ${origin || referer}`);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized origin' }),
+    try {
+      const url = new URL(origin);
+      const originHostname = url.hostname;
+      const originHost = url.host;
+
+      const isAllowedOrigin = allowedOrigins.some(allowed => {
+         const allowedDomain = allowed.replace(/^https?:\/\//, '');
+         if (allowedDomain.includes(':')) {
+            return originHost === allowedDomain;
+         }
+         return originHostname === allowedDomain || originHostname.endsWith('.' + allowedDomain);
+      });
+
+      let isAllowedReferer = false;
+      if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+          const refererHostname = refererUrl.hostname;
+          const refererHost = refererUrl.host;
+          isAllowedReferer = allowedOrigins.some(allowed => {
+            const allowedDomain = allowed.replace(/^https?:\/\//, '');
+            if (allowedDomain.includes(':')) {
+                return refererHost === allowedDomain;
+            }
+            return refererHostname === allowedDomain || refererHostname.endsWith('.' + allowedDomain);
+          });
+        } catch {
+          // Ignore invalid referer
+        }
+      }
+
+      if (!isAllowedOrigin && !isAllowedReferer) {
+         console.warn(`Blocked request from unauthorized origin: ${origin || referer}`);
+         return new Response(
+            JSON.stringify({ error: 'Unauthorized origin' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+         );
+      }
+    } catch (e) {
+       console.error('Error validating origin:', e);
+       return new Response(
+        JSON.stringify({ error: 'Invalid origin' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

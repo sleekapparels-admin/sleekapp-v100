@@ -35,21 +35,36 @@ export const ChangePasswordDialog = () => {
     setIsLoading(true);
     setErrors([]);
 
-    // Validate new password
-    const validation = passwordSchema.safeParse(newPassword);
-    if (!validation.success) {
-      setErrors(validation.error.errors.map(e => e.message));
-      setIsLoading(false);
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setErrors(["Passwords do not match"]);
-      setIsLoading(false);
-      return;
-    }
-
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        setErrors(["Unable to verify user"]);
+        return;
+      }
+
+      // Validate new password
+      const validation = passwordSchema.safeParse(newPassword);
+      if (!validation.success) {
+        setErrors(validation.error.errors.map(e => e.message));
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setErrors(["Passwords do not match"]);
+        return;
+      }
+
+      // SECURITY FIX: Re-authenticate with current password before allowing change
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        setErrors(["Current password is incorrect"]);
+        return;
+      }
+
       // Check password against breach database
       const { data: breachData, error: breachError } = await supabase.functions.invoke('password-breach-check', {
         body: { password: newPassword }
@@ -60,11 +75,10 @@ export const ChangePasswordDialog = () => {
         // Continue with password change if breach check fails
       } else if (breachData?.pwned) {
         setErrors([`This password has been exposed in ${breachData.count.toLocaleString()} data breaches. Please choose a different password.`]);
-        setIsLoading(false);
         return;
       }
 
-      // Update password
+      // Update password (only after current password verified)
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
       });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,16 +12,18 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Loader2, Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function JoinSupplier() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<'email' | 'verify' | 'details'>('email');
+  const [step, setStep] = useState<'details' | 'verify'>('details');
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   
-  // Form state
+  // Form state - email is now part of formData
   const [formData, setFormData] = useState({
+    email: "",
     companyName: "",
     contactPerson: "",
     contactPhone: "",
@@ -47,66 +49,16 @@ export default function JoinSupplier() {
     "Jerseys", "Jackets", "Pants", "Shorts"
   ];
 
-  const handleSendOTP = async () => {
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate email
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       toast.error("Please enter a valid email address");
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('send-otp', {
-        body: { type: 'email-supplier', email }
-      });
-
-      if (error) throw error;
-
-      if (data?.error) {
-        toast.error(data.error);
-        return;
-      }
-
-      toast.success("Verification code sent to your email!");
-      setStep('verify');
-    } catch (error: any) {
-      console.error('Error sending OTP:', error);
-      toast.error(error.message || "Failed to send verification code");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyOTP = async () => {
-    if (otp.length !== 6) {
-      toast.error("Please enter the 6-digit code");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-otp', {
-        body: { type: 'email-supplier', email, otp }
-      });
-
-      if (error) throw error;
-
-      if (data?.verified) {
-        toast.success("Email verified successfully!");
-        setStep('details');
-      } else {
-        toast.error(data?.error || "Invalid verification code");
-      }
-    } catch (error: any) {
-      console.error('Error verifying OTP:', error);
-      toast.error(error.message || "Failed to verify code");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    // Validate passwords
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -117,12 +69,88 @@ export default function JoinSupplier() {
       return;
     }
 
-    setIsLoading(true);
+    // Verify reCAPTCHA
+    const captchaToken = await recaptchaRef.current?.executeAsync();
+    if (!captchaToken) {
+      toast.error("Please complete the CAPTCHA verification");
+      return;
+    }
 
+    // Send OTP after form validation with timeout
+    setIsLoading(true);
+    
     try {
-      // Create auth user with metadata
+      // Add timeout to prevent indefinite waiting
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timed out. Please check your connection and try again.')), 30000)
+      );
+      
+      const otpPromise = supabase.functions.invoke('send-otp', {
+        body: { type: 'email-supplier', email: formData.email, captchaToken }
+      });
+
+      const { data, error } = await Promise.race([otpPromise, timeoutPromise]) as any;
+
+      if (error) throw error;
+
+      if (data?.error) {
+        // Handle specific error cases
+        if (data.error.includes('wait 5 minutes')) {
+          toast.error("Please wait 5 minutes before requesting another code");
+        } else if (data.error.includes('already exists')) {
+          toast.error("A supplier with this email already exists. Please sign in instead.");
+        } else if (data.error.includes('Disposable email')) {
+          toast.error("Please use a permanent business email address");
+        } else {
+          toast.error(data.error);
+        }
+        return;
+      }
+
+      toast.success(`Verification code sent to ${formData.email}!`);
+      setStep('verify');
+      recaptchaRef.current?.reset();
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      
+      if (error.message?.includes('timed out')) {
+        toast.error("Request timed out. The system may be under load. Please try again.");
+      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('network')) {
+        toast.error("Network error. Please check your connection and try again.");
+      } else {
+        toast.error(error.message || "Failed to send verification code. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyAndComplete = async () => {
+    if (otp.length !== 6) {
+      toast.error("Please enter the 6-digit code");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Step 1: Verify OTP
+      const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-otp', {
+        body: { type: 'email-supplier', email: formData.email, otp }
+      });
+
+      if (verifyError) throw verifyError;
+
+      if (!verifyData?.verified) {
+        toast.error(verifyData?.error || "Invalid verification code");
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success("Email verified! Creating your account...");
+
+      // Step 2: Create auth user with metadata
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
+        email: formData.email,
         password: formData.password,
         options: {
           data: {
@@ -134,26 +162,86 @@ export default function JoinSupplier() {
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        // Handle rate limiting specifically
+        if (authError.message.includes('429') || authError.message.includes('rate limit')) {
+          toast.error('Too many signup attempts. Please wait 1-2 minutes and try again.');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Handle user already exists
+        if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
+          toast.error('This email is already registered. Please sign in instead.');
+          setIsLoading(false);
+          return;
+        }
+        
+        throw authError;
+      }
 
       if (!authData.user) {
         throw new Error("Failed to create user account");
       }
 
-      // Ensure session is fully established before database operations
+      // Step 3: Generate one-time confirmation token and auto-confirm
+      const confirmationToken = crypto.randomUUID();
+      
+      const { error: tokenError } = await supabase
+        .from('email_verification_otps')
+        .insert({ 
+          email: formData.email,
+          otp: 'CONFIRMATION_TOKEN',
+          session_id: confirmationToken,
+          user_id: authData.user.id,
+          verified: false,
+          expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+          ip_address: null
+        });
+
+      if (tokenError) {
+        console.error('Token generation failed:', tokenError);
+        throw new Error('Registration succeeded but confirmation token generation failed.');
+      }
+
+      const { error: confirmError } = await supabase.functions.invoke('auto-confirm-supplier', {
+        body: {
+          email: formData.email,
+          token: confirmationToken
+        }
+      });
+
+      if (confirmError) {
+        console.error('Email confirmation failed:', confirmError);
+        
+        if (confirmError.message?.includes('Invalid or expired')) {
+          toast.error('Email confirmation token expired. Please contact support.');
+        } else if (confirmError.message?.includes('Rate limit')) {
+          toast.error('Too many confirmation attempts. Please wait and try again.');
+        } else if (confirmError.message?.includes('User not found')) {
+          toast.error('Account created but confirmation failed. Please contact support with your email.');
+        } else {
+          toast.error('Registration succeeded but email confirmation failed. Please contact support.');
+        }
+        
+        setIsLoading(false);
+        return;
+      }
+
+      // Step 4: Ensure session is established
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
         throw new Error("Session not established after signup");
       }
 
-      // Create supplier profile
+      // Step 5: Create supplier profile
       const { error: supplierError } = await supabase
         .from('suppliers')
         .insert({
           user_id: authData.user.id,
           company_name: formData.companyName,
           contact_person: formData.contactPerson,
-          contact_email: email,
+          contact_email: formData.email,
           contact_phone: formData.contactPhone,
           factory_location: formData.factoryLocation,
           address: formData.address,
@@ -177,7 +265,41 @@ export default function JoinSupplier() {
       navigate("/supplier-dashboard");
     } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error(error.message || "Failed to complete registration");
+      
+      if (error.message?.includes('duplicate') || error.message?.includes('already exists')) {
+        toast.error('This email or company is already registered. Please sign in or use a different email.');
+      } else if (error.message?.includes('Token generation failed')) {
+        toast.error('Registration successful but confirmation setup failed. Please contact support.');
+      } else if (error.message?.includes('Session not established')) {
+        toast.error('Registration completed but session setup failed. Please try signing in.');
+      } else if (error.message?.includes('rate limit') || error.message?.includes('429')) {
+        toast.error('Too many attempts. Please wait a few minutes and try again.');
+      } else {
+        toast.error(error.message || "Failed to complete registration. Please try again or contact support.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-otp', {
+        body: { type: 'email-supplier', email: formData.email }
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      toast.success("Verification code resent!");
+    } catch (error: any) {
+      console.error('Error resending OTP:', error);
+      toast.error(error.message || "Failed to resend verification code");
     } finally {
       setIsLoading(false);
     }
@@ -201,56 +323,7 @@ export default function JoinSupplier() {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-4xl">
-          {/* Step 1: Email Entry */}
-          {step === 'email' && (
-            <Card className="shadow-lg">
-              <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <Mail className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-3xl">Join as a Supplier</CardTitle>
-                <CardDescription>Enter your email to get started with supplier registration</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your.email@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
-                  />
-                </div>
-
-                <Button 
-                  onClick={handleSendOTP} 
-                  disabled={isLoading}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending code...
-                    </>
-                  ) : (
-                    "Send Verification Code"
-                  )}
-                </Button>
-
-                <p className="text-center text-sm text-muted-foreground">
-                  Already a supplier?{" "}
-                  <a href="/auth" className="text-primary hover:underline">
-                    Sign in
-                  </a>
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 2: OTP Verification */}
+          {/* Step 1: OTP Verification */}
           {step === 'verify' && (
             <Card className="shadow-lg">
               <CardHeader className="text-center">
@@ -259,7 +332,7 @@ export default function JoinSupplier() {
                 </div>
                 <CardTitle className="text-3xl">Verify Your Email</CardTitle>
                 <CardDescription>
-                  We sent a 6-digit code to <strong>{email}</strong>
+                  We sent a 6-digit code to <strong>{formData.email}</strong>
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -282,7 +355,7 @@ export default function JoinSupplier() {
                 </div>
 
                 <Button 
-                  onClick={handleVerifyOTP} 
+                  onClick={handleVerifyAndComplete} 
                   disabled={isLoading || otp.length !== 6}
                   className="w-full"
                   size="lg"
@@ -290,26 +363,26 @@ export default function JoinSupplier() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Verifying...
+                      Creating account...
                     </>
                   ) : (
                     <>
                       <CheckCircle className="mr-2 h-4 w-4" />
-                      Verify Email
+                      Verify & Complete Registration
                     </>
                   )}
                 </Button>
 
                 <div className="flex justify-between text-sm">
                   <button
-                    onClick={() => setStep('email')}
+                    onClick={() => setStep('details')}
                     className="text-muted-foreground hover:text-primary flex items-center gap-1"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    Change email
+                    Back to form
                   </button>
                   <button
-                    onClick={handleSendOTP}
+                    onClick={handleResendOTP}
                     disabled={isLoading}
                     className="text-primary hover:underline"
                   >
@@ -320,14 +393,14 @@ export default function JoinSupplier() {
             </Card>
           )}
 
-          {/* Step 3: Supplier Details Form */}
+          {/* Step 2: Supplier Details Form */}
           {step === 'details' && (
             <form onSubmit={handleSubmit}>
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-3xl">Complete Your Profile</CardTitle>
+                  <CardTitle className="text-3xl">Join as a Supplier</CardTitle>
                   <CardDescription>
-                    Provide details about your manufacturing facility
+                    Complete the registration form to join our supplier network
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -335,6 +408,17 @@ export default function JoinSupplier() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold border-b pb-2">Company Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="email">Email Address *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          required
+                          placeholder="your.email@company.com"
+                          value={formData.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                        />
+                      </div>
                       <div className="space-y-2">
                         <Label htmlFor="companyName">Company Name *</Label>
                         <Input
@@ -532,8 +616,17 @@ export default function JoinSupplier() {
                     </div>
                   </div>
 
+                  {/* reCAPTCHA */}
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      size="invisible"
+                      sitekey="6LcP_RMsAAAAAAyzUVk22XySYyE5zhKuWMotskop"
+                    />
+                  </div>
+
                   {/* Submit Button */}
-                  <Button 
+                  <Button
                     type="submit" 
                     disabled={isLoading}
                     className="w-full"
@@ -542,15 +635,15 @@ export default function JoinSupplier() {
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Registering...
+                        Sending code...
                       </>
                     ) : (
-                      "Complete Registration"
+                      "Send Verification Code"
                     )}
                   </Button>
 
                   <p className="text-center text-xs text-muted-foreground">
-                    By registering, you agree to our Terms of Service and Privacy Policy.
+                    By continuing, you agree to our Terms of Service and Privacy Policy.
                     Your application will be reviewed by our team.
                   </p>
                 </CardContent>

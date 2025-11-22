@@ -1,7 +1,7 @@
 // Google Analytics 4 configuration
 export const GA4_MEASUREMENT_ID = 'G-KXHZLKH9LG';
 export const GOOGLE_TAG_ID = 'GT-TBNDGT6V';
-export const GTM_CONTAINER_ID = 'GTM-WTKDHCJ9';
+export const GTM_CONTAINER_ID = 'GTM-NSTT3GTQ';
 
 // Microsoft Clarity configuration
 export const CLARITY_PROJECT_ID = 'txi3rcrykl';

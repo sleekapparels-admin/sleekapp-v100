@@ -12,6 +12,8 @@ import { SupplierOrdersList } from "@/components/supplier/SupplierOrdersList";
 import { SupplierPerformanceMetrics } from "@/components/supplier/SupplierPerformanceMetrics";
 import { SupplierProfile } from "@/components/supplier/SupplierProfile";
 import { FactoryCapacityManager } from "@/components/supplier/FactoryCapacityManager";
+import { ProductionManagementPanel } from "@/components/supplier/ProductionManagementPanel";
+import { FinancialDashboard } from "@/components/supplier/FinancialDashboard";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 export default function SupplierDashboard() {
@@ -113,6 +115,8 @@ export default function SupplierDashboard() {
             <Tabs defaultValue="orders" className="space-y-6">
               <TabsList>
                 <TabsTrigger value="orders">My Orders</TabsTrigger>
+                <TabsTrigger value="production">Production</TabsTrigger>
+                <TabsTrigger value="financial">Financial</TabsTrigger>
                 <TabsTrigger value="capacity">Factory Capacity</TabsTrigger>
                 <TabsTrigger value="performance">Performance</TabsTrigger>
                 <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -120,6 +124,14 @@ export default function SupplierDashboard() {
 
               <TabsContent value="orders">
                 <SupplierOrdersList supplierId={supplier.id} />
+              </TabsContent>
+
+              <TabsContent value="production">
+                <ProductionManagementPanel supplierId={supplier.id} />
+              </TabsContent>
+
+              <TabsContent value="financial">
+                <FinancialDashboard supplierId={supplier.id} />
               </TabsContent>
 
               <TabsContent value="capacity">

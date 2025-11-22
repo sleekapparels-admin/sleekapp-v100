@@ -1,23 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star, Eye, Zap, Shield } from "lucide-react";
-
+import { ArrowRight, Star, Eye, Zap, Shield, Calculator } from "lucide-react";
 export const Hero = () => {
-  return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
+  return <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        <video 
-          autoPlay 
-          loop 
-          muted 
-          playsInline
-          preload="auto"
-          className="w-full h-full object-cover"
-          poster="/images/hero-poster.jpg"
-          // @ts-ignore - fetchpriority is valid but not in TypeScript types yet
-          fetchpriority="high"
-        >
+        <video autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover"
+      // @ts-ignore - fetchpriority is valid but not in TypeScript types yet
+      fetchpriority="high">
           <source src="/videos/homepage-hero.webm" type="video/webm" />
           <source src="/videos/homepage-hero.mp4" type="video/mp4" />
           {/* Fallback for browsers that don't support video */}
@@ -34,17 +24,18 @@ export const Hero = () => {
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-3xl">
-          {/* New Badge/Label for LoopTrace™ */}
+          {/* Beta Launch Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full mb-6">
             <Eye className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-white">
-              Introducing LoopTrace™ - AI-Powered Production Transparency
+              🚀 LoopTrace™ BETA - Free Access Until December 31, 2025
             </span>
           </div>
 
           <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
-            Premium Knitwear Manufacturing from Bangladesh
-            <span className="block text-primary mt-2">Starting from Just 50 Pieces</span>
+            Bangladesh's First AI Powered Apparel Sourcing Platform
+           
+            <span className="block text-primary mt-2">Powered by LoopTrace™ Technology</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed font-medium">
@@ -81,16 +72,17 @@ export const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
-              <Link to="/quote-generator">
-                Get AI-Powered Quote Now
-                <ArrowRight className="ml-2 h-5 w-5" />
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg shadow-primary/20">
+              <Link to="/instant-quote">
+                <Calculator className="mr-2 h-5 w-5" />
+                Get Instant Quote (30s)
               </Link>
             </Button>
             
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50">
-              <Link to="/production-tracking">
-                See Live Tracking Demo
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+              <Link to="/get-started">
+                Start Your Project
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -108,6 +100,5 @@ export const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };

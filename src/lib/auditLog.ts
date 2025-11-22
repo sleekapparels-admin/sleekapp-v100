@@ -7,12 +7,23 @@ export type AuditAction =
   | 'blog_post_published'
   | 'blog_post_unpublished'
   | 'user_role_assigned'
-  | 'user_role_revoked';
+  | 'user_role_revoked'
+  | 'order_created'
+  | 'order_updated'
+  | 'order_status_changed'
+  | 'payment_initiated'
+  | 'payment_completed'
+  | 'quote_approved'
+  | 'supplier_assigned';
 
 export type AuditResourceType = 
   | 'blog_post'
   | 'user_role'
-  | 'user';
+  | 'user'
+  | 'order'
+  | 'payment'
+  | 'quote'
+  | 'supplier';
 
 interface LogAdminActionParams {
   action: AuditAction;
@@ -37,6 +48,10 @@ export const logAdminAction = async ({
     // Get IP address and user agent from browser
     const userAgent = navigator.userAgent;
     
+    // Note: IP address cannot be reliably captured client-side due to proxies/VPNs
+    // For production: Consider implementing an edge function wrapper that captures 
+    // true client IP from headers (x-forwarded-for, x-real-ip)
+    
     const { error } = await supabase
       .from('admin_audit_logs')
       .insert({
@@ -46,7 +61,7 @@ export const logAdminAction = async ({
         resource_id: resourceId || null,
         details: details,
         user_agent: userAgent,
-        // IP address will be captured by edge functions or database triggers
+        ip_address: null, // Client-side cannot reliably get true IP
       });
 
     if (error) {

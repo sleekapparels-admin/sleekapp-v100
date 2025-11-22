@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, User, ChevronDown, Heart } from "lucide-react";
+import { Menu, X, User, ChevronDown, Heart, LogOut, Shirt, Zap, Users, Sparkles, LayoutGrid, FileText, Truck, Droplet, BookOpen, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -11,44 +11,53 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useWishlistContext } from "@/contexts/WishlistContext";
 import sleekLogo from "@/assets/sleek-logo.webp";
 const servicesMenu = [{
-  name: "Casualwear Manufacturing",
+  name: "Casualwear",
   href: "/casualwear",
-  description: "T-shirts, hoodies, sweatshirts, joggers"
+  description: "T-shirts, hoodies, sweatshirts, joggers",
+  icon: Shirt
 }, {
-  name: "Activewear & Performance",
+  name: "Activewear",
   href: "/activewear",
-  description: "Performance wear and athletic basics"
+  description: "Performance wear and athletic basics",
+  icon: Zap
 }, {
-  name: "Uniforms & Teamwear",
+  name: "Team Uniforms",
   href: "/uniforms-teamwear",
-  description: "Bulk orders for schools & teams"
+  description: "Bulk orders for schools & teams",
+  icon: Users
 }, {
-  name: "LoopTrace™ Technology",
+  name: "LoopTrace™ Platform",
   href: "/looptrace-technology",
-  description: "AI platform for production visibility & transparency",
-  highlight: true
+  description: "AI-powered instant quotes & production tracking with full transparency",
+  highlight: true,
+  icon: Sparkles
 }, {
   name: "View All Services",
   href: "/services",
-  description: "Explore our full capabilities"
+  description: "Explore our full capabilities",
+  icon: LayoutGrid
 }];
 
 const resourcesMenuNew = [{
   name: "Materials Guide",
   href: "/materials-guide",
-  description: "Find the right fabric for your project"
+  description: "Find the right fabric for your project",
+  icon: Droplet
 }, {
   name: "Shipping & Logistics",
   href: "/shipping-logistics",
-  description: "International shipping information"
+  description: "International shipping information",
+  icon: Truck
 }, {
   name: "Sample Policy",
   href: "/sample-policy",
-  description: "How sampling works with us"
+  description: "How sampling works with us",
+  icon: FileText
 }, {
   name: "First-Time Ordering",
   href: "/first-time-ordering",
-  description: "Beginner's guide to ordering"
+  description: "Beginner's guide to ordering",
+  icon: BookOpen
 }];
 
 const resourcesMenu = [{
@@ -72,17 +81,17 @@ const resourcesMenu = [{
   href: "/contact",
   description: "Get in touch with our team"
 }];
-const navigation = [{
-  name: "Our Partner Network",
-  href: "/suppliers"
-}];
+const navigation: { name: string; href: string }[] = [];
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const isHome = location.pathname === "/";
+  
+  // Use useMemo to ensure isHome is calculated immediately and consistently
+  const isHome = useMemo(() => location.pathname === "/", [location.pathname]);
+  
   const { wishlistCount } = useWishlistContext();
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -119,7 +128,14 @@ export const Navbar = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
-  return <nav className={`${isHome ? "fixed top-0 left-0 w-full bg-black/60 supports-[backdrop-filter]:bg-black/40 backdrop-blur-sm border-0" : "sticky top-0 bg-background/98 backdrop-blur-md border-b border-border shadow-sm"} z-50 transition-all duration-300`}>
+  return <nav 
+      data-home={isHome ? "true" : "false"}
+      className={`${isHome ? "fixed top-0 left-0 w-full bg-black/60 supports-[backdrop-filter]:bg-black/40 backdrop-blur-sm border-0" : "sticky top-0 bg-background/98 backdrop-blur-md border-b border-border shadow-sm"} z-50 transition-all duration-300`}
+      style={{
+        // Force immediate background color to prevent flash
+        backgroundColor: isHome ? 'rgba(0, 0, 0, 0.6)' : 'hsl(var(--background) / 0.98)',
+      }}
+    >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16 rounded-none">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
@@ -152,21 +168,37 @@ export const Navbar = () => {
                     Services
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="flex flex-col w-[320px] gap-2 p-4 bg-background/95 backdrop-blur-sm border border-border shadow-lg">
-                      {servicesMenu.map(item => <li key={item.name}>
-                          <NavigationMenuLink asChild>
-                            <Link to={item.href} className={`block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors ${item.highlight ? 'bg-primary/10 text-primary hover:bg-primary/20 focus:bg-primary/20' : 'text-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'}`}>
-                              <div className="text-sm font-medium leading-none flex items-center gap-2">
-                                {item.name}
-                                {item.highlight && <span className="text-xs px-1.5 py-0.5 bg-primary text-primary-foreground rounded">NEW</span>}
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                {item.description}
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>)}
-                    </ul>
+                    <div className="w-[420px] p-2 bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-xl border border-border/50 shadow-2xl rounded-lg">
+                      <div className="p-3 border-b border-border/50 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-t-md">
+                        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                          <LayoutGrid className="h-4 w-4 text-primary" />
+                          Our Services
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1">Explore what we can do for you</p>
+                      </div>
+                      <ul className="flex flex-col gap-1 p-2">
+                        {servicesMenu.map(item => <li key={item.name}>
+                            <NavigationMenuLink asChild>
+                              <Link to={item.href} className={`group block select-none rounded-lg p-3 leading-none no-underline outline-none transition-all duration-200 ${item.highlight ? 'bg-gradient-to-r from-primary/15 to-purple-500/15 hover:from-primary/25 hover:to-purple-500/25 border border-primary/20 hover:border-primary/30 shadow-sm hover:shadow-md' : 'hover:bg-accent/50 hover:shadow-sm'}`}>
+                                <div className="flex items-start gap-3">
+                                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${item.highlight ? 'bg-gradient-to-br from-primary to-purple-600 shadow-md group-hover:shadow-lg group-hover:scale-110' : 'bg-primary/10 group-hover:bg-primary/20'}`}>
+                                    <item.icon className={`h-5 w-5 ${item.highlight ? 'text-white' : 'text-primary'}`} />
+                                  </div>
+                                  <div className="flex-1 space-y-1">
+                                    <div className="text-sm font-semibold leading-none flex items-center gap-2 text-foreground group-hover:text-primary transition-colors">
+                                      {item.name}
+                                      {item.highlight && <span className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-primary to-purple-600 text-white rounded-full font-bold shadow-sm animate-pulse">NEW</span>}
+                                    </div>
+                                    <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>)}
+                      </ul>
+                    </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -180,45 +212,81 @@ export const Navbar = () => {
                     Resources
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="flex flex-col w-[320px] gap-2 p-4 bg-background/95 backdrop-blur-sm border border-border shadow-lg">
-                      {resourcesMenuNew.map(item => <li key={item.name}>
-                          <NavigationMenuLink asChild>
-                            <Link to={item.href} className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                              <div className="text-sm font-medium leading-none">{item.name}</div>
-                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                {item.description}
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>)}
-                      <li className="pt-2 border-t border-border mt-2">
-                        <Link to="/portfolio" className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                          <div className="text-sm font-medium leading-none">Portfolio & More</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            View our work and additional resources
-                          </p>
-                        </Link>
-                      </li>
-                    </ul>
+                    <div className="w-[400px] p-2 bg-gradient-to-br from-background via-background to-blue-500/5 backdrop-blur-xl border border-border/50 shadow-2xl rounded-lg">
+                      <div className="p-3 border-b border-border/50 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-t-md">
+                        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-blue-600" />
+                          Resources & Guides
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-1">Everything you need to know</p>
+                      </div>
+                      <ul className="flex flex-col gap-1 p-2">
+                        {resourcesMenuNew.map(item => <li key={item.name}>
+                            <NavigationMenuLink asChild>
+                              <Link to={item.href} className="group block select-none rounded-lg p-3 leading-none no-underline outline-none transition-all duration-200 hover:bg-accent/50 hover:shadow-sm">
+                                <div className="flex items-start gap-3">
+                                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 flex items-center justify-center transition-all duration-200 group-hover:scale-110">
+                                    <item.icon className="h-5 w-5 text-blue-600" />
+                                  </div>
+                                  <div className="flex-1 space-y-1">
+                                    <div className="text-sm font-semibold leading-none text-foreground group-hover:text-blue-600 transition-colors">
+                                      {item.name}
+                                    </div>
+                                    <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>)}
+                        <li className="pt-2 border-t border-border/50 mt-1">
+                          <Link to="/portfolio" className="group block select-none rounded-lg p-3 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 hover:shadow-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 group-hover:from-blue-500/20 group-hover:to-purple-500/20 flex items-center justify-center transition-all duration-200 group-hover:scale-110">
+                                <Image className="h-5 w-5 text-blue-600" />
+                              </div>
+                              <div className="flex-1 space-y-1">
+                                <div className="text-sm font-semibold leading-none text-foreground group-hover:text-blue-600 transition-colors">
+                                  Portfolio & More
+                                </div>
+                                <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
+                                  View our work and additional resources
+                                </p>
+                              </div>
+                            </div>
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
 
             {userRole !== 'supplier' && <Button asChild variant={isHome ? "outline" : "default"} size="sm" className={`ml-2 font-semibold ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm" : "bg-accent hover:bg-accent/90 text-accent-foreground"}`}>
-                <Link to="/quote-generator">Get AI Quote</Link>
+                <Link to="/get-started">Start Your Project</Link>
               </Button>}
 
             {user ? <>
                 <NotificationBell className={`relative ${isHome ? "text-white hover:bg-white/10" : ""}`} />
-                <Button onClick={() => navigate("/dashboard")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
+                <Button onClick={() => navigate("/dashboard-router")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
                   <User className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
-              </> : <>
-                <Button asChild variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
-                  <Link to="/join-supplier">Join as Supplier</Link>
+                <Button 
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    navigate("/");
+                  }} 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`ml-2 ${isHome ? "text-white hover:bg-white/20" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
                 </Button>
+              </> : <>
                 <Button onClick={() => navigate("/auth")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
                   Sign In
                 </Button>
@@ -278,8 +346,8 @@ export const Navbar = () => {
             </div>
 
             {userRole !== 'supplier' && <Button asChild variant="default" className="w-full mt-3 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-sm">
-                <Link to="/quote-generator" onClick={() => setIsOpen(false)}>
-                  Get AI Quote
+                <Link to="/get-started" onClick={() => setIsOpen(false)}>
+                  Start Your Project
                 </Link>
               </Button>}
             {user ? <>
@@ -287,18 +355,25 @@ export const Navbar = () => {
                   <NotificationBell />
                 </div>
                 <Button onClick={() => {
-            navigate("/dashboard");
+            navigate("/dashboard-router");
             setIsOpen(false);
           }} variant="outline" className="w-full mt-2">
                   <User className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
-              </> : <>
-                <Button asChild variant="outline" className="w-full mt-2">
-                  <Link to="/join-supplier" onClick={() => setIsOpen(false)}>
-                    Join as Supplier
-                  </Link>
+                <Button 
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    setIsOpen(false);
+                    navigate("/");
+                  }} 
+                  variant="ghost" 
+                  className="w-full mt-2"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
                 </Button>
+              </> : <>
                 <Button onClick={() => {
             navigate("/auth");
             setIsOpen(false);

@@ -38,7 +38,7 @@ const ProductCatalog = () => {
   const [colorOpen, setColorOpen] = useState(false);
 
   // Fetch products
-  const { data: products, isLoading } = useQuery({
+  const { data: products, isLoading, error, refetch } = useQuery({
     queryKey: ["products", categoryFilter, searchQuery, sortBy],
     queryFn: async () => {
       let query = supabase
@@ -476,7 +476,24 @@ const ProductCatalog = () => {
                 )}
 
                 {/* Products Display */}
-                {isLoading ? (
+                {error ? (
+                  <Card className="p-8 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+                        <X className="h-6 w-6 text-destructive" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">Failed to Load Products</h3>
+                        <p className="text-muted-foreground mb-4">
+                          {error instanceof Error ? error.message : "An unexpected error occurred"}
+                        </p>
+                      </div>
+                      <Button onClick={() => refetch()} variant="default">
+                        Try Again
+                      </Button>
+                    </div>
+                  </Card>
+                ) : isLoading ? (
                   <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
                     {[...Array(6)].map((_, i) => (
                       <Card key={i} className="animate-pulse">

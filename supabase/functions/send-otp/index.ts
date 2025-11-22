@@ -19,6 +19,32 @@ const DISPOSABLE_DOMAINS = [
   'temp-mail.org', 'fakeinbox.com', 'sharklasers.com', 'getnada.com'
 ];
 
+// TypeScript interfaces for type safety
+interface ResendEmailResponse {
+  data?: {
+    id: string;
+  };
+  error?: {
+    message: string;
+    name: string;
+  };
+}
+
+type OTPType = 'phone' | 'email-quote' | 'email-supplier';
+
+interface OTPRequest {
+  type: OTPType;
+  phone?: string;
+  email?: string;
+  country?: string;
+  captchaToken?: string;
+}
+
+// Sanitize email to prevent header injection attacks
+function sanitizeEmail(email: string): string {
+  return email.replace(/[\r\n]/g, '').trim().toLowerCase();
+}
+
 function validateEmail(email: string): { valid: boolean; error?: string } {
   // Check if email exists
   if (!email || typeof email !== 'string') {
@@ -64,18 +90,44 @@ function validateEmail(email: string): { valid: boolean; error?: string } {
   return { valid: true };
 }
 
-type OTPType = 'phone' | 'email-quote' | 'email-supplier';
+// Retry logic for transient email delivery failures
+function isRetryableError(error: any): boolean {
+  if (!error?.message) return false;
+  const retryableMessages = ['rate_limit', 'timeout', 'service_unavailable', 'temporarily unavailable'];
+  const message = error.message.toLowerCase();
+  return retryableMessages.some(msg => message.includes(msg));
+}
 
-interface OTPRequest {
-  type: OTPType;
-  phone?: string;
-  email?: string;
-  country?: string;
+async function sendEmailWithRetry(
+  emailData: any,
+  maxRetries: number = 2
+): Promise<ResendEmailResponse> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await resend.emails.send(emailData) as ResendEmailResponse;
+      
+      // If no error or non-retryable error, return immediately
+      if (!response.error || !isRetryableError(response.error)) {
+        return response;
+      }
+      
+      // Wait before retry with exponential backoff
+      if (attempt < maxRetries) {
+        console.log(`[${new Date().toISOString()}] ⏳ Retrying email send (attempt ${attempt + 1}/${maxRetries})...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
+    } catch (error) {
+      console.error(`[${new Date().toISOString()}] ❌ Email send attempt ${attempt} failed:`, error);
+      if (attempt === maxRetries) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+  throw new Error('Failed to send email after retries');
 }
 
 serve(async (req) => {
   if (!Deno.env.get('RESEND_API_KEY')) {
-    console.error('RESEND_API_KEY not configured');
+    console.error(`[${new Date().toISOString()}] ❌ RESEND_API_KEY not configured`);
     return new Response(
       JSON.stringify({ error: 'Service temporarily unavailable', code: 'EMAIL_001' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -87,13 +139,49 @@ serve(async (req) => {
   }
 
   try {
-    const { type, phone, email, country }: OTPRequest = await req.json();
+    const { type, phone, email, country, captchaToken }: OTPRequest = await req.json();
 
     if (!type || !['phone', 'email-quote', 'email-supplier'].includes(type)) {
       return new Response(
         JSON.stringify({ error: 'Valid type (phone, email-quote, email-supplier) is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Verify reCAPTCHA for supplier registration (anti-bot protection)
+    if (type === 'email-supplier' && captchaToken) {
+      const recaptchaSecret = Deno.env.get('RECAPTCHA_SECRET_KEY');
+      
+      if (!recaptchaSecret) {
+        console.error(`[${new Date().toISOString()}] ❌ RECAPTCHA_SECRET_KEY not configured`);
+        return new Response(
+          JSON.stringify({ error: 'CAPTCHA verification unavailable' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${captchaToken}`;
+      
+      try {
+        const captchaResponse = await fetch(verifyUrl, { method: 'POST' });
+        const captchaData = await captchaResponse.json();
+        
+        if (!captchaData.success) {
+          console.log(`[${new Date().toISOString()}] ⚠️ CAPTCHA verification failed:`, captchaData['error-codes']);
+          return new Response(
+            JSON.stringify({ error: 'CAPTCHA verification failed. Please try again.' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        console.log(`[${new Date().toISOString()}] ✅ CAPTCHA verified successfully`);
+      } catch (captchaError) {
+        console.error(`[${new Date().toISOString()}] ❌ CAPTCHA verification error:`, captchaError);
+        return new Response(
+          JSON.stringify({ error: 'CAPTCHA verification error. Please try again.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -108,6 +196,8 @@ serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      console.log(`[${new Date().toISOString()}] 📱 Phone OTP request - Phone: ${phone.substring(0, 4)}***`);
 
       // Rate limiting for phone
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
@@ -143,7 +233,7 @@ serve(async (req) => {
         });
 
       if (insertError) {
-        console.error('Phone OTP insert error:', insertError);
+        console.error(`[${new Date().toISOString()}] ❌ Phone OTP insert error:`, insertError);
         return new Response(
           JSON.stringify({ error: 'Failed to generate verification code' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -151,7 +241,7 @@ serve(async (req) => {
       }
 
       // In production, integrate with SMS service here
-      console.log(`Phone OTP for ${phone}: ${otp}`);
+      console.log(`[${new Date().toISOString()}] ✅ Phone OTP generated for ${phone}: ${otp}`);
 
       return new Response(
         JSON.stringify({ 
@@ -171,6 +261,8 @@ serve(async (req) => {
       );
     }
 
+    console.log(`[${new Date().toISOString()}] 📧 Email OTP request - Type: ${type}, Email: ${email.substring(0, 3)}***`);
+
     // Validate email format
     const emailValidation = validateEmail(email);
     if (!emailValidation.valid) {
@@ -180,21 +272,15 @@ serve(async (req) => {
       );
     }
 
-    // Email validation
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email) || email.length < 5 || email.length > 255) {
-      return new Response(
-        JSON.stringify({ error: 'Valid email is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Sanitize email to prevent header injection
+    const sanitizedEmail = sanitizeEmail(email);
 
     // Check for supplier-specific validation
     if (type === 'email-supplier') {
       const { data: existingSupplier } = await supabase
         .from('suppliers')
         .select('id')
-        .eq('contact_email', email)
+        .eq('contact_email', sanitizedEmail)
         .maybeSingle();
 
       if (existingSupplier) {
@@ -210,7 +296,7 @@ serve(async (req) => {
     const { data: recentOTPs } = await supabase
       .from('email_verification_otps')
       .select('id')
-      .eq('email', email)
+      .eq('email', sanitizedEmail)
       .gt('created_at', fiveMinutesAgo)
       .limit(1);
 
@@ -232,12 +318,12 @@ serve(async (req) => {
       const { count: quotesUsedToday, error: countError } = await supabase
         .from('email_verification_otps')
         .select('*', { count: 'exact', head: true })
-        .eq('email', email)
+        .eq('email', sanitizedEmail)
         .gte('created_at', todayStart.toISOString())
         .eq('verified', true);
 
       if (countError) {
-        console.error('Error checking daily limit:', countError);
+        console.error(`[${new Date().toISOString()}] ⚠️ Error checking daily limit:`, countError);
       }
 
       const maxQuotesPerDay = 3;
@@ -256,26 +342,29 @@ serve(async (req) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Store OTP
-    const { error: insertError } = await supabase
+    // Store OTP with delivery tracking
+    const { data: insertedOTP, error: insertError } = await supabase
       .from('email_verification_otps')
       .insert({
-        email,
+        email: sanitizedEmail,
         otp,
         expires_at: expiresAt.toISOString(),
         verified: false,
-        attempt_count: 0
-      });
+        attempt_count: 0,
+        delivery_status: 'pending'
+      })
+      .select()
+      .single();
 
     if (insertError) {
-      console.error('Email OTP insert error:', insertError);
+      console.error(`[${new Date().toISOString()}] ❌ Email OTP insert error:`, insertError);
       return new Response(
         JSON.stringify({ error: 'Failed to generate verification code' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Send email
+    // Send email with retry logic
     const emailSubject = type === 'email-supplier' 
       ? 'Verify Your Supplier Registration'
       : `${otp} is your Sleek Apparels verification code`;
@@ -309,33 +398,82 @@ serve(async (req) => {
     `;
 
     try {
-      await resend.emails.send({
-        from: 'Sleek Apparels <noreply@sleekapparels.com>',
-        to: [email],
+      const emailResponse = await sendEmailWithRetry({
+        from: 'Sleek Apparels <noreply@notifications.sleekapparels.com>',
+        to: [sanitizedEmail],
         subject: emailSubject,
         html: emailHtml,
       });
 
-      console.log(`Email OTP sent to ${email.substring(0, 3)}***`);
-    } catch (emailError) {
-      console.error('Email sending error:', emailError);
+      // Check for Resend API errors
+      if (emailResponse.error) {
+        console.error(`[${new Date().toISOString()}] ❌ Resend API error:`, emailResponse.error);
+        
+        // Update OTP record with failure
+        await supabase
+          .from('email_verification_otps')
+          .update({
+            delivery_status: 'failed',
+            delivery_error: emailResponse.error.message
+          })
+          .eq('email', sanitizedEmail)
+          .eq('otp', otp);
+        
+        return new Response(
+          JSON.stringify({ 
+            error: 'Failed to send verification email. Please try again.',
+            code: 'EMAIL_DELIVERY_FAILED'
+          }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Update OTP record with successful delivery
+      await supabase
+        .from('email_verification_otps')
+        .update({
+          resend_email_id: emailResponse.data?.id,
+          email_sent_at: new Date().toISOString(),
+          delivery_status: 'sent'
+        })
+        .eq('email', sanitizedEmail)
+        .eq('otp', otp);
+
+      console.log(`[${new Date().toISOString()}] ✅ Email sent successfully - Resend ID: ${emailResponse.data?.id}, To: ${sanitizedEmail.substring(0, 3)}***`);
+
       return new Response(
-        JSON.stringify({ error: 'Failed to send verification email' }),
+        JSON.stringify({ 
+          success: true,
+          expiresAt: expiresAt.toISOString(),
+          message: 'Verification code sent to your email'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+
+    } catch (emailError: any) {
+      console.error(`[${new Date().toISOString()}] ❌ Email sending error:`, emailError);
+      
+      // Update OTP record with failure
+      await supabase
+        .from('email_verification_otps')
+        .update({
+          delivery_status: 'failed',
+          delivery_error: emailError.message || 'Unknown error'
+        })
+        .eq('email', sanitizedEmail)
+        .eq('otp', otp);
+      
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to send verification email. Please try again.',
+          code: 'EMAIL_DELIVERY_FAILED'
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true,
-        expiresAt: expiresAt.toISOString(),
-        message: 'Verification code sent to your email'
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-
   } catch (error: any) {
-    console.error('Error in send-otp function:', error);
+    console.error(`[${new Date().toISOString()}] ❌ Error in send-otp function:`, error);
     return new Response(
       JSON.stringify({ error: error.message || 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

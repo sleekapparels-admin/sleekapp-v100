@@ -10,6 +10,23 @@
     <meta name="build-id" content="BUILD_TIMESTAMP" />
     <meta name="theme-color" content="#2D5C4E" />
     
+    <!-- Content Security Policy - Strict Configuration with inline script hash -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'sha256-VVbZragXBoCq3xNCSykFl0fLOdZu5q7ku7+o78P0Zn8=' 'sha256-W7CSJa1fR5YqXKxqCXwxhv0EkR+n5xE5PXE2wvxvmyI=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      img-src 'self' data: blob: https://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://fonts.googleapis.com https://images.unsplash.com https://c.clarity.ms https://www.facebook.com https://px.ads.linkedin.com;
+      font-src 'self' data: https://fonts.gstatic.com;
+      connect-src 'self' https://eqpftggctumujhutomom.supabase.co wss://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://api.lovable.dev https://c.clarity.ms https://www.facebook.com https://px.ads.linkedin.com;
+      media-src 'self' blob: data:;
+      object-src 'none';
+      frame-src 'self' https://www.facebook.com;
+      base-uri 'self';
+      form-action 'self' https://www.facebook.com;
+      frame-ancestors 'self';
+      upgrade-insecure-requests;
+    " />
+    
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
     
@@ -20,11 +37,13 @@
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <!-- Google Tag Manager - Deferred for performance -->
+    <!-- Google Tag Manager - Initialize dataLayer before GTM loads -->
     <script>
-      // Initialize dataLayer for GTM
       window.dataLayer = window.dataLayer || [];
     </script>
+    
+    <!-- Load CSS optimizer after DOM ready -->
+    <script src="/init-critical.js" defer></script>
     <!-- End Google Tag Manager -->
 
     <!-- Performance Optimizations: Resource Hints -->
@@ -126,19 +145,7 @@
       @media print { #async-css-loader { display: none; } }
     </style>
     
-    <!-- Async CSS Loading Script - Non-blocking -->
-    <script>
-      (function() {
-        var links = document.getElementsByTagName('link');
-        for (var i = 0; i < links.length; i++) {
-          var link = links[i];
-          if (link.rel === 'stylesheet' && link.href.includes('index-') && link.href.includes('.css')) {
-            link.media = 'print';
-            link.onload = function() { this.media = 'all'; };
-          }
-        }
-      })();
-    </script>
+    <!-- Async CSS Loading Script moved to external file for CSP compliance -->
     
     <!-- Removed external web fonts to improve performance; using system fonts -->
 
@@ -243,7 +250,7 @@
 
   <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WTKDHCJ9"
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSTT3GTQ"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     

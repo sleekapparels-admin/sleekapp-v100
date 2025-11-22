@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles, Clock, DollarSign, Calendar, TrendingDown, Lightbulb, Upload, X, FileText, Image as ImageIcon, Mail, Shield } from "lucide-react";
+import { Loader2, Sparkles, Clock, DollarSign, Calendar, TrendingDown, Lightbulb, Upload, X, FileText, Image as ImageIcon, Mail, Shield, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateAIQuote } from "@/lib/api/aiQuote";
 import { supabase } from "@/integrations/supabase/client";
 import { SmartFactoryMatcher } from "@/components/quote/SmartFactoryMatcher";
@@ -26,7 +27,7 @@ import confetti from "canvas-confetti";
 // Validation schema
 const quoteFormSchema = z.object({
   productType: z.string().min(1, "Product type is required"),
-  quantity: z.number().int().min(50, "Minimum quantity is 50 pieces").max(100000, "Maximum quantity is 100,000 pieces"),
+  quantity: z.number().int().min(50, "Sleek Apparels requires a minimum order of 50 units for this product category.").max(100000, "Maximum quantity is 100,000 pieces"),
   complexityLevel: z.enum(['simple', 'medium', 'complex']).optional(),
   fabricType: z.string().max(100, "Fabric type too long").optional(),
   additionalRequirements: z.string().max(2000, "Requirements too long (max 2000 characters)").optional(),
@@ -328,7 +329,7 @@ export const AIQuoteGeneratorWithOTP = () => {
       console.error('Error verifying OTP:', error);
       
       // Show friendly error with options
-      const errorMessage = error instanceof Error ? error.message : 'Failed to generate quote';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate quote. Please try again later.';
       
       toast({
         title: "Quote Generation Failed",
@@ -899,7 +900,22 @@ I'm interested in proceeding with this order. Please provide final pricing and d
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="quantity">Quantity (pieces) *</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="quantity">Quantity (pieces) *</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-sm">
+                        <strong>Minimum Order Quantity (MOQ): 50 pieces</strong><br />
+                        We maintain this policy to ensure optimal production efficiency and competitive pricing for our clients.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Input
                 id="quantity"
                 type="number"

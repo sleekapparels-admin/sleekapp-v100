@@ -7,6 +7,7 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
 
 import { StickyWhatsAppButton } from "@/components/StickyWhatsAppButton";
+import { AIAssistantChat } from "@/components/AIAssistantChat";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -18,6 +19,7 @@ import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Health from "./pages/Health";
+import { SmartDashboardRouter } from "./components/SmartDashboardRouter";
 
 // Lazy load secondary pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
@@ -64,9 +66,17 @@ const Consultation = lazy(() => import("./pages/Consultation"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const SupplierVerification = lazy(() => import("./pages/admin/SupplierVerification"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const GetStarted = lazy(() => import("./pages/GetStarted"));
+const InstantQuote = lazy(() => import("./pages/InstantQuote"));
+const ModernBuyerDashboard = lazy(() => import("./pages/ModernBuyerDashboard"));
+const ModernSupplierDashboard = lazy(() => import("./pages/ModernSupplierDashboard"));
+const ModernAdminDashboard = lazy(() => import("./pages/ModernAdminDashboard"));
 const OrderManagement = lazy(() => import("./pages/admin/OrderManagement"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
+const ProductUpload = lazy(() => import("./pages/supplier/ProductUpload"));
+const ProductApproval = lazy(() => import("./pages/admin/ProductApproval"));
+const ProductReview = lazy(() => import("./pages/admin/ProductReview"));
+const Marketplace = lazy(() => import("./pages/Marketplace"));
 const BuyerOrderTracking = lazy(() => import("./pages/BuyerOrderTracking"));
 const UserSettings = lazy(() => import("./pages/UserSettings"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
@@ -124,6 +134,7 @@ const Root = () => {
       <ServiceWorkerStatus />
       
       <StickyWhatsAppButton />
+      <AIAssistantChat />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
@@ -155,10 +166,18 @@ const router = createBrowserRouter([
       { path: "/sustainability", element: <Sustainability /> },
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
-      { path: "/dashboard", element: <Dashboard /> },
-      { path: "/admin", element: <AdminDashboard /> },
+      { path: "/get-started", element: <GetStarted /> },
+      { path: "/instant-quote", element: <InstantQuote /> },
+      { path: "/dashboard-router", element: <SmartDashboardRouter /> },
+      { path: "/dashboard", element: <ModernBuyerDashboard /> },
+      { path: "/buyer-dashboard-modern", element: <ModernBuyerDashboard /> },
+      { path: "/supplier-dashboard-modern", element: <ModernSupplierDashboard /> },
+      { path: "/modern-showcase", element: lazy(() => import("./pages/ModernShowcase")) },
+      { path: "/admin", element: <ModernAdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },
       { path: "/admin/orders", element: <OrderManagement /> },
+      { path: "/admin/products/approval", element: <ProductApproval /> },
+      { path: "/admin/products/:productId/review", element: <ProductReview /> },
       { path: "/orders/:orderId/track", element: <BuyerOrderTracking /> },
       { path: "/orders/:orderId", element: <OrderDetails /> },
       { path: "/orders", element: <Orders /> },
@@ -178,9 +197,11 @@ const router = createBrowserRouter([
       { path: "/track-order/:orderId", element: <TrackOrder /> },
       { path: "/become-supplier", element: <BecomeSupplier /> },
       { path: "/suppliers", element: <SupplierDirectory /> },
+      { path: "/marketplace", element: <Marketplace /> },
       { path: "/order-confirmation", element: <OrderConfirmation /> },
       { path: "/join-supplier", element: <JoinSupplier /> },
-      { path: "/supplier-dashboard", element: <SupplierDashboard /> },
+      { path: "/supplier-dashboard", element: <ModernSupplierDashboard /> },
+      { path: "/supplier/products", element: <ProductUpload /> },
       { path: "/supplier/orders/:orderId", element: <SupplierOrderDetail /> },
       { path: "/admin/supplier-orders", element: <SupplierOrderManagement /> },
       { path: "/admin/supplier-orders/:orderId", element: <AdminSupplierOrderDetail /> },

@@ -1,5 +1,11 @@
 project_id = "eqpftggctumujhutomom"
 
+[functions.generate-invoice]
+verify_jwt = true
+
+[functions.generate-work-order]
+verify_jwt = true
+
 [functions.seed-test-users]
 verify_jwt = false
 
@@ -32,3 +38,45 @@ verify_jwt = true
 
 [functions.wishlist-check]
 verify_jwt = true
+
+[functions.resend-webhook]
+verify_jwt = false
+
+[functions.auto-confirm-supplier]
+verify_jwt = false
+
+[functions.initialize-production-stages]
+verify_jwt = true
+
+[functions.ai-supplier-assignment]
+verify_jwt = true
+
+[functions.predict-quality-risks]
+verify_jwt = true
+
+[functions.send-notification-email]
+verify_jwt = true
+
+[functions.execute-automation-rules]
+verify_jwt = true
+
+[functions.generate-product-description]
+verify_jwt = true
+
+[functions.ai-blog-assistant]
+verify_jwt = true
+
+[functions.create-payment-intent]
+verify_jwt = true
+
+[functions.predict-delivery-timeline]
+verify_jwt = true
+
+[functions.log-audit-action]
+verify_jwt = true
+
+[functions.create-database-backup]
+verify_jwt = true
+
+[functions.submit-blog-comment]
+verify_jwt = false

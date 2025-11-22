@@ -170,4 +170,14 @@ All colors MUST be HSL.
   video {
     content-visibility: auto;
   }
+
+  /* Prevent navbar FOUC (Flash of Unstyled Content) */
+  /* Force initial navbar styling before JS loads */
+  nav[data-home="true"] {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  
+  nav[data-home="false"] {
+    background-color: hsl(var(--background) / 0.98) !important;
+  }
 }

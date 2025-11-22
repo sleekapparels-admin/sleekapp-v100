@@ -15,6 +15,11 @@ import { FinalCTA } from "@/components/FinalCTA";
 import { StatsCounter } from "@/components/home/StatsCounter";
 import { CertificationBadges } from "@/components/home/CertificationBadges";
 import { HowItWorks } from "@/components/home/HowItWorks";
+import { SupplierCTASection } from "@/components/home/SupplierCTASection";
+import { BetaPricingSection } from "@/components/home/BetaPricingSection";
+import { FeaturedMarketplace } from "@/components/home/FeaturedMarketplace";
+import { LoopTraceFeatures } from "@/components/home/LoopTraceFeatures";
+import { BuyerSupplierJourney } from "@/components/home/BuyerSupplierJourney";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -54,7 +59,19 @@ function Index() {
         {/* Section 6: How It Works - NEW */}
         <HowItWorks />
         
-        {/* Section 7: Main Services */}
+        {/* Section 7: Supplier CTA - NEW */}
+        <SupplierCTASection />
+        
+        {/* Section 7.5: Featured Marketplace - NEW */}
+        <FeaturedMarketplace />
+        
+        {/* Section 7.6: LoopTrace Features - NEW */}
+        <LoopTraceFeatures />
+        
+        {/* Section 7.7: Buyer/Supplier Journey - NEW */}
+        <BuyerSupplierJourney />
+        
+        {/* Section 8: Main Services */}
         <ServicesSection />
         
         {/* Section 8: Portfolio Gallery */}
@@ -72,7 +89,10 @@ function Index() {
         {/* Section 12: Resources */}
         <ResourcesSection />
         
-        {/* Section 13: Final CTA */}
+        {/* Section 13: Beta Pricing */}
+        <BetaPricingSection />
+        
+        {/* Section 14: Final CTA */}
         <FinalCTA />
         
         <Footer />
