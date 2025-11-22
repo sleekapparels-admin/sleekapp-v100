@@ -35,7 +35,7 @@ export const Hero = () => {
           <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
             Bangladesh's First AI Powered Apparel Sourcing Platform
            
-            <span className="block text-primary mt-2">Powered by LoopTrace™ Technology</span>
+            <span className="block text-primary mt-2 text-base md:text-lg">Powered by LoopTrace™ Technology</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed font-medium">

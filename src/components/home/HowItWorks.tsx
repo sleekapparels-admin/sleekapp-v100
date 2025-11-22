@@ -10,7 +10,7 @@ const steps = [
     icon: MessageSquare,
     title: "Get Instant Quote",
     duration: "60 Seconds",
-    description: "Use our AI-powered quote generator or chat with our CEO directly. Describe your product, quantity, and timeline.",
+    description: "Use our AI-powered quote generator or chat with our expert directly. Describe your product, quantity, and timeline.",
     features: [
       "AI analyzes your requirements instantly",
       "Transparent pricing breakdown",

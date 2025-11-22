@@ -213,11 +213,11 @@ const WhySleekApparels = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold mb-4 text-secondary">Still Not Convinced?</h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Book a 30-minute consultation with our CEO. We'll discuss your specific needs, share factory video tour, and provide custom pricing—no commitment required.
+              Book a 30-minute consultation with our expert. We'll discuss your specific needs, share factory video tour, and provide custom pricing—no commitment required.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="/consultation" className="inline-block px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
-                Book CEO Consultation
+                Book Expert Consultation
               </a>
               <a href="/contact" className="inline-block px-8 py-4 border border-border rounded-lg font-semibold hover:bg-muted transition-colors">
                 Request Factory Tour

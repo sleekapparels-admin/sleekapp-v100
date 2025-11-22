@@ -53,7 +53,7 @@ const HowItWorks = () => {
           features: ["Instant pricing", "Material suggestions", "MOQ calculations"]
         },
         {
-          name: "CEO Consultation",
+          name: "Expert Consultation",
           duration: "15-90 minutes",
           bestFor: "Complex orders, material guidance",
           features: ["5-10 material alternatives", "Cost optimization", "Personalized advice"]

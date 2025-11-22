@@ -4,7 +4,7 @@ import { FloatingContactWidget } from "@/components/FloatingContactWidget";
 import { SEO } from "@/components/SEO";
 import { getPageSEO } from "@/lib/seo";
 import { Heart, Users, Award, TrendingUp } from "lucide-react";
-import founderPhoto from "@/assets/founder-photo.webp";
+
 import factoryFloor from "@/assets/factory/wide-factory-floor.webp";
 import teamwork from "@/assets/factory/teamwork-production.webp";
 
@@ -54,10 +54,10 @@ const OurStory = () => {
         {/* Founder Story */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="max-w-4xl mx-auto">
               <div>
-                <h2 className="text-3xl font-bold mb-2 text-foreground">Kh Raj Rahman</h2>
-                <p className="text-xl text-primary mb-6">Founder & Managing Director</p>
+                <h2 className="text-3xl font-bold mb-2 text-foreground text-center">Kh Raj Rahman</h2>
+                <p className="text-xl text-primary mb-6 text-center">Founder & Managing Director</p>
                 <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap mb-6">
                   <Award className="h-4 w-4" />
                   Nankai University, Tianjin • International Trade & RMG Specialist • 5+ Years in Apparel Manufacturing
@@ -76,15 +76,6 @@ const OurStory = () => {
                     Our approach isn't revolutionary—it's just focused. We run 50-100 piece production runs with the same attention to construction details, stitch consistency, and fabric testing that factories normally reserve for 5,000-piece orders. We've built relationships with mills that'll accommodate smaller fabric minimums. And we maintain GOTS and Oeko-Tex certifications so brands don't have to compromise on sustainability or compliance just because they're starting small.
                   </p>
                 </div>
-              </div>
-              <div className="relative">
-                <img 
-                  src={founderPhoto} 
-                  alt="Kh Raj Rahman - Founder of Sleek Apparels"
-                  className="rounded-lg shadow-2xl w-full h-auto"
-                  loading="lazy"
-                  onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
-                />
               </div>
             </div>
           </div>

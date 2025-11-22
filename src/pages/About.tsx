@@ -41,70 +41,9 @@ const About = () => {
       {/* Founder Section */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            {/* Left Column - Photo & Contact */}
-            <div className="space-y-6">
-              <div className="relative">
-                <img 
-                  src={founderPhoto} 
-                  alt="Kh Raj Rahman - Founder & Managing Director"
-                  className="w-full rounded-lg shadow-xl"
-                  onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
-                />
-              </div>
-              
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">Connect With Our Founder</h3>
-                  
-                  <div className="space-y-3">
-                    <a 
-                      href="mailto:raj@sleekapparels.com"
-                      className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <Mail className="h-5 w-5" />
-                      <span>raj@sleekapparels.com</span>
-                    </a>
-                    
-                    <a 
-                      href="https://wa.me/8801711071684?text=Hi%20Raj%2C%20I%27d%20like%20to%20schedule%20a%20consultation%20regarding%20apparel%20manufacturing."
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <MessageCircle className="h-5 w-5" />
-                      <span>WhatsApp</span>
-                    </a>
-                    
-                    <a 
-                      href="https://www.linkedin.com/in/md-sleekbd"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <Linkedin className="h-5 w-5" />
-                      <span>Connect on LinkedIn</span>
-                    </a>
-                  </div>
-                  
-                  <Button asChild className="w-full mt-4">
-                    <a 
-                      href="https://wa.me/8801711071684?text=Hi%20Raj%2C%20I%27d%20like%20to%20schedule%20a%20consultation%20to%20discuss%20my%20project%20requirements%20and%20technical%20specifications.%20When%20would%20be%20a%20good%20time%3F"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Schedule Consultation
-                    </a>
-                  </Button>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Limited availability—project evaluation required
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Right Column - Story */}
-            <div className="space-y-6">
+          <div className="grid md:grid-cols-1 gap-12 items-start">
+            {/* Founder Story - Full Width */}
+            <div className="space-y-6 max-w-5xl mx-auto">
               <div>
                 <h2 className="text-3xl font-bold mb-2">Kh Raj Rahman</h2>
                 <p className="text-xl text-primary mb-3">Founder & Managing Director</p>
@@ -207,6 +146,65 @@ const About = () => {
                 <h3 className="text-xl font-semibold mb-3">Radical Transparency</h3>
                 <p className="text-muted-foreground">
                   Real-time visibility into every production stage. No hidden processes, no filtered information—just complete clarity from order to delivery.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-primary/20">
+              <CardContent className="p-6">
+                <CheckCircle className="h-10 w-10 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-3">Technical Excellence</h3>
+                <p className="text-muted-foreground">
+                  Combining advanced manufacturing technology with skilled craftsmanship to deliver consistent, superior quality across every production run.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-primary/20">
+              <CardContent className="p-6">
+                <CheckCircle className="h-10 w-10 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-3">Quality Foundation</h3>
+                <p className="text-muted-foreground">
+                  Fair labor practices, safe working conditions, and environmental responsibility aren't extras—they're baseline requirements for every operation.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-20 px-4 bg-gradient-to-b from-background to-secondary/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            The Sleek Difference
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+            We're not the right fit for everyone, and that's intentional. If you're seeking the absolute lowest cost regardless of conditions, we're not your manufacturer. If you need thousands of basic units with minimal oversight, there are more efficient options.
+          </p>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            But if you're a brand that values quality, ethics, and transparency—if you need sophisticated production capabilities at accessible minimums—if you want a partner invested in your success rather than just another order number—then Sleek Apparels might be exactly what you've been searching for.
+          </p>
+          <Button size="lg" className="mt-8" asChild>
+            <a 
+              href="https://wa.me/8801711071684?text=Hi%20Raj%2C%20I%27d%20like%20to%20start%20a%20project%20with%20Sleek%20Apparels.%20Can%20we%20discuss%20the%20details%3F"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Start Your Project
+            </a>
+          </Button>
+        </div>
+      </section>
+
+        <Footer />
+      </div>
+    </>
+  );
+};
+
+export default About;
+es, no filtered information—just complete clarity from order to delivery.
                 </p>
               </CardContent>
             </Card>

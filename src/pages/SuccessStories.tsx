@@ -15,7 +15,7 @@ const SuccessStories = () => {
       client: "International School, Bangkok",
       category: "Education",
       challenge: "Needed 200 custom school uniforms with specific tropical-friendly fabric requirements and tight budget constraints.",
-      solution: "Our CEO recommended switching from 100% cotton to a moisture-wicking cotton-poly blend better suited for Bangkok's climate. This alternative saved $700 on the order while improving comfort.",
+      solution: "Our expert recommended switching from 100% cotton to a moisture-wicking cotton-poly blend better suited for Bangkok's climate. This alternative saved $700 on the order while improving comfort.",
       results: [
         "35% cost savings ($700 on 200 units)",
         "Better fabric for tropical climate",

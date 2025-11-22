@@ -140,7 +140,7 @@ const Consultation = () => {
     <>
       <SEO config={{
         title: "Manufacturing Consultation - Expert Material Guidance | Sleek Apparels",
-        description: "Get personalized apparel manufacturing consultation from our CEO. Discover material alternatives that save 30-40% while maintaining quality. Book your free discovery call today.",
+        description: "Get personalized apparel manufacturing consultation from our expert. Discover material alternatives that save 30-40% while maintaining quality. Book your free discovery call today.",
         keywords: "apparel consultation, fabric consultation, manufacturing advice, material alternatives, textile expert",
         canonical: "https://sleek-apparels.com/consultation"
       }} />
@@ -154,13 +154,13 @@ const Consultation = () => {
             <div className="text-center mb-16">
               <Badge variant="secondary" className="mb-4">
                 <Sparkles className="h-3 w-3 mr-1" />
-                CEO-Led Consultation
+                Expert-Led Consultation
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 Manufacturing Intelligence Consultation
               </h1>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-                Discover material alternatives that could save you <span className="text-primary font-semibold">30-40% while maintaining quality</span>. Get expert guidance from our CEO with 7+ years Bangladesh manufacturing experience.
+                Discover material alternatives that could save you <span className="text-primary font-semibold">30-40% while maintaining quality</span>. Get expert guidance from our manufacturing specialist with 7+ years Bangladesh manufacturing experience.
               </p>
               
               <div className="flex flex-wrap justify-center gap-6 text-sm">
