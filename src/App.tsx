@@ -6,7 +6,7 @@ import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 
 
-import { AIAssistantChat } from "@/components/AIAssistantChat";
+import { SmartAIAssistant } from "@/components/SmartAIAssistant";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -130,7 +130,7 @@ const Root = () => {
       gtmId={GTM_CONTAINER_ID}
     >
       <ScrollToTop />
-      <AIAssistantChat />
+      <SmartAIAssistant />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (

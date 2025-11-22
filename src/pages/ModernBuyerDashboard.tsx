@@ -570,6 +570,3 @@ export default function ModernBuyerDashboard() {
     </>
   );
 }
-  </>
-  );
-}
