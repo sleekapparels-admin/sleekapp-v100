@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -9,11 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle2, Factory, Award, TrendingUp, Users, Plus, X } from "lucide-react";
+import { CheckCircle2, Factory, Award, TrendingUp, Users, Plus, X, AlertCircle } from "lucide-react";
 import { useCreateSupplier } from "@/hooks/useSuppliers";
 import { useCreateSupplierCapabilities } from "@/hooks/useSupplierCapabilities";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const PRODUCT_CATEGORIES = [
   "T-Shirts",
@@ -34,6 +36,34 @@ const BecomeSupplier = () => {
   const { toast } = useToast();
   const createSupplier = useCreateSupplier();
   const createCapabilities = useCreateSupplierCapabilities();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+      
+      // Restore saved form data if user just authenticated
+      if (session) {
+        const savedData = sessionStorage.getItem('supplierFormData');
+        if (savedData) {
+          try {
+            const parsed = JSON.parse(savedData);
+            setFormData(parsed.formData);
+            setSelectedCategories(parsed.selectedCategories);
+            setCustomCategories(parsed.customCategories);
+            toast({
+              title: "Form Data Restored",
+              description: "Your supplier application has been restored. Please continue filling it out.",
+            });
+          } catch (e) {
+            console.error('Failed to restore form data:', e);
+          }
+        }
+      }
+    };
+    checkAuth();
+  }, []);
   
   const [formData, setFormData] = useState({
     company_name: "",
@@ -77,6 +107,24 @@ const BecomeSupplier = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check authentication before proceeding
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in or create an account to continue",
+        variant: "destructive",
+      });
+      // Store form data in session storage to restore later
+      sessionStorage.setItem('supplierFormData', JSON.stringify({
+        formData,
+        selectedCategories,
+        customCategories
+      }));
+      navigate('/auth?intent=supplier');
+      return;
+    }
 
     const allCategories = [...selectedCategories, ...customCategories];
     
@@ -116,8 +164,11 @@ const BecomeSupplier = () => {
         title: "Application Submitted!",
         description: "Your supplier profile has been created successfully. We'll review it within 2-3 business days.",
       });
+      
+      // Clear stored form data
+      sessionStorage.removeItem('supplierFormData');
 
-      navigate("/dashboard");
+      navigate("/dashboard-router");
     } catch (error: any) {
       toast({
         title: "Submission Failed",
@@ -240,6 +291,15 @@ const BecomeSupplier = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {isAuthenticated === false && (
+                  <Alert className="mb-6 bg-primary/5 border-primary/20">
+                    <AlertCircle className="h-4 w-4 text-primary" />
+                    <AlertDescription>
+                      <strong>Note:</strong> You'll need to create an account or sign in before submitting this application. 
+                      Your form data will be saved automatically.
+                    </AlertDescription>
+                  </Alert>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Company Information */}
                   <div className="space-y-4">

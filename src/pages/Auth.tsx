@@ -36,6 +36,7 @@ export default function Auth() {
   const role = searchParams.get('role');
   const isBetaIntent = intent === 'beta';
   const isBuyerRole = role === 'buyer';
+  const isSupplierIntent = intent === 'supplier';
   
   const [activeTab, setActiveTab] = useState(isBetaIntent ? "signup" : "login");
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
@@ -139,13 +140,17 @@ export default function Auth() {
     setPasswordErrors([]);
 
     const formData = new FormData(e.currentTarget);
+    
+    // Determine role from URL parameter or form data
+    const urlRole = isSupplierIntent ? 'supplier' : (role || 'buyer'); // Default to buyer if not specified
+    
     const rawData = {
       email: formData.get("signup-email") as string,
       password: formData.get("signup-password") as string,
       fullName: formData.get("full-name") as string,
       companyName: formData.get("company-name") as string,
       phone: phoneNumber || "",
-      role: formData.get("role") as string,
+      role: urlRole,
     };
 
     try {
@@ -177,7 +182,7 @@ export default function Auth() {
         return;
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -186,11 +191,26 @@ export default function Auth() {
             full_name: fullName,
             company_name: companyName,
             phone: phone || null,
+            role: rawData.role,
           },
         },
       });
 
       if (error) throw error;
+
+      // Store user role in user_roles table (if user was created)
+      if (signUpData.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: signUpData.user.id,
+            role: rawData.role,
+          });
+        
+        if (roleError) {
+          console.warn('Failed to store user role:', roleError);
+        }
+      }
 
       toast.success("Account created! Please check your email and click the verification link to activate your account.", {
         duration: 8000,
@@ -249,7 +269,15 @@ export default function Auth() {
       }
 
       toast.success("Signed in successfully");
-      navigate("/dashboard-router");
+      
+      // Check if there's a saved supplier form to restore
+      const savedSupplierForm = sessionStorage.getItem('supplierFormData');
+      if (savedSupplierForm && isSupplierIntent) {
+        toast.info("Redirecting back to your supplier application...", { duration: 3000 });
+        navigate("/become-supplier");
+      } else {
+        navigate("/dashboard-router");
+      }
     } catch (error: any) {
       if (error.message === "Failed to fetch" || error.message?.includes('fetch')) {
         toast.error(
@@ -270,10 +298,12 @@ export default function Auth() {
         <CardHeader className="space-y-3">
           <div className="text-center">
         <CardTitle className="text-2xl">
-          {isBetaIntent && isBuyerRole ? '🚀 Join LoopTrace™ - Buyer Registration' : isBetaIntent ? '🚀 Get Free LoopTrace™ Access' : 'Sleek Apparels'}
+          {isSupplierIntent ? '🏭 Supplier Registration' : isBetaIntent && isBuyerRole ? '🚀 Join LoopTrace™ - Buyer Registration' : isBetaIntent ? '🚀 Get Free LoopTrace™ Access' : 'Sleek Apparels'}
         </CardTitle>
         <CardDescription className="text-base">
-          {isBetaIntent 
+          {isSupplierIntent
+            ? 'Create your account to complete your supplier application'
+            : isBetaIntent 
             ? 'Free access to LoopTrace™ platform until December 31, 2025 • Growth & Scale tiers launching Jan 2026'
             : 'Manufacturer & Sourcing Partner'
           }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, User, ChevronDown, Heart } from "lucide-react";
+import { Menu, X, User, ChevronDown, Heart, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -212,6 +212,18 @@ export const Navbar = () => {
                   <User className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
+                <Button 
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    navigate("/");
+                  }} 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`ml-2 ${isHome ? "text-white hover:bg-white/20" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
               </> : <>
                 <Button onClick={() => navigate("/auth")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
                   Sign In
@@ -286,6 +298,18 @@ export const Navbar = () => {
           }} variant="outline" className="w-full mt-2">
                   <User className="mr-2 h-4 w-4" />
                   Dashboard
+                </Button>
+                <Button 
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    setIsOpen(false);
+                    navigate("/");
+                  }} 
+                  variant="ghost" 
+                  className="w-full mt-2"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
                 </Button>
               </> : <>
                 <Button onClick={() => {
