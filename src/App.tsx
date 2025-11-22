@@ -34,7 +34,7 @@ const Portfolio = lazy(() => import("./pages/Portfolio"));
 const About = lazy(() => import("./pages/About"));
 const Sustainability = lazy(() => import("./pages/Sustainability"));
 const Auth = lazy(() => import("./pages/Auth"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
+
 const OrderDetails = lazy(() => import("./pages/OrderDetails"));
 const Orders = lazy(() => import("./pages/Orders"));
 const Blog = lazy(() => import("./pages/Blog"));
@@ -55,7 +55,7 @@ const BecomeSupplier = lazy(() => import("./pages/BecomeSupplier"));
 const SupplierDirectory = lazy(() => import("./pages/SupplierDirectory"));
 const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const JoinSupplier = lazy(() => import("./pages/JoinSupplier"));
-const SupplierDashboard = lazy(() => import("./pages/SupplierDashboard"));
+
 const SupplierOrderManagement = lazy(() => import("./pages/admin/SupplierOrderManagement"));
 const SupplierOrderDetail = lazy(() => import("./pages/SupplierOrderDetail"));
 const PaymentCheckout = lazy(() => import("./pages/PaymentCheckout"));
