@@ -19,6 +19,7 @@ import { SupplierCTASection } from "@/components/home/SupplierCTASection";
 import { BetaPricingSection } from "@/components/home/BetaPricingSection";
 import { FeaturedMarketplace } from "@/components/home/FeaturedMarketplace";
 import { LoopTraceFeatures } from "@/components/home/LoopTraceFeatures";
+import { BuyerSupplierJourney } from "@/components/home/BuyerSupplierJourney";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -66,6 +67,9 @@ function Index() {
         
         {/* Section 7.6: LoopTrace Features - NEW */}
         <LoopTraceFeatures />
+        
+        {/* Section 7.7: Buyer/Supplier Journey - NEW */}
+        <BuyerSupplierJourney />
         
         {/* Section 8: Main Services */}
         <ServicesSection />
