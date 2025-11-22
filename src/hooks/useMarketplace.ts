@@ -47,9 +47,9 @@ export function useMarketplaceProducts(filters?: ProductSearchFilters) {
         `)
         .eq('status', 'approved');
       
-      // Set a reasonable timeout to prevent infinite loading
+      // Set a short timeout to prevent slow page loads
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
 
       // Apply filters
       if (filters?.category) {
@@ -107,9 +107,9 @@ export function useMarketplaceProducts(filters?: ProductSearchFilters) {
       }
       return data as MarketplaceProduct[];
     },
-    // Add retry and timeout configuration
-    retry: 1,
-    retryDelay: 1000,
+    // Add retry and timeout configuration  
+    retry: 0, // No retries - fail fast for missing database
+    retryDelay: 500,
     staleTime: 5 * 60 * 1000, // 5 minutes
     // Return empty array on error instead of infinite loading
     placeholderData: [],
