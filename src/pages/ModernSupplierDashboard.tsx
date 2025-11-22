@@ -266,10 +266,20 @@ export default function ModernSupplierDashboard() {
                 </p>
               </div>
               
-              <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
-                <Camera className="mr-2 h-5 w-5" />
-                Upload Photos
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => navigate('/supplier/products')}
+                >
+                  <Package className="mr-2 h-5 w-5" />
+                  My Products
+                </Button>
+                <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
+                  <Camera className="mr-2 h-5 w-5" />
+                  Upload Photos
+                </Button>
+              </div>
             </div>
           </motion.div>
 

@@ -260,6 +260,69 @@ export function useUpdateProduct() {
 }
 
 // =====================================================
+// SAVE DRAFT (CREATE OR UPDATE)
+// =====================================================
+
+export function useSaveDraft() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ 
+      id, 
+      data 
+    }: { 
+      id?: string; 
+      data: Partial<MarketplaceProduct> 
+    }) => {
+      if (id) {
+        // Update existing draft
+        const { data: product, error } = await supabase
+          .from('marketplace_products')
+          .update({ ...data, status: 'draft' })
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return product as MarketplaceProduct;
+      } else {
+        // Create new draft
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Not authenticated');
+
+        const { data: supplier } = await supabase
+          .from('suppliers')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+
+        if (!supplier) throw new Error('Supplier profile not found');
+
+        const { data: product, error } = await supabase
+          .from('marketplace_products')
+          .insert([{
+            ...data,
+            supplier_id: supplier.id,
+            status: 'draft',
+          }])
+          .select()
+          .single();
+
+        if (error) throw error;
+        return product as MarketplaceProduct;
+      }
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: marketplaceKeys.products() });
+      queryClient.invalidateQueries({ queryKey: marketplaceKeys.product(data.id) });
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to save draft: ${error.message}`);
+    },
+  });
+}
+
+// =====================================================
 // SUBMIT FOR APPROVAL
 // =====================================================
 
