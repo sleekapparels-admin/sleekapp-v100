@@ -92,6 +92,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const ProductionTracking = lazy(() => import("./pages/ProductionTracking"));
 const Samples = lazy(() => import("./pages/Samples"));
+const TechPackServices = lazy(() => import("./pages/TechPackServices"));
 // AdminSetup page removed (security hardening)
 // AdminBootstrap page removed (used once, now deleted for security)
 import QuoteHistory from "./pages/QuoteHistory";
@@ -226,6 +227,7 @@ const router = createBrowserRouter([
         { path: "/materials-guide", element: <MaterialsGuide /> },
         { path: "/sample-policy", element: <SamplePolicy /> },
         { path: "/samples", element: <Samples /> },
+        { path: "/tech-pack-services", element: <TechPackServices /> },
         { path: "/looptrace-technology", element: <LoopTraceTechnology /> },
         { path: "/production-tracking", element: <ProductionTracking /> },
         { path: "/why-sleek-apparels", element: <WhySleekApparels /> },
