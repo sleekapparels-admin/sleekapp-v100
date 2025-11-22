@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider, Outlet, Navigate, useLocation } fr
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { WishlistProvider } from "@/contexts/WishlistContext";
-import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
+
 
 import { StickyWhatsAppButton } from "@/components/StickyWhatsAppButton";
 import { AIAssistantChat } from "@/components/AIAssistantChat";
@@ -131,8 +131,6 @@ const Root = () => {
       gtmId={GTM_CONTAINER_ID}
     >
       <ScrollToTop />
-      <ServiceWorkerStatus />
-      
       <StickyWhatsAppButton />
       <AIAssistantChat />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
