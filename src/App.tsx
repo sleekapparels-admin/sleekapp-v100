@@ -70,7 +70,7 @@ const GetStarted = lazy(() => import("./pages/GetStarted"));
 const InstantQuote = lazy(() => import("./pages/InstantQuote"));
 const ModernBuyerDashboard = lazy(() => import("./pages/ModernBuyerDashboard"));
 const ModernSupplierDashboard = lazy(() => import("./pages/ModernSupplierDashboard"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const ModernAdminDashboard = lazy(() => import("./pages/ModernAdminDashboard"));
 const OrderManagement = lazy(() => import("./pages/admin/OrderManagement"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
 const BuyerOrderTracking = lazy(() => import("./pages/BuyerOrderTracking"));
@@ -169,7 +169,7 @@ const router = createBrowserRouter([
       { path: "/buyer-dashboard-modern", element: <ModernBuyerDashboard /> },
       { path: "/supplier-dashboard-modern", element: <ModernSupplierDashboard /> },
       { path: "/modern-showcase", element: lazy(() => import("./pages/ModernShowcase")) },
-      { path: "/admin", element: <AdminDashboard /> },
+      { path: "/admin", element: <ModernAdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },
       { path: "/admin/orders", element: <OrderManagement /> },
       { path: "/orders/:orderId/track", element: <BuyerOrderTracking /> },
