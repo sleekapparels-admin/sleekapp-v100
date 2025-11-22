@@ -36,15 +36,29 @@ const basePricing: Record<string, number> = {
   'polo': 9.50,
   'hoodie': 15.00,
   'sweatshirt': 12.00,
+  'sweater': 14.00,
+  'pullover': 13.50,
+  'cardigan': 16.00,
+  'vest': 11.00,
   'tank-top': 4.50,
   'long-sleeve': 7.00,
   'jacket': 22.00,
+  'windbreaker': 19.00,
+  'blazer': 35.00,
   'pants': 14.00,
+  'jeans': 18.00,
+  'joggers': 15.00,
   'shorts': 8.50,
+  'skirt': 12.00,
+  'dress': 20.00,
+  'jumpsuit': 25.00,
   'uniform-shirt': 11.00,
   'uniform-pants': 13.00,
   'scrubs': 16.00,
   'jersey': 18.00,
+  'tracksuit': 28.00,
+  'leggings': 10.00,
+  'activewear-top': 12.00,
 };
 
 // Customization costs
@@ -60,11 +74,42 @@ const customizationPricing: Record<string, number> = {
 // Fabric multipliers
 const fabricMultipliers: Record<string, number> = {
   'cotton-100': 1.0,
-  'polyester-100': 0.9,
-  'cotton-poly-blend': 0.95,
-  'organic-cotton': 1.25,
-  'performance': 1.15,
-  'premium': 1.35,
+  'cotton-combed': 1.10,
+  'cotton-pima': 1.30,
+  'cotton-supima': 1.45,
+  'cotton-organic': 1.25,
+  'polyester-100': 0.85,
+  'polyester-recycled': 0.95,
+  'nylon': 0.95,
+  'spandex': 1.05,
+  'rayon': 0.90,
+  'viscose': 0.92,
+  'modal': 1.10,
+  'linen': 1.35,
+  'bamboo': 1.20,
+  'wool': 2.00,
+  'merino-wool': 2.50,
+  'cashmere': 4.00,
+  'silk': 3.50,
+  'cotton-poly-blend': 0.90,
+  'poly-spandex-blend': 0.95,
+  'tri-blend': 1.10,
+  'french-terry': 1.15,
+  'fleece': 1.20,
+  'jersey-knit': 1.05,
+  'rib-knit': 1.08,
+  'waffle-knit': 1.12,
+  'performance-tech': 1.25,
+  'moisture-wicking': 1.20,
+  'quick-dry': 1.18,
+  'anti-microbial': 1.22,
+};
+
+// Premium quality multipliers
+const qualityMultipliers: Record<string, number> = {
+  'standard': 1.0,
+  'premium': 1.20,
+  'luxury': 1.45,
 };
 
 // Timeline options
@@ -80,6 +125,7 @@ export const InstantQuoteCalculator = () => {
   const [quantity, setQuantity] = useState(100);
   const [customization, setCustomization] = useState('screen-print');
   const [fabric, setFabric] = useState('cotton-100');
+  const [quality, setQuality] = useState('standard');
   const [timeline, setTimeline] = useState('standard');
   const [estimate, setEstimate] = useState<QuoteEstimate | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -110,11 +156,14 @@ export const InstantQuoteCalculator = () => {
       // Fabric multiplier
       const fabricMultiplier = fabricMultipliers[fabric] || 1.0;
       
+      // Quality multiplier
+      const qualityMultiplier = qualityMultipliers[quality] || 1.0;
+      
       // Timeline urgency fee
       const urgencyFee = timelineOptions[timeline]?.fee || 0;
       
       // Calculate price per piece
-      const subtotal = basePrice * fabricMultiplier;
+      const subtotal = basePrice * fabricMultiplier * qualityMultiplier;
       const discountedPrice = subtotal * (1 - quantityDiscount);
       const withCustomization = discountedPrice + customizationCost;
       const pricePerPiece = withCustomization * (1 + urgencyFee);
@@ -153,6 +202,7 @@ export const InstantQuoteCalculator = () => {
           customizationCost,
           urgencyFee,
           fabricMultiplier,
+          qualityMultiplier,
         },
         savings: Math.round(savings * 100) / 100,
       });
@@ -218,11 +268,25 @@ export const InstantQuoteCalculator = () => {
                 <SelectItem value="polo">Polo Shirt</SelectItem>
                 <SelectItem value="hoodie">Hoodie</SelectItem>
                 <SelectItem value="sweatshirt">Sweatshirt</SelectItem>
+                <SelectItem value="sweater">Sweater</SelectItem>
+                <SelectItem value="pullover">Pullover</SelectItem>
+                <SelectItem value="cardigan">Cardigan</SelectItem>
+                <SelectItem value="vest">Vest</SelectItem>
                 <SelectItem value="tank-top">Tank Top</SelectItem>
                 <SelectItem value="long-sleeve">Long Sleeve Shirt</SelectItem>
                 <SelectItem value="jacket">Jacket</SelectItem>
+                <SelectItem value="windbreaker">Windbreaker</SelectItem>
+                <SelectItem value="blazer">Blazer</SelectItem>
                 <SelectItem value="pants">Pants</SelectItem>
+                <SelectItem value="jeans">Jeans</SelectItem>
+                <SelectItem value="joggers">Joggers</SelectItem>
                 <SelectItem value="shorts">Shorts</SelectItem>
+                <SelectItem value="skirt">Skirt</SelectItem>
+                <SelectItem value="dress">Dress</SelectItem>
+                <SelectItem value="jumpsuit">Jumpsuit</SelectItem>
+                <SelectItem value="leggings">Leggings</SelectItem>
+                <SelectItem value="activewear-top">Activewear Top</SelectItem>
+                <SelectItem value="tracksuit">Tracksuit (Set)</SelectItem>
                 <SelectItem value="uniform-shirt">Uniform Shirt</SelectItem>
                 <SelectItem value="uniform-pants">Uniform Pants</SelectItem>
                 <SelectItem value="scrubs">Medical Scrubs</SelectItem>
@@ -279,15 +343,57 @@ export const InstantQuoteCalculator = () => {
               <SelectTrigger id="fabric">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[300px]">
                 <SelectItem value="cotton-100">100% Cotton (Standard)</SelectItem>
-                <SelectItem value="polyester-100">100% Polyester (-10%)</SelectItem>
-                <SelectItem value="cotton-poly-blend">Cotton/Poly Blend (-5%)</SelectItem>
-                <SelectItem value="organic-cotton">Organic Cotton (+25%)</SelectItem>
-                <SelectItem value="performance">Performance Fabric (+15%)</SelectItem>
-                <SelectItem value="premium">Premium Fabric (+35%)</SelectItem>
+                <SelectItem value="cotton-combed">Combed Cotton (+10%)</SelectItem>
+                <SelectItem value="cotton-pima">Pima Cotton (+30%)</SelectItem>
+                <SelectItem value="cotton-supima">Supima Cotton (+45%)</SelectItem>
+                <SelectItem value="cotton-organic">Organic Cotton (+25%)</SelectItem>
+                <SelectItem value="polyester-100">100% Polyester (-15%)</SelectItem>
+                <SelectItem value="polyester-recycled">Recycled Polyester (-5%)</SelectItem>
+                <SelectItem value="nylon">Nylon (-5%)</SelectItem>
+                <SelectItem value="spandex">Spandex/Elastane (+5%)</SelectItem>
+                <SelectItem value="rayon">Rayon (-10%)</SelectItem>
+                <SelectItem value="viscose">Viscose (-8%)</SelectItem>
+                <SelectItem value="modal">Modal (+10%)</SelectItem>
+                <SelectItem value="linen">Linen (+35%)</SelectItem>
+                <SelectItem value="bamboo">Bamboo Fiber (+20%)</SelectItem>
+                <SelectItem value="wool">Wool (+100%)</SelectItem>
+                <SelectItem value="merino-wool">Merino Wool (+150%)</SelectItem>
+                <SelectItem value="cashmere">Cashmere (+300%)</SelectItem>
+                <SelectItem value="silk">Silk (+250%)</SelectItem>
+                <SelectItem value="cotton-poly-blend">Cotton/Poly Blend (-10%)</SelectItem>
+                <SelectItem value="poly-spandex-blend">Poly/Spandex Blend (-5%)</SelectItem>
+                <SelectItem value="tri-blend">Tri-Blend (+10%)</SelectItem>
+                <SelectItem value="french-terry">French Terry (+15%)</SelectItem>
+                <SelectItem value="fleece">Fleece (+20%)</SelectItem>
+                <SelectItem value="jersey-knit">Jersey Knit (+5%)</SelectItem>
+                <SelectItem value="rib-knit">Rib Knit (+8%)</SelectItem>
+                <SelectItem value="waffle-knit">Waffle Knit (+12%)</SelectItem>
+                <SelectItem value="performance-tech">Performance Tech (+25%)</SelectItem>
+                <SelectItem value="moisture-wicking">Moisture-Wicking (+20%)</SelectItem>
+                <SelectItem value="quick-dry">Quick-Dry (+18%)</SelectItem>
+                <SelectItem value="anti-microbial">Anti-Microbial (+22%)</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Quality/Premium Level */}
+          <div className="space-y-2">
+            <Label htmlFor="quality">Quality Level</Label>
+            <Select value={quality} onValueChange={setQuality}>
+              <SelectTrigger id="quality">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="standard">Standard Quality</SelectItem>
+                <SelectItem value="premium">Premium Quality (+20%)</SelectItem>
+                <SelectItem value="luxury">Luxury Quality (+45%)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Quality affects stitching, finishing, and construction standards
+            </p>
           </div>
 
           {/* Timeline */}

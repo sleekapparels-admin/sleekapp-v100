@@ -154,14 +154,8 @@ export default function Auth() {
     };
 
     try {
-      // Phone verification is optional but recommended
-      if (phoneOtpSent && phoneOtp) {
-        const verified = await verifyPhoneOtp();
-        if (!verified) {
-          setIsLoading(false);
-          return;
-        }
-      }
+      // Phone verification disabled - OTP service not working
+      // Phone number will be stored without verification
 
       // Client-side validation
       const validationResult = signupSchema.safeParse(rawData);
@@ -414,69 +408,17 @@ export default function Auth() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number (Optional)</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="+1234567890"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      disabled={phoneOtpSent}
-                      className="h-11"
-                    />
-                    {!phoneOtpSent && phoneNumber && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={sendPhoneOtp}
-                        disabled={isLoading}
-                        className="whitespace-nowrap"
-                      >
-                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify"}
-                      </Button>
-                    )}
-                  </div>
-                  {phoneOtpSent && (
-                    <div className="space-y-2 mt-2">
-                      <Label htmlFor="phone-otp" className="text-sm text-muted-foreground">
-                        Enter 6-digit code sent to your phone
-                      </Label>
-                      <InputOTP
-                        maxLength={6}
-                        value={phoneOtp}
-                        onChange={setPhoneOtp}
-                      >
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                      {otpExpiry && (
-                        <p className="text-xs text-muted-foreground">
-                          Code expires in {Math.max(0, Math.floor((otpExpiry.getTime() - Date.now()) / 60000))} minutes
-                        </p>
-                      )}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setPhoneOtpSent(false);
-                          setPhoneOtp("");
-                        }}
-                        className="text-xs"
-                      >
-                        Change phone number
-                      </Button>
-                    </div>
-                  )}
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+1234567890"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="h-11"
+                  />
                   <p className="text-xs text-muted-foreground">
-                    Verify your phone for faster communication
+                    Optional - We'll use this for faster communication
                   </p>
                 </div>
                 <div className="space-y-2">

@@ -37,22 +37,38 @@ export default function ModernBuyerDashboard() {
   // Get current user
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error || !user) {
+          console.error('Auth error:', error);
+          navigate('/auth');
+          return;
+        }
+        
         setUserId(user.id);
+        
         // Get user profile data
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('full_name')
           .eq('id', user.id)
           .single();
+          
+        if (profileError) {
+          console.error('Profile error:', profileError);
+        }
+        
         if (profile?.full_name) {
           setUserName(profile.full_name.split(' ')[0]); // First name only
         }
+      } catch (err) {
+        console.error('Dashboard auth error:', err);
+        navigate('/auth');
       }
     };
     getUser();
-  }, []);
+  }, [navigate]);
 
   // Fetch real data
   const { data: orders = [], isLoading: ordersLoading } = useOrdersByBuyer(userId || '');
@@ -196,7 +212,8 @@ export default function ModernBuyerDashboard() {
     onClick: () => navigate('/products'),
   });
 
-  if (ordersLoading || quotesLoading) {
+  // Show loading state while fetching user or data
+  if (!userId || ordersLoading || quotesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50/30">
         <motion.div
@@ -551,5 +568,8 @@ export default function ModernBuyerDashboard() {
 
       <Footer />
     </>
+  );
+}
+  </>
   );
 }
