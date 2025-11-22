@@ -129,7 +129,7 @@ export const Navbar = () => {
       className={`${isHome ? "fixed top-0 left-0 w-full bg-black/60 backdrop-blur-sm border-0" : "sticky top-0 bg-background/95 backdrop-blur-md border-b border-border shadow-sm"} z-50`}
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16 rounded-none">
+        <div className="flex justify-between items-center h-14 rounded-none">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             <img 
               src={sleekLogo} 
