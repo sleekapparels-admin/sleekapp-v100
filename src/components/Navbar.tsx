@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, User, ChevronDown, Heart, LogOut, Shirt, Zap, Users, Sparkles, LayoutGrid, FileText, Truck, Droplet, BookOpen, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -88,7 +88,10 @@ export const Navbar = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const isHome = location.pathname === "/";
+  
+  // Use useMemo to ensure isHome is calculated immediately and consistently
+  const isHome = useMemo(() => location.pathname === "/", [location.pathname]);
+  
   const { wishlistCount } = useWishlistContext();
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -125,7 +128,14 @@ export const Navbar = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
-  return <nav className={`${isHome ? "fixed top-0 left-0 w-full bg-black/60 supports-[backdrop-filter]:bg-black/40 backdrop-blur-sm border-0" : "sticky top-0 bg-background/98 backdrop-blur-md border-b border-border shadow-sm"} z-50 transition-all duration-300`}>
+  return <nav 
+      data-home={isHome ? "true" : "false"}
+      className={`${isHome ? "fixed top-0 left-0 w-full bg-black/60 supports-[backdrop-filter]:bg-black/40 backdrop-blur-sm border-0" : "sticky top-0 bg-background/98 backdrop-blur-md border-b border-border shadow-sm"} z-50 transition-all duration-300`}
+      style={{
+        // Force immediate background color to prevent flash
+        backgroundColor: isHome ? 'rgba(0, 0, 0, 0.6)' : 'hsl(var(--background) / 0.98)',
+      }}
+    >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16 rounded-none">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
