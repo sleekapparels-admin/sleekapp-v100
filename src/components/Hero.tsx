@@ -43,7 +43,7 @@ export const Hero = () => {
           </p>
 
           <p className="text-base md:text-lg text-white/75 mb-8 leading-relaxed">
-            Break free from high MOQs and zero visibility. Watch your order progress through every stage with our revolutionary LoopTrace™ technology. From yarn to finished garment, full transparency guaranteed.
+            Premium private label clothing manufacturing with low MOQs and full visibility. Watch your order progress through every stage with our revolutionary LoopTrace™ technology. From yarn to finished garment, full transparency guaranteed.
           </p>
 
           {/* Key Features - Quick Scan */}

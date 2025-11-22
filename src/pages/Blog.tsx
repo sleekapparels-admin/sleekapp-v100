@@ -74,8 +74,55 @@ const Blog = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               </div>
             ) : blogPosts.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-xl text-muted-foreground">No blog posts available yet.</p>
+              <div className="max-w-2xl mx-auto text-center py-20">
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-8 md:p-12 border border-purple-100">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full mb-6">
+                    <Calendar className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold mb-4">Blog Coming Soon!</h2>
+                  <p className="text-xl text-muted-foreground mb-8">
+                    We're preparing insightful articles on apparel manufacturing, sustainable fashion, 
+                    startup guides, and industry trends. Subscribe to get notified when we launch.
+                  </p>
+                  <div className="max-w-md mx-auto">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="flex-1 px-4 py-3 rounded-lg border border-input bg-background"
+                      />
+                      <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                        Notify Me
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-4">
+                      Join 500+ apparel entrepreneurs getting our updates. Unsubscribe anytime.
+                    </p>
+                  </div>
+                  <div className="mt-8 pt-8 border-t border-purple-200">
+                    <p className="text-sm text-muted-foreground mb-4">While you wait, check out:</p>
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      <Button variant="outline" asChild>
+                        <Link to="/for-startups">
+                          Startup Guide
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <Link to="/tech-pack-services">
+                          Tech Pack Resources
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <Link to="/samples">
+                          Sample Program
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

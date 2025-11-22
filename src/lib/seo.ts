@@ -18,9 +18,9 @@ const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`;
 export const getPageSEO = (page: string): SEOConfig => {
   const configs: Record<string, SEOConfig> = {
     home: {
-      title: 'Custom T-Shirt & Hoodie Manufacturer | Low MOQ 50 Pieces | Bangladesh',
-      description: 'Premium custom apparel manufacturing from Bangladesh. T-shirts, hoodies, sweatshirts, joggers from 50 pieces. LoopTrace™ platform access for real-time tracking. Fast production, ethical practices, global shipping to Europe, North America & worldwide.',
-      keywords: 't-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, custom apparel, low MOQ, Bangladesh manufacturer, casualwear manufacturer, joggers manufacturer, polo shirts, activewear, LoopTrace platform',
+      title: 'Private Label Clothing Manufacturer | Custom T-Shirts & Hoodies | MOQ 50',
+      description: 'Premium private label apparel manufacturing from Bangladesh. Custom t-shirts, hoodies, sweatshirts, joggers from 50 pieces. Private label clothing with your brand. LoopTrace™ platform access for real-time tracking. Fast production, ethical practices, global shipping to Europe, North America & worldwide.',
+      keywords: 'private label clothing manufacturer, private label apparel, t-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, custom apparel, low MOQ, Bangladesh manufacturer, casualwear manufacturer, joggers manufacturer, polo shirts, activewear, white label clothing, LoopTrace platform',
       canonical: BASE_URL,
       ogTitle: 'Custom Apparel Manufacturer | T-Shirts, Hoodies & More | MOQ 50',
       ogDescription: 'Custom t-shirts, hoodies, sweatshirts, and joggers. MOQ 50. LoopTrace™ platform access. Fast production from Bangladesh.',
@@ -31,9 +31,9 @@ export const getPageSEO = (page: string): SEOConfig => {
       twitterImage: DEFAULT_OG_IMAGE,
     },
     services: {
-      title: 'Apparel Manufacturing Services | T-Shirts, Hoodies, Activewear | Bangladesh',
-      description: 'Complete apparel manufacturing services. T-shirts, hoodies, sweatshirts, joggers, uniforms. MOQ 50-300. Fast sampling. Serving Europe, North America & worldwide. Transparent pricing, ethical production.',
-      keywords: 'apparel manufacturing services, t-shirt manufacturer, hoodie manufacturer, custom apparel, uniform manufacturing, Bangladesh manufacturer, casualwear services, wholesale garments, ethical production',
+      title: 'Private Label Apparel Manufacturing Services | T-Shirts, Hoodies, Activewear',
+      description: 'Complete private label apparel manufacturing services. Custom t-shirts, hoodies, sweatshirts, joggers, uniforms with your brand. MOQ 50-300. Fast sampling. Serving Europe, North America & worldwide. Transparent pricing, ethical production.',
+      keywords: 'private label manufacturing services, private label apparel, apparel manufacturing services, t-shirt manufacturer, hoodie manufacturer, custom apparel, uniform manufacturing, Bangladesh manufacturer, casualwear services, wholesale garments, white label clothing, ethical production',
       canonical: `${BASE_URL}/services`,
       ogTitle: 'Apparel Manufacturing Services | Casualwear & Activewear',
       ogDescription: 'Complete manufacturing services. T-shirts, hoodies, joggers, uniforms. MOQ 50-300.',
@@ -44,9 +44,9 @@ export const getPageSEO = (page: string): SEOConfig => {
       twitterImage: DEFAULT_OG_IMAGE,
     },
     casualwear: {
-      title: 'Custom Casualwear Manufacturer | T-Shirts, Hoodies & Sweatshirts | MOQ 50',
-      description: 'Premium casualwear manufacturing for global brands. Custom t-shirts, hoodies, sweatshirts, polo shirts. MOQ from 50 pieces. Ring-spun cotton, organic fabrics. Fast sampling 3-7 days. Serving Europe, North America & worldwide.',
-      keywords: 't-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, polo shirts, custom casualwear, ring-spun cotton, organic cotton, low MOQ apparel, Bangladesh manufacturer',
+      title: 'Private Label Casualwear Manufacturer | T-Shirts, Hoodies | MOQ 50',
+      description: 'Premium private label casualwear manufacturing for global brands. Custom t-shirts, hoodies, sweatshirts, polo shirts with your brand. MOQ from 50 pieces. Ring-spun cotton, organic fabrics. Fast sampling 3-7 days. Serving Europe, North America & worldwide.',
+      keywords: 'private label casualwear, private label t-shirts, t-shirt manufacturer, hoodie manufacturer, sweatshirt manufacturer, polo shirts, custom casualwear, ring-spun cotton, organic cotton, low MOQ apparel, white label clothing, Bangladesh manufacturer',
       canonical: `${BASE_URL}/casualwear`,
       ogTitle: 'Custom Casualwear Manufacturer | T-Shirts, Hoodies | MOQ 50',
       ogDescription: 'Custom t-shirts, hoodies, sweatshirts, polos. MOQ 50. Fast production.',
