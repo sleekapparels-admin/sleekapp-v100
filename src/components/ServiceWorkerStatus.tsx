@@ -12,6 +12,9 @@ import { useSyncQueue } from "@/hooks/useSyncQueue";
 import { Badge } from "@/components/ui/badge";
 
 export const ServiceWorkerStatus = () => {
+  // Hidden for production - service worker status not needed in UI
+  return null;
+  
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [hasServiceWorker, setHasServiceWorker] = useState(false);
   const [cacheSize, setCacheSize] = useState<number | null>(null);

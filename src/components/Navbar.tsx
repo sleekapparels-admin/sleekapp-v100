@@ -156,7 +156,7 @@ export const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`!h-10 px-2 xl:px-3 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 appearance-none !border-none !shadow-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 ${isHome ? "!bg-transparent !text-white hover:!text-white hover:!bg-white/10 data-[state=open]:!text-white data-[state=open]:!bg-white/20" : "!bg-transparent !text-foreground hover:!text-foreground hover:!bg-muted data-[state=open]:!bg-muted data-[state=open]:!text-foreground"}`}>
+                  <NavigationMenuTrigger className={`!h-10 px-2 xl:px-3 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 appearance-none !border-none !shadow-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 ${isHome ? "!bg-primary !text-white hover:!bg-primary/90 data-[state=open]:!bg-primary/80" : "!bg-primary !text-white hover:!bg-primary/90 data-[state=open]:!bg-primary/80"}`}>
                     Services
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -200,7 +200,7 @@ export const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`!h-10 px-2 xl:px-3 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 appearance-none !border-none !shadow-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 ${isHome ? "!bg-transparent !text-white hover:!text-white hover:!bg-white/10 data-[state=open]:!text-white data-[state=open]:!bg-white/20" : "!bg-transparent !text-foreground hover:!text-foreground hover:!bg-muted data-[state=open]:!bg-muted data-[state=open]:!text-foreground"}`}>
+                  <NavigationMenuTrigger className={`!h-10 px-2 xl:px-3 rounded-md text-xs xl:text-sm font-medium transition-all duration-200 appearance-none !border-none !shadow-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 ${isHome ? "!bg-primary !text-white hover:!bg-primary/90 data-[state=open]:!bg-primary/80" : "!bg-primary !text-white hover:!bg-primary/90 data-[state=open]:!bg-primary/80"}`}>
                     Resources
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
