@@ -17,6 +17,7 @@ import { CertificationBadges } from "@/components/home/CertificationBadges";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { SupplierCTASection } from "@/components/home/SupplierCTASection";
 import { BetaPricingSection } from "@/components/home/BetaPricingSection";
+import { FeaturedMarketplace } from "@/components/home/FeaturedMarketplace";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
 
@@ -58,6 +59,9 @@ function Index() {
         
         {/* Section 7: Supplier CTA - NEW */}
         <SupplierCTASection />
+        
+        {/* Section 7.5: Featured Marketplace - NEW */}
+        <FeaturedMarketplace />
         
         {/* Section 8: Main Services */}
         <ServicesSection />
