@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Trophy,
   TrendingUp,
@@ -25,6 +25,11 @@ import { pageTransition, staggerContainer, staggerItem, hoverLift, bounceIn } fr
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useSupplierByUser } from '@/hooks/queries/useSuppliers';
+import { useOrdersByFactory } from '@/hooks/queries/useOrders';
+import { useSupplierQuotes } from '@/hooks/useQuotes';
 
 // Mock data
 const performanceScore = {
@@ -91,6 +96,127 @@ const achievements = [
 
 export default function ModernSupplierDashboard() {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [supplierName, setSupplierName] = useState<string>('Supplier');
+
+  // Get current user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    };
+    getUser();
+  }, []);
+
+  // Fetch real supplier data
+  const { data: supplier, isLoading: supplierLoading } = useSupplierByUser(userId || '');
+  const { data: orders = [], isLoading: ordersLoading } = useOrdersByFactory(supplier?.id || '');
+  const { data: quotes = [], isLoading: quotesLoading } = useSupplierQuotes();
+
+  // Set supplier name
+  useEffect(() => {
+    if (supplier?.company_name) {
+      setSupplierName(supplier.company_name);
+    }
+  }, [supplier]);
+
+  // Calculate real stats
+  const activeOrders = orders.filter(o => 
+    o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'rejected'
+  ).length;
+  
+  const monthlyRevenue = orders
+    .filter(o => {
+      const orderDate = new Date(o.created_at || '');
+      const now = new Date();
+      const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+      return orderDate >= monthAgo;
+    })
+    .reduce((sum, order) => sum + (Number(order.supplier_price) || 0), 0);
+  
+  const capacityUtilization = supplier?.total_capacity_monthly 
+    ? Math.min(100, Math.round((activeOrders * 100) / (supplier.total_capacity_monthly / 500)))
+    : 0;
+  
+  const avgRating = supplier?.supplier_ratings?.[0]?.overall_score || 0;
+
+  // Calculate performance score
+  const completedOrders = orders.filter(o => o.status === 'completed');
+  const onTimeOrders = completedOrders.filter(o => {
+    // This would need actual delivery tracking data
+    return true; // Placeholder
+  });
+  const onTimeDelivery = completedOrders.length > 0 
+    ? Math.round((onTimeOrders.length / completedOrders.length) * 100)
+    : 0;
+
+  const looptraceCompliance = Math.round((avgRating / 5) * 100);
+  
+  const performanceScore = {
+    overall: Math.round((onTimeDelivery + looptraceCompliance + (avgRating * 20)) / 3),
+    onTimeDelivery,
+    qualityScore: avgRating,
+    looptraceCompliance,
+    communicationScore: Math.round((avgRating / 5) * 100),
+    tier: supplier?.tier || 'BRONZE',
+    tierProgress: 68,
+    pointsToNextTier: 13,
+  };
+
+  const stats = {
+    activeOrders,
+    monthlyRevenue: `$${monthlyRevenue.toLocaleString()}`,
+    capacityUtilization,
+    avgRating,
+  };
+
+  // Extract urgent actions from real data
+  const urgentActions = orders
+    .filter(o => o.status === 'quality_check' || o.status === 'awaiting_approval')
+    .slice(0, 3)
+    .map(order => ({
+      id: order.id,
+      type: order.status === 'quality_check' ? 'photo_update' : 'update',
+      order: order.order_number || order.id,
+      product: order.product_type || 'Product',
+      message: order.status === 'quality_check' ? 'Upload Quality Check photos' : 'Update production status',
+      dueIn: '2 hours',
+      priority: 'high' as const,
+    }));
+
+  // Add pending quote responses
+  const pendingQuotes = quotes
+    .filter((q: any) => q.status === 'pending')
+    .slice(0, 2)
+    .map((quote: any) => ({
+      id: quote.id,
+      type: 'quote',
+      order: quote.quotes?.product_type || 'Quote',
+      product: quote.quotes?.product_type || 'Product',
+      message: 'Respond to quote request',
+      dueIn: '4 hours',
+      priority: 'high' as const,
+    }));
+
+  urgentActions.push(...pendingQuotes);
+
+  if (supplierLoading || ordersLoading || quotesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-orange-50/30">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading your dashboard...</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   const getTierColor = (tier: string) => {
     switch (tier) {

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ShoppingBag, 
   FileText, 
@@ -10,7 +10,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Zap,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { StatCard } from '@/components/modern/StatCard';
 import { ProgressRing } from '@/components/modern/ProgressRing';
@@ -22,86 +23,194 @@ import { Footer } from '@/components/Footer';
 import { pageTransition, staggerContainer, staggerItem, hoverLift } from '@/lib/animations';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-
-// Mock data - Replace with real API calls
-const mockStats = {
-  activeOrders: 8,
-  pendingQuotes: 3,
-  totalSpent: '$47,250',
-  avgDeliveryTime: '16 days',
-};
-
-const mockOrders = [
-  {
-    id: '12345',
-    product: 'Polo Shirts',
-    quantity: 500,
-    status: 'In Production',
-    progress: 65,
-    stage: 'Quality Check',
-    supplier: 'ABC Textiles',
-    dueDate: '2025-12-05',
-    daysRemaining: 12,
-    estimatedDelivery: 'Dec 5, 2025',
-    looptraceUpdates: 8,
-    lastUpdate: '2 hours ago',
-  },
-  {
-    id: '12346',
-    product: 'Hoodies',
-    quantity: 200,
-    status: 'Cutting',
-    progress: 25,
-    stage: 'Cutting',
-    supplier: 'XYZ Manufacturing',
-    dueDate: '2025-12-15',
-    daysRemaining: 22,
-    estimatedDelivery: 'Dec 15, 2025',
-    looptraceUpdates: 3,
-    lastUpdate: '1 day ago',
-  },
-  {
-    id: '12347',
-    product: 'T-Shirts',
-    quantity: 1000,
-    status: 'Fabric Sourcing',
-    progress: 10,
-    stage: 'Fabric Sourcing',
-    supplier: 'Best Apparel Co.',
-    dueDate: '2025-12-20',
-    daysRemaining: 27,
-    estimatedDelivery: 'Dec 20, 2025',
-    looptraceUpdates: 1,
-    lastUpdate: '3 days ago',
-  },
-];
-
-const mockRecommendations = [
-  {
-    id: '1',
-    type: 'reorder',
-    title: 'Ready to Reorder Polo Shirts?',
-    description: 'You typically reorder every 45 days. Last order was 42 days ago.',
-    action: 'Reorder Now',
-    icon: RefreshCw,
-    color: 'primary' as const,
-  },
-  {
-    id: '2',
-    type: 'seasonal',
-    title: 'Summer Collection Prep',
-    description: 'Start ordering for summer season now to avoid delays.',
-    action: 'Browse Products',
-    icon: TrendingUp,
-    color: 'accent' as const,
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
+import { useOrdersByBuyer } from '@/hooks/queries/useOrders';
+import { useQuotes } from '@/hooks/useQuotes';
+import { format, differenceInDays } from 'date-fns';
 
 export default function ModernBuyerDashboard() {
   const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'active' | 'pending'>('all');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>('User');
 
-  const filteredOrders = mockOrders;
+  // Get current user
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        // Get user profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        if (profile?.full_name) {
+          setUserName(profile.full_name.split(' ')[0]); // First name only
+        }
+      }
+    };
+    getUser();
+  }, []);
+
+  // Fetch real data
+  const { data: orders = [], isLoading: ordersLoading } = useOrdersByBuyer(userId || '');
+  const { data: quotes = [], isLoading: quotesLoading } = useQuotes();
+
+  // Calculate stats from real data
+  const activeOrders = orders.filter(o => 
+    o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'rejected'
+  ).length;
+  
+  const pendingQuotes = quotes.filter(q => q.status === 'pending' || q.status === 'draft').length;
+  
+  const totalSpent = orders
+    .filter(o => o.status === 'completed')
+    .reduce((sum, order) => sum + (Number(order.buyer_price) || 0), 0);
+  
+  const completedOrders = orders.filter(o => o.status === 'completed');
+  const avgDeliveryTime = completedOrders.length > 0
+    ? Math.round(completedOrders.reduce((sum, order) => {
+        if (order.created_at && order.updated_at) {
+          return sum + differenceInDays(new Date(order.updated_at), new Date(order.created_at));
+        }
+        return sum;
+      }, 0) / completedOrders.length)
+    : 0;
+
+  // Map real orders to display format
+  const mappedOrders = orders
+    .filter(o => {
+      if (selectedFilter === 'all') return true;
+      if (selectedFilter === 'active') return o.status === 'in_production' || o.status === 'cutting' || o.status === 'sewing';
+      if (selectedFilter === 'pending') return o.status === 'pending' || o.status === 'awaiting_approval';
+      return true;
+    })
+    .map(order => {
+      // Calculate progress based on status
+      let progress = 0;
+      let stage = 'Pending';
+      
+      switch (order.status) {
+        case 'pending':
+        case 'awaiting_approval':
+          progress = 5;
+          stage = 'Awaiting Approval';
+          break;
+        case 'fabric_sourcing':
+          progress = 15;
+          stage = 'Fabric Sourcing';
+          break;
+        case 'cutting':
+          progress = 30;
+          stage = 'Cutting';
+          break;
+        case 'sewing':
+          progress = 50;
+          stage = 'Sewing';
+          break;
+        case 'quality_check':
+          progress = 75;
+          stage = 'Quality Check';
+          break;
+        case 'in_production':
+          progress = 40;
+          stage = 'In Production';
+          break;
+        case 'packaging':
+          progress = 85;
+          stage = 'Packaging';
+          break;
+        case 'shipped':
+          progress = 95;
+          stage = 'Shipped';
+          break;
+        case 'completed':
+          progress = 100;
+          stage = 'Completed';
+          break;
+        default:
+          progress = 10;
+          stage = 'Processing';
+      }
+
+      const dueDate = order.target_delivery_date 
+        ? new Date(order.target_delivery_date)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default 30 days
+
+      return {
+        id: order.order_number || order.id,
+        product: order.product_type || 'Product',
+        quantity: order.quantity || 0,
+        status: order.status,
+        progress,
+        stage,
+        supplier: order.suppliers?.company_name || 'Sleek Apparels',
+        dueDate: format(dueDate, 'yyyy-MM-dd'),
+        daysRemaining: differenceInDays(dueDate, new Date()),
+        estimatedDelivery: format(dueDate, 'MMM d, yyyy'),
+        looptraceUpdates: 0, // Can be enhanced with real tracking data
+        lastUpdate: order.updated_at ? format(new Date(order.updated_at), "'Updated' h:mm a") : 'Recently',
+      };
+    });
+
+  // Smart recommendations based on real data
+  const recommendations = [];
+  
+  // Check for reorder opportunities
+  const recentCompletedOrders = orders
+    .filter(o => o.status === 'completed')
+    .sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime())
+    .slice(0, 3);
+
+  if (recentCompletedOrders.length > 0) {
+    const lastOrder = recentCompletedOrders[0];
+    const daysSinceLastOrder = lastOrder.updated_at 
+      ? differenceInDays(new Date(), new Date(lastOrder.updated_at))
+      : 999;
+    
+    if (daysSinceLastOrder > 40) {
+      recommendations.push({
+        id: '1',
+        type: 'reorder',
+        title: `Ready to Reorder ${lastOrder.product_type}?`,
+        description: `Last order was ${daysSinceLastOrder} days ago. Keep your inventory stocked.`,
+        action: 'Reorder Now',
+        icon: RefreshCw,
+        color: 'primary' as const,
+        onClick: () => navigate('/instant-quote'),
+      });
+    }
+  }
+
+  // Add seasonal recommendation
+  recommendations.push({
+    id: '2',
+    type: 'seasonal',
+    title: 'Plan Ahead for Next Season',
+    description: 'Start ordering for next season now to avoid delays and get better pricing.',
+    action: 'Browse Products',
+    icon: TrendingUp,
+    color: 'accent' as const,
+    onClick: () => navigate('/products'),
+  });
+
+  if (ordersLoading || quotesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading your dashboard...</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -125,7 +234,7 @@ export default function ModernBuyerDashboard() {
             className="mb-8"
           >
             <h1 className="text-4xl font-bold text-foreground mb-2">
-              Welcome back, User! 👋
+              Welcome back, {userName}! 👋
             </h1>
             <p className="text-lg text-muted-foreground">
               Here's what's happening with your orders today
@@ -142,7 +251,7 @@ export default function ModernBuyerDashboard() {
             <motion.div variants={staggerItem}>
               <StatCard
                 title="Active Orders"
-                value={mockStats.activeOrders}
+                value={activeOrders}
                 change={{ value: 12, label: 'vs last month' }}
                 trend="up"
                 icon={Package}
@@ -154,7 +263,7 @@ export default function ModernBuyerDashboard() {
             <motion.div variants={staggerItem}>
               <StatCard
                 title="Pending Quotes"
-                value={mockStats.pendingQuotes}
+                value={pendingQuotes}
                 change={{ value: 5, label: 'vs last week' }}
                 trend="down"
                 icon={FileText}
@@ -166,7 +275,7 @@ export default function ModernBuyerDashboard() {
             <motion.div variants={staggerItem}>
               <StatCard
                 title="Total Spent"
-                value={mockStats.totalSpent}
+                value={`$${totalSpent.toLocaleString()}`}
                 change={{ value: 18, label: 'vs last month' }}
                 trend="up"
                 icon={DollarSign}
@@ -177,7 +286,7 @@ export default function ModernBuyerDashboard() {
             <motion.div variants={staggerItem}>
               <StatCard
                 title="Avg Delivery"
-                value={mockStats.avgDeliveryTime}
+                value={avgDeliveryTime > 0 ? `${avgDeliveryTime} days` : 'N/A'}
                 change={{ value: 2, label: 'days faster' }}
                 trend="up"
                 icon={Clock}
@@ -236,7 +345,7 @@ export default function ModernBuyerDashboard() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-bold text-foreground">
-                    Active Orders ({mockOrders.length})
+                    Active Orders ({mappedOrders.length})
                   </h2>
                   <div className="flex gap-2">
                     {(['all', 'active', 'pending'] as const).map((filter) => (
@@ -253,186 +362,186 @@ export default function ModernBuyerDashboard() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  {filteredOrders.map((order, index) => (
-                    <motion.div
-                      key={order.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                      {...hoverLift}
-                    >
-                      <Card className="p-6 cursor-pointer" onClick={() => navigate(`/orders/${order.id}/track`)}>
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <h3 className="text-lg font-semibold text-foreground mb-1">
-                              Order #{order.id}
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              {order.product} • {order.quantity} pieces
-                            </p>
+                {mappedOrders.length === 0 ? (
+                  <Card className="p-12 text-center">
+                    <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4 opacity-50" />
+                    <h3 className="text-xl font-semibold mb-2">No Orders Yet</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Start by getting an instant quote for your first order
+                    </p>
+                    <Button onClick={() => navigate('/instant-quote')}>
+                      <Zap className="mr-2 h-4 w-4" />
+                      Get Instant Quote
+                    </Button>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {mappedOrders.map((order, index) => (
+                      <motion.div
+                        key={order.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 + index * 0.1 }}
+                        {...hoverLift}
+                      >
+                        <Card className="p-6 cursor-pointer" onClick={() => navigate(`/orders/${order.id}/track`)}>
+                          <div className="flex items-start justify-between mb-4">
+                            <div>
+                              <h3 className="text-lg font-semibold text-foreground mb-1">
+                                Order #{order.id}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {order.product} • {order.quantity} pieces
+                              </p>
+                            </div>
+                            <Badge 
+                              variant="secondary"
+                              className="bg-primary/10 text-primary border-primary/20"
+                            >
+                              {order.stage}
+                            </Badge>
                           </div>
-                          <Badge 
-                            variant="secondary"
-                            className="bg-primary/10 text-primary border-primary/20"
-                          >
-                            {order.stage}
-                          </Badge>
-                        </div>
 
-                        {/* Progress Bar */}
-                        <div className="mb-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-foreground">
-                              Production Progress
-                            </span>
-                            <span className="text-sm font-semibold text-primary">
-                              {order.progress}%
-                            </span>
+                          {/* Progress Bar */}
+                          <div className="mb-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-foreground">
+                                Production Progress
+                              </span>
+                              <span className="text-sm font-semibold text-primary">
+                                {order.progress}%
+                              </span>
+                            </div>
+                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${order.progress}%` }}
+                                transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
+                                className="h-full bg-gradient-to-r from-primary to-accent"
+                              />
+                            </div>
                           </div>
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${order.progress}%` }}
-                              transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                              className="h-full bg-gradient-to-r from-primary to-accent"
-                            />
-                          </div>
-                        </div>
 
-                        {/* Order Details */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground mb-1">Supplier</p>
-                            <p className="font-medium">{order.supplier}</p>
+                          {/* Order Details */}
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <p className="text-muted-foreground mb-1">Supplier</p>
+                              <p className="font-medium text-foreground">{order.supplier}</p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground mb-1">Delivery</p>
+                              <p className="font-medium text-foreground">{order.estimatedDelivery}</p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground mb-1">Last Update</p>
+                              <p className="font-medium text-foreground">{order.lastUpdate}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-muted-foreground mb-1">Delivery</p>
-                            <p className="font-medium">{order.estimatedDelivery}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground mb-1">Days Left</p>
-                            <p className="font-medium text-primary">{order.daysRemaining} days</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground mb-1">LoopTrace™</p>
-                            <p className="font-medium flex items-center gap-1">
-                              <CheckCircle2 className="h-4 w-4 text-green-500" />
-                              {order.looptraceUpdates} updates
-                            </p>
-                          </div>
-                        </div>
 
-                        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">
-                            Last update: {order.lastUpdate}
-                          </span>
-                          <Button size="sm" variant="ghost" className="text-primary">
-                            View LoopTrace™ →
-                          </Button>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
+                          {/* LoopTrace Updates Indicator */}
+                          {order.daysRemaining > 0 && order.daysRemaining < 7 && (
+                            <div className="mt-4 pt-4 border-t border-gray-200">
+                              <div className="flex items-center gap-2 text-orange-600">
+                                <Clock className="h-4 w-4" />
+                                <span className="text-sm font-medium">
+                                  {order.daysRemaining} days until delivery
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             </div>
 
-            {/* Sidebar - Recommendations & Quick Stats */}
+            {/* Sidebar - AI Recommendations */}
             <div className="space-y-6">
-              {/* Performance Ring */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <Card className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Your Activity</h3>
-                  <div className="flex justify-center mb-4">
-                    <ProgressRing
-                      progress={78}
-                      size={140}
-                      strokeWidth={12}
-                      color="primary"
-                      label="Orders Completed"
-                    />
-                  </div>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">On-time orders</span>
-                      <span className="font-semibold text-green-600">95%</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Quality satisfaction</span>
-                      <span className="font-semibold text-blue-600">4.8/5</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Repeat orders</span>
-                      <span className="font-semibold text-orange-600">42%</span>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
+                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-primary" />
+                  Smart Suggestions
+                </h3>
 
-              {/* Smart Recommendations */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-                className="space-y-4"
-              >
-                <h3 className="text-lg font-semibold">Smart Recommendations</h3>
-                {mockRecommendations.map((rec, index) => {
-                  const Icon = rec.icon;
-                  return (
-                    <motion.div
-                      key={rec.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 + index * 0.1 }}
-                      {...hoverLift}
+                {recommendations.map((rec, index) => (
+                  <motion.div
+                    key={rec.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 + index * 0.1 }}
+                    {...hoverLift}
+                  >
+                    <Card 
+                      className="p-5 cursor-pointer mb-4 bg-gradient-to-br from-card to-card/50 border-primary/20"
+                      onClick={rec.onClick}
                     >
-                      <Card className="p-4 cursor-pointer border-2 hover:border-primary/50">
-                        <div className="flex items-start gap-3">
-                          <div className={`p-2 rounded-lg ${
-                            rec.color === 'primary' ? 'bg-blue-500/10 text-blue-600' : 'bg-orange-500/10 text-orange-600'
-                          }`}>
-                            <Icon className="h-5 w-5" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-sm mb-1">{rec.title}</h4>
-                            <p className="text-xs text-muted-foreground mb-3">
-                              {rec.description}
-                            </p>
-                            <Button size="sm" variant="outline" className="w-full">
-                              {rec.action}
-                            </Button>
-                          </div>
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-lg bg-${rec.color}/10`}>
+                          <rec.icon className={`h-6 w-6 text-${rec.color}`} />
                         </div>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-foreground mb-1">
+                            {rec.title}
+                          </h4>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {rec.description}
+                          </p>
+                          <Button size="sm" variant="outline" className="w-full">
+                            {rec.action}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
               </motion.div>
 
-              {/* Quick Alert */}
+              {/* Recent Quotes */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.9 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 }}
               >
-                <Card className="p-4 bg-amber-50 border-amber-200">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-sm text-amber-900 mb-1">
-                        Peak Season Ahead
-                      </h4>
-                      <p className="text-xs text-amber-800">
-                        Order now to avoid 2-3 week delays during peak season (Jan-Feb).
-                      </p>
+                <h3 className="text-xl font-bold text-foreground mb-4">Recent Quotes</h3>
+                <Card className="p-5">
+                  {quotes.length === 0 ? (
+                    <div className="text-center py-8">
+                      <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-3 opacity-50" />
+                      <p className="text-sm text-muted-foreground">No quotes yet</p>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {quotes.slice(0, 3).map((quote: any) => (
+                        <div 
+                          key={quote.id}
+                          className="p-3 border border-gray-200 rounded-lg hover:border-primary/50 transition-colors cursor-pointer"
+                          onClick={() => navigate(`/quotes/${quote.id}`)}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium text-foreground">
+                              {quote.product_type}
+                            </span>
+                            <Badge variant={
+                              quote.status === 'approved' ? 'default' : 
+                              quote.status === 'pending' ? 'secondary' : 
+                              'outline'
+                            }>
+                              {quote.status}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {quote.quantity} pieces • {format(new Date(quote.created_at), 'MMM d')}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Card>
               </motion.div>
             </div>
