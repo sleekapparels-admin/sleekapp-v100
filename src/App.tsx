@@ -76,6 +76,7 @@ const Analytics = lazy(() => import("./pages/admin/Analytics"));
 const ProductUpload = lazy(() => import("./pages/supplier/ProductUpload"));
 const ProductApproval = lazy(() => import("./pages/admin/ProductApproval"));
 const ProductReview = lazy(() => import("./pages/admin/ProductReview"));
+const Marketplace = lazy(() => import("./pages/Marketplace"));
 const BuyerOrderTracking = lazy(() => import("./pages/BuyerOrderTracking"));
 const UserSettings = lazy(() => import("./pages/UserSettings"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
@@ -196,6 +197,7 @@ const router = createBrowserRouter([
       { path: "/track-order/:orderId", element: <TrackOrder /> },
       { path: "/become-supplier", element: <BecomeSupplier /> },
       { path: "/suppliers", element: <SupplierDirectory /> },
+      { path: "/marketplace", element: <Marketplace /> },
       { path: "/order-confirmation", element: <OrderConfirmation /> },
       { path: "/join-supplier", element: <JoinSupplier /> },
       { path: "/supplier-dashboard", element: <ModernSupplierDashboard /> },
