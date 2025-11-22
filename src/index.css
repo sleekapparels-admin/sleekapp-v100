@@ -171,3 +171,22 @@ All colors MUST be HSL.
     content-visibility: auto;
   }
 }
+
+/* CRITICAL FIX: Force NavigationMenu to have transparent background and inherit text color */
+/* This prevents Radix UI from applying popover styles after initial render */
+[data-radix-navigation-menu-viewport] {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Force navigation menu triggers to be transparent and inherit text color */
+button[data-radix-collection-item] {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Ensure dropdown chevron icons inherit text color */
+button[data-radix-collection-item] svg {
+  color: inherit !important;
+}

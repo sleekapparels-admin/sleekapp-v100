@@ -45,11 +45,13 @@ const NavigationMenuTrigger = React.forwardRef<
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={cn(navigationMenuTriggerStyle(), "group", className)}
+    style={{ backgroundColor: 'transparent', color: 'inherit' }}
     {...props}
   >
     {children}{" "}
     <ChevronDown
       className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+      style={{ color: 'inherit' }}
       aria-hidden="true"
     />
   </NavigationMenuPrimitive.Trigger>
