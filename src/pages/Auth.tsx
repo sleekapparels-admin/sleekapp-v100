@@ -30,15 +30,12 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   
-  // Detect beta intent from URL parameter
+  // Simplified MVP: All users start with buyer role
   const searchParams = new URLSearchParams(window.location.search);
   const intent = searchParams.get('intent');
-  const role = searchParams.get('role');
   const isBetaIntent = intent === 'beta';
-  const isBuyerRole = role === 'buyer';
-  const isSupplierIntent = intent === 'supplier';
   
-  const [activeTab, setActiveTab] = useState(isBetaIntent ? "signup" : "login");
+  const [activeTab, setActiveTab] = useState("login"); // MVP: Start with login by default
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [phoneOtp, setPhoneOtp] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -141,8 +138,8 @@ export default function Auth() {
 
     const formData = new FormData(e.currentTarget);
     
-    // Determine role from URL parameter or form data
-    const urlRole = isSupplierIntent ? 'supplier' : (role || 'buyer'); // Default to buyer if not specified
+    // MVP: All signups default to 'buyer' role for lead generation
+    // Admin will manually assign 'supplier' role after lead qualification
     
     const rawData = {
       email: formData.get("signup-email") as string,
@@ -150,7 +147,7 @@ export default function Auth() {
       fullName: formData.get("full-name") as string,
       companyName: formData.get("company-name") as string,
       phone: phoneNumber || "",
-      role: urlRole,
+      role: 'buyer', // MVP: Everyone starts as buyer
     };
 
     try {
@@ -264,14 +261,8 @@ export default function Auth() {
 
       toast.success("Signed in successfully");
       
-      // Check if there's a saved supplier form to restore
-      const savedSupplierForm = sessionStorage.getItem('supplierFormData');
-      if (savedSupplierForm && isSupplierIntent) {
-        toast.info("Redirecting back to your supplier application...", { duration: 3000 });
-        navigate("/become-supplier");
-      } else {
-        navigate("/dashboard-router");
-      }
+      // MVP: All users go to dashboard router for role-based routing
+      navigate("/dashboard-router");
     } catch (error: any) {
       if (error.message === "Failed to fetch" || error.message?.includes('fetch')) {
         toast.error(
@@ -292,14 +283,12 @@ export default function Auth() {
         <CardHeader className="space-y-3">
           <div className="text-center">
         <CardTitle className="text-2xl">
-          {isSupplierIntent ? '🏭 Supplier Registration' : isBetaIntent && isBuyerRole ? '🚀 Join LoopTrace™ - Buyer Registration' : isBetaIntent ? '🚀 Get Free LoopTrace™ Access' : 'Sleek Apparels'}
+          {isBetaIntent ? '🚀 Join Sleek Apparels Early Access' : 'Welcome to Sleek Apparels'}
         </CardTitle>
         <CardDescription className="text-base">
-          {isSupplierIntent
-            ? 'Create your account to complete your supplier application'
-            : isBetaIntent 
-            ? 'Free access to LoopTrace™ platform until December 31, 2025 • Growth & Scale tiers launching Jan 2026'
-            : 'Manufacturer & Sourcing Partner'
+          {isBetaIntent 
+            ? 'Connect with verified manufacturers and buyers worldwide'
+            : 'Premium apparel manufacturing & sourcing platform'
           }
         </CardDescription>
           </div>
@@ -338,7 +327,7 @@ export default function Auth() {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">
-            {isBetaIntent ? 'Join Early Access 🚀' : 'Sign Up'}
+            {isBetaIntent ? 'Get Started 🚀' : 'Sign Up'}
           </TabsTrigger>
             </TabsList>
             <TabsContent value="login">
@@ -447,24 +436,24 @@ export default function Auth() {
              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
                <h4 className="text-sm font-semibold text-primary flex items-center gap-2">
                  <Sparkles className="h-4 w-4" />
-                 🎁 LoopTrace™ Beta Benefits
+                 🎁 Platform Benefits
                </h4>
                <ul className="text-xs text-muted-foreground space-y-1.5">
                  <li className="flex items-start gap-2">
                    <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                   <span>Unlimited AI-powered quote generations until Dec 31, 2025</span>
+                   <span><strong>For Buyers:</strong> Access verified manufacturers with transparent pricing</span>
                  </li>
                  <li className="flex items-start gap-2">
                    <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                   <span>Full LoopTrace™ real-time order tracking access</span>
+                   <span><strong>For Suppliers:</strong> Get connected with global brands and buyers</span>
                  </li>
                  <li className="flex items-start gap-2">
                    <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                   <span>Priority support & AI production analytics</span>
+                   <span>AI-powered instant quotes & real-time production tracking</span>
                  </li>
                  <li className="flex items-start gap-2">
                    <Crown className="h-3.5 w-3.5 text-accent mt-0.5 flex-shrink-0" />
-                   <span className="font-semibold text-accent">Lifetime discount on LoopTrace™ Growth & Scale tiers</span>
+                   <span className="font-semibold text-accent">Early access to exclusive features</span>
                  </li>
                </ul>
              </div>
@@ -474,10 +463,10 @@ export default function Auth() {
              {isLoading ? (
                <>
                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                 {isBetaIntent ? 'Getting your LoopTrace™ access...' : 'Creating account...'}
+                 {isBetaIntent ? 'Setting up your account...' : 'Creating account...'}
                </>
              ) : (
-               isBetaIntent ? 'Get LoopTrace™ Access' : 'Create Account'
+               isBetaIntent ? 'Get Started' : 'Create Account'
              )}
            </Button>
               </form>
