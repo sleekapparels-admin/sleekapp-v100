@@ -1,5 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
-import { logError } from './sentry';
+
+// Simple error logging without Sentry
+const logError = (error: Error, context?: Record<string, any>) => {
+  console.error('Error logged:', error, context);
+};
 
 // Comprehensive audit action types
 export type EnhancedAuditAction = 

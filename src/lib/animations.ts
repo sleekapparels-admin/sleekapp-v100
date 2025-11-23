@@ -60,6 +60,28 @@ export const slideInRight: Variants = {
   exit: { opacity: 0, x: -20 },
 };
 
+// Slide In from Left
+export const slideInLeft: Variants = {
+  initial: { opacity: 0, x: -50 },
+  animate: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.4 }
+  },
+  exit: { opacity: 0, x: 20 },
+};
+
+// Fade In Up
+export const fadeInUp: Variants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.3 }
+  },
+  exit: { opacity: 0, y: 10 },
+};
+
 // Scale Up (for modals, cards)
 export const scaleUp: Variants = {
   initial: { opacity: 0, scale: 0.9 },

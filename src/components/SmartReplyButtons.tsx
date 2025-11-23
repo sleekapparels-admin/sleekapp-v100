@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
-import { slideInBottom, staggerContainer } from "@/lib/animations";
+import { slideInBottom, staggerContainer, fadeInUp } from "@/lib/animations";
 import { memo } from 'react';
 import { QuickReply } from '@/hooks/useConversation';
 

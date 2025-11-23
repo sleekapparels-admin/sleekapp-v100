@@ -199,7 +199,7 @@ export default function Auth() {
           .insert({
             user_id: signUpData.user.id,
             role: rawData.role,
-          });
+          } as any);
         
         if (roleError) {
           console.warn('Failed to store user role:', roleError);

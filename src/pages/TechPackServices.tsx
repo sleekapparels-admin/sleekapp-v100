@@ -108,18 +108,7 @@ ADDITIONAL DETAILS:
       <SEO config={{
         title: "Tech Pack Services - Free Templates & Auto-Generator | Sleek Apparels",
         description: "Create professional tech packs with our free auto-generator tool. Download tech pack templates, get expert consultation, and streamline your apparel production process.",
-        keywords: [
-          "tech pack template",
-          "tech pack generator",
-          "apparel tech pack",
-          "clothing tech pack",
-          "tech pack creation service",
-          "tech pack consultation",
-          "tech pack review",
-          "free tech pack template",
-          "tech pack guide",
-          "how to create tech pack"
-        ],
+        keywords: "tech pack template, tech pack generator, apparel tech pack, clothing tech pack, tech pack creation service, tech pack consultation, tech pack review, free tech pack template, tech pack guide, how to create tech pack",
         canonical: "https://sleekapparels.com/tech-pack-services"
       }} />
 
