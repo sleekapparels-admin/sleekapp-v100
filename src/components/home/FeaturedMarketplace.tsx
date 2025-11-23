@@ -21,6 +21,7 @@ import { useMarketplaceProducts } from '@/hooks/useMarketplace';
 import { staggerContainer, staggerItem, hoverLift, fadeIn } from '@/lib/animations';
 import type { MarketplaceProduct } from '@/types/marketplace';
 import { getRandomImages } from '@/lib/aiGeneratedProductImages';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const PRODUCT_CATEGORIES = [
   { value: 'fabric', label: 'Fabrics', icon: '🧵', color: 'from-blue-500 to-cyan-500' },
@@ -71,11 +72,13 @@ export function FeaturedMarketplace() {
         onClick={() => navigate(`/marketplace/${product.id}`)}
       >
         {/* Image */}
-        <div className="aspect-square relative bg-gray-100">
+        <div className="aspect-square relative bg-gray-100 overflow-hidden">
           {product.primary_image || product.images?.[0] ? (
-            <img
+            <OptimizedImage
               src={product.primary_image || product.images[0]}
               alt={product.title}
+              width={400}
+              height={400}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
           ) : (
@@ -248,13 +251,15 @@ export function FeaturedMarketplace() {
               {getRandomImages(8).map((img) => (
                 <motion.div key={img.id} variants={staggerItem} whileHover={hoverLift}>
                   <Card className="overflow-hidden cursor-pointer h-full group">
-                    <div className="aspect-square relative bg-gray-100">
-                      <img
+                    <div className="aspect-square relative bg-gray-100 overflow-hidden">
+                      <OptimizedImage
                         src={img.url}
                         alt={img.alt}
+                        width={400}
+                        height={400}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
-                      <Badge className="absolute top-2 left-2 bg-primary">
+                      <Badge className="absolute top-2 left-2 bg-primary z-10">
                         <Sparkles className="h-3 w-3 mr-1" />
                         New
                       </Badge>
