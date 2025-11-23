@@ -1,15 +1,87 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut, Shirt, Zap, Users, Sparkles, LayoutGrid, FileText, Truck, Droplet, BookOpen, Factory } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import sleekLogo from "@/assets/sleek-logo.webp";
-// MVP Streamlined Navigation - Focus on lead generation
+// Services dropdown menu - Educational for buyers
+const servicesMenu = [
+  {
+    name: "Casualwear",
+    href: "/casualwear",
+    description: "T-shirts, hoodies, sweatshirts, joggers",
+    icon: Shirt
+  },
+  {
+    name: "Activewear",
+    href: "/activewear",
+    description: "Performance wear and athletic basics",
+    icon: Zap
+  },
+  {
+    name: "Team Uniforms",
+    href: "/uniforms-teamwear",
+    description: "Bulk orders for schools & teams",
+    icon: Users
+  },
+  {
+    name: "LoopTrace™ Platform",
+    href: "/looptrace-technology",
+    description: "AI-powered instant quotes & real-time tracking",
+    highlight: true,
+    icon: Sparkles
+  },
+  {
+    name: "View All Services",
+    href: "/services",
+    description: "Explore our full manufacturing capabilities",
+    icon: LayoutGrid
+  }
+];
+
+// Resources dropdown menu - Educational content for buyers & suppliers
+const resourcesMenu = [
+  {
+    name: "Materials Guide",
+    href: "/materials-guide",
+    description: "Find the right fabric for your project",
+    icon: Droplet,
+    audience: "buyer"
+  },
+  {
+    name: "Shipping & Logistics",
+    href: "/shipping-logistics",
+    description: "International shipping information",
+    icon: Truck,
+    audience: "both"
+  },
+  {
+    name: "Sample Policy",
+    href: "/sample-policy",
+    description: "How sampling works with us",
+    icon: FileText,
+    audience: "buyer"
+  },
+  {
+    name: "First-Time Ordering",
+    href: "/first-time-ordering",
+    description: "Beginner's guide for new buyers",
+    icon: BookOpen,
+    audience: "buyer"
+  },
+  {
+    name: "Become a Supplier",
+    href: "/become-supplier",
+    description: "Partner with us as a manufacturer",
+    icon: Factory,
+    audience: "supplier"
+  }
+];
+
 const navigation: { name: string; href: string }[] = [
   { name: "Why Us", href: "/why-sleek-apparels" },
-  { name: "Services", href: "/services" },
-  { name: "Contact", href: "/contact" },
 ];
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,11 +143,97 @@ export const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation - MVP Streamlined */}
-          <div className="hidden lg:flex items-center space-x-2">
+          {/* Desktop Navigation - With Dropdowns */}
+          <div className="hidden lg:flex items-center space-x-1">
             {navigation.map(item => <Link key={item.name} to={item.href} className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isHome ? location.pathname === item.href ? "text-white bg-white/20 backdrop-blur drop-shadow-md" : "text-white/90 hover:text-white hover:bg-white/10 drop-shadow-md" : location.pathname === item.href ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
                 {item.name}
               </Link>)}
+            
+            {/* Services Dropdown */}
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
+                    Services
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[420px] p-3 bg-background border border-border shadow-xl rounded-lg">
+                      <div className="space-y-1">
+                        {servicesMenu.map(item => (
+                          <NavigationMenuLink key={item.name} asChild>
+                            <Link 
+                              to={item.href} 
+                              className={`group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors ${
+                                item.highlight ? 'bg-primary/5 border border-primary/20' : ''
+                              }`}
+                            >
+                              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
+                                item.highlight ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+                              }`}>
+                                <item.icon className="h-5 w-5" />
+                              </div>
+                              <div className="flex-1 space-y-1">
+                                <div className="text-sm font-semibold flex items-center gap-2">
+                                  {item.name}
+                                  {item.highlight && <span className="text-[10px] px-1.5 py-0.5 bg-primary text-white rounded-full">NEW</span>}
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {item.description}
+                                </p>
+                              </div>
+                            </Link>
+                          </NavigationMenuLink>
+                        ))}
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            {/* Resources Dropdown */}
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
+                    Resources
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[380px] p-3 bg-background border border-border shadow-xl rounded-lg">
+                      <div className="space-y-1">
+                        {resourcesMenu.map(item => (
+                          <NavigationMenuLink key={item.name} asChild>
+                            <Link 
+                              to={item.href} 
+                              className="group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors"
+                            >
+                              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                                <item.icon className="h-5 w-5" />
+                              </div>
+                              <div className="flex-1 space-y-1">
+                                <div className="text-sm font-semibold flex items-center gap-2">
+                                  {item.name}
+                                  {item.audience === "supplier" && (
+                                    <span className="text-[10px] px-1.5 py-0.5 bg-green-500/10 text-green-600 rounded-full">For Suppliers</span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {item.description}
+                                </p>
+                              </div>
+                            </Link>
+                          </NavigationMenuLink>
+                        ))}
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <Link to="/contact" className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isHome ? "text-white/90 hover:text-white hover:bg-white/10 drop-shadow-md" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
+              Contact
+            </Link>
             
             {/* Primary CTA - Get Quote */}
             <Button asChild variant={isHome ? "default" : "default"} size="sm" className={`ml-2 font-semibold ${isHome ? "bg-primary text-white hover:bg-primary/90 shadow-lg" : "bg-primary text-white hover:bg-primary/90"}`}>
@@ -136,6 +294,24 @@ export const Navbar = () => {
                 {item.name}
               </Link>)}
             
+            {/* Services Section */}
+            <div className="pt-2">
+              <p className="px-4 py-2 text-xs font-semibold text-foreground/70 uppercase tracking-wide">Services</p>
+              {servicesMenu.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
+                  <item.icon className="h-4 w-4 text-primary" />
+                  {item.name}
+                </Link>)}
+            </div>
+
+            {/* Resources Section */}
+            <div className="pt-2">
+              <p className="px-4 py-2 text-xs font-semibold text-foreground/70 uppercase tracking-wide">Resources</p>
+              {resourcesMenu.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
+                  <item.icon className="h-4 w-4 text-blue-600" />
+                  {item.name}
+                </Link>)}
+            </div>
+            
             {/* Primary CTA */}
             <Button asChild variant="default" className="w-full mt-3 bg-primary hover:bg-primary/90 text-white font-semibold shadow-lg">
                 <Link to="/quote-generator" onClick={() => setIsOpen(false)}>
@@ -143,9 +319,6 @@ export const Navbar = () => {
                 </Link>
               </Button>
             {user ? <>
-                <div className="flex justify-center mt-2">
-                  <NotificationBell />
-                </div>
                 <Button onClick={() => {
             navigate("/dashboard-router");
             setIsOpen(false);
