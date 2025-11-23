@@ -250,14 +250,24 @@ export function FeaturedMarketplace() {
             >
               {getRandomImages(8).map((img) => (
                 <motion.div key={img.id} variants={staggerItem} whileHover={hoverLift}>
-                  <Card className="overflow-hidden cursor-pointer h-full group">
-                    <div className="aspect-square relative bg-gray-100 overflow-hidden">
-                      <OptimizedImage
+                  <Card className="overflow-hidden cursor-pointer h-full group" onClick={() => navigate('/marketplace')}>
+                    <div className="aspect-square relative bg-white overflow-hidden">
+                      <img
                         src={img.url}
                         alt={img.alt}
-                        width={400}
-                        height={400}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                        className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'w-full h-full flex items-center justify-center';
+                            fallback.innerHTML = '<div class="h-12 w-12 text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></div>';
+                            parent.appendChild(fallback);
+                          }
+                        }}
                       />
                       <Badge className="absolute top-2 left-2 bg-primary z-10">
                         <Sparkles className="h-3 w-3 mr-1" />

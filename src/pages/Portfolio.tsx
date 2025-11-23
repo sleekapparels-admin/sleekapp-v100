@@ -137,12 +137,40 @@ const Portfolio = () => {
                       className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1"
                       onClick={() => setSelectedProduct(item)}
                     >
-                       <div className="aspect-[4/5] overflow-hidden bg-white">
-                        <LazyImage
-                          src={getPhotorealisticImage(item.image_url) || getPhotorealisticImage(item.title) || getPhotorealisticImage(item.category) || '/placeholder.svg'}
-                          alt={item.title}
-                          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-                        />
+                       <div className="aspect-[4/5] overflow-hidden bg-white relative">
+                        {(() => {
+                          const imageSrc = getPhotorealisticImage(item.image_url) || 
+                                          getPhotorealisticImage(item.title) || 
+                                          getPhotorealisticImage(item.category);
+                          
+                          return imageSrc ? (
+                            <img
+                              src={imageSrc}
+                              alt={item.title}
+                              loading="lazy"
+                              className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent && !parent.querySelector('.fallback-icon')) {
+                                  const fallback = document.createElement('div');
+                                  fallback.className = 'fallback-icon w-full h-full flex items-center justify-center';
+                                  fallback.innerHTML = '<div class="text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>';
+                                  parent.appendChild(fallback);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                              </svg>
+                            </div>
+                          );
+                        })()}
                       </div>
                       <div className="p-4">
                         <h3 className="text-base font-bold mb-1">{item.title}</h3>
@@ -171,12 +199,38 @@ const Portfolio = () => {
             {selectedProduct && (
               <div className="grid md:grid-cols-2 gap-0">
                 <div className="relative aspect-square bg-white">
-                  <LazyImage
-                    src={getPhotorealisticImage(selectedProduct.image_url) || getPhotorealisticImage(selectedProduct.title) || getPhotorealisticImage(selectedProduct.category) || '/placeholder.svg'}
-                    alt={selectedProduct.title}
-                    className="w-full h-full object-contain p-8"
-                    priority
-                  />
+                  {(() => {
+                    const imageSrc = getPhotorealisticImage(selectedProduct.image_url) || 
+                                    getPhotorealisticImage(selectedProduct.title) || 
+                                    getPhotorealisticImage(selectedProduct.category);
+                    
+                    return imageSrc ? (
+                      <img
+                        src={imageSrc}
+                        alt={selectedProduct.title}
+                        className="w-full h-full object-contain p-8"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent && !parent.querySelector('.fallback-icon')) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'fallback-icon w-full h-full flex items-center justify-center';
+                            fallback.innerHTML = '<div class="text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>';
+                            parent.appendChild(fallback);
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="p-8">
                   <AnimatedSection>
