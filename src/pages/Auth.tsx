@@ -210,7 +210,7 @@ export default function Auth() {
       }
 
       // Track signup completion
-      const { trackSignupComplete } = await import('@/lib/analytics');
+      const { trackSignupComplete } = await import('@/lib/analyticsTracking');
       trackSignupComplete('email', 'buyer');
 
       toast.success("Account created! Please check your email and click the verification link to activate your account.", {
@@ -289,7 +289,7 @@ export default function Auth() {
       }
 
       // Track signup completion
-      const { trackSignupComplete } = await import('@/lib/analytics');
+      const { trackSignupComplete } = await import('@/lib/analyticsTracking');
       trackSignupComplete('email', 'supplier');
 
       toast.success("Account created! Please check your email and click the verification link to activate your account.", {
@@ -381,7 +381,7 @@ export default function Auth() {
       }
 
       // Track signup completion
-      const { trackSignupComplete } = await import('@/lib/analytics');
+      const { trackSignupComplete } = await import('@/lib/analyticsTracking');
       trackSignupComplete('email', rawData.role);
 
       toast.success("Account created! Please check your email and click the verification link to activate your account.", {

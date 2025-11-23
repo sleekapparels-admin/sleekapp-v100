@@ -51,7 +51,7 @@ export async function trackDatabaseEvent(event: DatabaseAnalyticsEvent): Promise
 
     // Insert event into analytics_events table
     const { error } = await supabase
-      .from('analytics_events')
+      .from('analytics_events' as any)
       .insert(eventData);
 
     if (error) {

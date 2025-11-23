@@ -96,21 +96,41 @@ const InnovationShowcase = () => {
               animate="visible"
               className="text-center"
             >
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6"
+              >
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-sm font-semibold text-primary">Innovation Showcase</span>
               </motion.div>
               
-              <motion.h1 variants={fadeInUp} className="text-5xl sm:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-5xl sm:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-primary"
+              >
                 Experience the Future
               </motion.h1>
               
-              <motion.p variants={fadeInUp} className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
+              >
                 Discover our cutting-edge UI innovations: Progressive image loading, 3D product carousels, 
                 intelligent search, and delightful micro-interactions that make every click feel amazing.
               </motion.p>
               
-              <motion.div variants={fadeInUp} className="flex flex-wrap gap-4 justify-center">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-wrap gap-4 justify-center"
+              >
                 <Button 
                   variant="gold" 
                   size="lg"
