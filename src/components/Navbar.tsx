@@ -258,7 +258,10 @@ export const Navbar = () => {
                   Sign Out
                 </Button>
               </> : <>
-                <Button onClick={() => navigate("/auth")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
+                <Button onClick={() => navigate("/signup")} variant="default" size="sm" className={`ml-2 font-semibold ${isHome ? "bg-white text-black hover:bg-white/90" : "bg-primary text-white hover:bg-primary/90"}`}>
+                  Create Account
+                </Button>
+                <Button onClick={() => navigate("/signup")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
                   Sign In
                 </Button>
               </>}
@@ -340,7 +343,13 @@ export const Navbar = () => {
                 </Button>
               </> : <>
                 <Button onClick={() => {
-            navigate("/auth");
+            navigate("/signup");
+            setIsOpen(false);
+          }} variant="default" className="w-full mt-2 bg-primary hover:bg-primary/90 text-white font-semibold">
+                  Create Account
+                </Button>
+                <Button onClick={() => {
+            navigate("/signup");
             setIsOpen(false);
           }} variant="outline" className="w-full mt-2">
                   Sign In

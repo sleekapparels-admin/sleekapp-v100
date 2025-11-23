@@ -11,6 +11,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { toast } from "sonner";
 import { Loader2, Sparkles, Crown, Check } from "lucide-react";
 import { z } from "zod";
+import { CustomerSignupForm, CustomerSignupData } from "@/components/auth/CustomerSignupForm";
+import { ProductionPartnerSignupForm, ProductionPartnerSignupData } from "@/components/auth/ProductionPartnerSignupForm";
 
 const signupSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }).max(255),
@@ -147,6 +149,162 @@ export default function Auth() {
     } catch (err) {
       console.warn('Password breach check error:', err);
       return false;
+    }
+  };
+
+  const handleCustomerSignup = async (data: CustomerSignupData) => {
+    setIsLoading(true);
+    setPasswordErrors([]);
+
+    try {
+      // Client-side validation
+      const validationResult = signupSchema.safeParse(data);
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(err => err.message);
+        setPasswordErrors(errors);
+        toast.error("Please fix the validation errors");
+        return;
+      }
+
+      const { email, password, fullName, companyName, phone } = validationResult.data;
+
+      // Check for password breach
+      const isBreached = await checkPasswordBreach(password);
+      if (isBreached) {
+        setPasswordErrors(["This password has been found in data breaches. Please choose a different password."]);
+        toast.error("Password compromised. Please choose a stronger password.");
+        return;
+      }
+
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard-router`,
+          data: {
+            full_name: fullName,
+            company_name: companyName,
+            phone: phone || null,
+            role: 'buyer',
+            customer_type: data.customerType,
+            expected_volume: data.expectedVolume,
+            product_interest: data.productInterest,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      // Store user role in user_roles table
+      if (signUpData.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: signUpData.user.id,
+            role: 'buyer',
+          } as any);
+        
+        if (roleError) {
+          console.warn('Failed to store user role:', roleError);
+        }
+      }
+
+      // Track signup completion
+      const { trackSignupComplete } = await import('@/lib/analytics');
+      trackSignupComplete('email', 'buyer');
+
+      toast.success("Account created! Please check your email and click the verification link to activate your account.", {
+        duration: 8000,
+      });
+      
+      setActiveTab("login");
+    } catch (error: any) {
+      if (error.message === "Failed to fetch") {
+        toast.error("Network error. Please check your connection or ensure this app's URL is added to allowed URLs in backend settings.");
+      } else {
+        toast.error(error.message || "Failed to create account");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleProductionPartnerSignup = async (data: ProductionPartnerSignupData) => {
+    setIsLoading(true);
+    setPasswordErrors([]);
+
+    try {
+      // Client-side validation
+      const validationResult = signupSchema.safeParse(data);
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(err => err.message);
+        setPasswordErrors(errors);
+        toast.error("Please fix the validation errors");
+        return;
+      }
+
+      const { email, password, fullName, companyName, phone } = validationResult.data;
+
+      // Check for password breach
+      const isBreached = await checkPasswordBreach(password);
+      if (isBreached) {
+        setPasswordErrors(["This password has been found in data breaches. Please choose a different password."]);
+        toast.error("Password compromised. Please choose a stronger password.");
+        return;
+      }
+
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard-router`,
+          data: {
+            full_name: fullName,
+            company_name: companyName,
+            phone: phone || null,
+            role: 'supplier',
+            partner_type: data.partnerType,
+            location: data.location,
+            capacity: data.capacity,
+            certifications: data.certifications,
+            specialization: data.specialization,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      // Store user role in user_roles table
+      if (signUpData.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: signUpData.user.id,
+            role: 'supplier',
+          } as any);
+        
+        if (roleError) {
+          console.warn('Failed to store user role:', roleError);
+        }
+      }
+
+      // Track signup completion
+      const { trackSignupComplete } = await import('@/lib/analytics');
+      trackSignupComplete('email', 'supplier');
+
+      toast.success("Account created! Please check your email and click the verification link to activate your account.", {
+        duration: 8000,
+      });
+      
+      setActiveTab("login");
+    } catch (error: any) {
+      if (error.message === "Failed to fetch") {
+        toast.error("Network error. Please check your connection or ensure this app's URL is added to allowed URLs in backend settings.");
+      } else {
+        toast.error(error.message || "Failed to create account");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -388,111 +546,138 @@ export default function Auth() {
               </form>
             </TabsContent>
             <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4 mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="full-name">Full Name</Label>
-                  <Input
-                    id="full-name"
-                    name="full-name"
-                    type="text"
-                    placeholder="John Doe"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    name="signup-email"
-                    type="email"
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="company-name">Company Name</Label>
-                  <Input
-                    id="company-name"
-                    name="company-name"
-                    type="text"
-                    placeholder="Your Company"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number (Optional)</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+1234567890"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="h-11"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Optional - We'll use this for faster communication
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    name="signup-password"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                    minLength={8}
-                  />
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>Must be at least 8 characters with uppercase, lowercase, and number</p>
-                    {passwordErrors.length > 0 && (
-                      <div className="text-destructive space-y-1">
-                        {passwordErrors.map((error, index) => (
-                          <p key={index}>{error}</p>
-                        ))}
+              {/* Conditionally render form based on user type from URL parameter */}
+              {userType === 'customer' ? (
+                // Customer Signup Form
+                <CustomerSignupForm 
+                  onSubmit={handleCustomerSignup}
+                  isLoading={isLoading}
+                  passwordErrors={passwordErrors}
+                />
+              ) : userType === 'production_partner' ? (
+                // Production Partner Signup Form
+                <ProductionPartnerSignupForm
+                  onSubmit={handleProductionPartnerSignup}
+                  isLoading={isLoading}
+                  passwordErrors={passwordErrors}
+                />
+              ) : (
+                // Default: Direct user to type selection page
+                <div className="text-center py-8 space-y-4">
+                  <p className="text-muted-foreground mb-4">Choose your account type to get started</p>
+                  <Button onClick={() => navigate('/signup')} className="w-full" size="lg">
+                    Select Account Type
+                  </Button>
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-xs text-muted-foreground mb-3">Or use the quick signup below:</p>
+                    <form onSubmit={handleSignUp} className="space-y-4 mt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="full-name">Full Name</Label>
+                        <Input
+                          id="full-name"
+                          name="full-name"
+                          type="text"
+                          placeholder="John Doe"
+                          required
+                        />
                       </div>
-                    )}
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email">Email</Label>
+                        <Input
+                          id="signup-email"
+                          name="signup-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="company-name">Company Name</Label>
+                        <Input
+                          id="company-name"
+                          name="company-name"
+                          type="text"
+                          placeholder="Your Company"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number (Optional)</Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          placeholder="+1234567890"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="h-11"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Optional - We'll use this for faster communication
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password">Password</Label>
+                        <Input
+                          id="signup-password"
+                          name="signup-password"
+                          type="password"
+                          placeholder="••••••••"
+                          required
+                          minLength={8}
+                        />
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <p>Must be at least 8 characters with uppercase, lowercase, and number</p>
+                          {passwordErrors.length > 0 && (
+                            <div className="text-destructive space-y-1">
+                              {passwordErrors.map((error, index) => (
+                                <p key={index}>{error}</p>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {isBetaIntent && (
+                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
+                     <h4 className="text-sm font-semibold text-primary flex items-center gap-2">
+                       <Sparkles className="h-4 w-4" />
+                       🎁 Platform Benefits
+                     </h4>
+                     <ul className="text-xs text-muted-foreground space-y-1.5">
+                       <li className="flex items-start gap-2">
+                         <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                         <span><strong>For Buyers:</strong> Access verified manufacturers with transparent pricing</span>
+                       </li>
+                       <li className="flex items-start gap-2">
+                         <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                         <span><strong>For Suppliers:</strong> Get connected with global brands and buyers</span>
+                       </li>
+                       <li className="flex items-start gap-2">
+                         <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                         <span>AI-powered instant quotes & real-time production tracking</span>
+                       </li>
+                       <li className="flex items-start gap-2">
+                         <Crown className="h-3.5 w-3.5 text-accent mt-0.5 flex-shrink-0" />
+                         <span className="font-semibold text-accent">Early access to exclusive features</span>
+                       </li>
+                     </ul>
+                   </div>
+                 )}
+                      
+                 <Button type="submit" className="w-full" disabled={isLoading}>
+                   {isLoading ? (
+                     <>
+                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                       {isBetaIntent ? 'Setting up your account...' : 'Creating account...'}
+                     </>
+                   ) : (
+                     isBetaIntent ? 'Get Started' : 'Create Account'
+                   )}
+                 </Button>
+                    </form>
                   </div>
                 </div>
-                
-                {isBetaIntent && (
-             <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
-               <h4 className="text-sm font-semibold text-primary flex items-center gap-2">
-                 <Sparkles className="h-4 w-4" />
-                 🎁 Platform Benefits
-               </h4>
-               <ul className="text-xs text-muted-foreground space-y-1.5">
-                 <li className="flex items-start gap-2">
-                   <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                   <span><strong>For Buyers:</strong> Access verified manufacturers with transparent pricing</span>
-                 </li>
-                 <li className="flex items-start gap-2">
-                   <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                   <span><strong>For Suppliers:</strong> Get connected with global brands and buyers</span>
-                 </li>
-                 <li className="flex items-start gap-2">
-                   <Check className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                   <span>AI-powered instant quotes & real-time production tracking</span>
-                 </li>
-                 <li className="flex items-start gap-2">
-                   <Crown className="h-3.5 w-3.5 text-accent mt-0.5 flex-shrink-0" />
-                   <span className="font-semibold text-accent">Early access to exclusive features</span>
-                 </li>
-               </ul>
-             </div>
-           )}
-                
-           <Button type="submit" className="w-full" disabled={isLoading}>
-             {isLoading ? (
-               <>
-                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                 {isBetaIntent ? 'Setting up your account...' : 'Creating account...'}
-               </>
-             ) : (
-               isBetaIntent ? 'Get Started' : 'Create Account'
-             )}
-           </Button>
-              </form>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
