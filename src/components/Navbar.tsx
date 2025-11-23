@@ -18,14 +18,6 @@ const platformMenu = [
     icon: Sparkles
   },
   {
-    name: "Become a Supplier",
-    href: "/become-supplier",
-    description: "Partner with us & grow your manufacturing business",
-    highlight: true,
-    highlightColor: "green",
-    icon: Factory
-  },
-  {
     name: "Why Sleek Apparels",
     href: "/why-sleek-apparels",
     description: "What makes us different",
@@ -54,6 +46,14 @@ const platformMenu = [
     href: "/services",
     description: "Explore our full manufacturing capabilities",
     icon: LayoutGrid
+  },
+  {
+    name: "Become a Supplier",
+    href: "/become-supplier",
+    description: "Partner with us & grow your manufacturing business",
+    highlight: true,
+    highlightColor: "green",
+    icon: Factory
   }
 ];
 
@@ -99,13 +99,6 @@ const accountMenu = [
     primary: true
   },
   {
-    name: "Become a Supplier",
-    href: "/become-supplier",
-    description: "Partner with us & grow your business",
-    icon: Factory,
-    highlight: true
-  },
-  {
     name: "Sign In",
     href: "/signup",
     description: "Access your dashboard",
@@ -116,6 +109,13 @@ const accountMenu = [
     href: "/contact",
     description: "Get in touch with our team",
     icon: FileText
+  },
+  {
+    name: "Become a Supplier",
+    href: "/become-supplier",
+    description: "Partner with us & grow your business",
+    icon: Factory,
+    highlight: true
   }
 ];
 export const Navbar = () => {
