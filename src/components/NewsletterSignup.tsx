@@ -52,7 +52,7 @@ export const NewsletterSignup = ({
 
       // Check if already subscribed
       const { data: existing, error: checkError } = await supabase
-        .from('newsletter_subscribers')
+        .from('newsletter_subscribers' as any)
         .select('id')
         .eq('email', email.toLowerCase())
         .single();
@@ -66,7 +66,7 @@ export const NewsletterSignup = ({
 
       // Subscribe to newsletter
       const { error: insertError } = await supabase
-        .from('newsletter_subscribers')
+        .from('newsletter_subscribers' as any)
         .insert({
           email: email.toLowerCase(),
           subscribed_at: new Date().toISOString(),
@@ -268,7 +268,7 @@ export const NewsletterInline = ({ className }: { className?: string }) => {
       emailSchema.parse(email);
 
       const { error } = await supabase
-        .from('newsletter_subscribers')
+        .from('newsletter_subscribers' as any)
         .insert({
           email: email.toLowerCase(),
           subscribed_at: new Date().toISOString(),
