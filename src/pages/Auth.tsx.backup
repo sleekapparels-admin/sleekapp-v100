@@ -30,21 +30,10 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   
-  // User type from URL parameter
+  // Simplified MVP: All users start with buyer role
   const searchParams = new URLSearchParams(window.location.search);
-  const userType = searchParams.get('type'); // 'customer' or 'production_partner'
   const intent = searchParams.get('intent');
   const isBetaIntent = intent === 'beta';
-  
-  // Additional form state for different user types
-  const [customerType, setCustomerType] = useState('');
-  const [expectedVolume, setExpectedVolume] = useState('');
-  const [productInterest, setProductInterest] = useState('');
-  const [partnerType, setPartnerType] = useState('');
-  const [location, setLocation] = useState('');
-  const [capacity, setCapacity] = useState('');
-  const [certifications, setCertifications] = useState<string[]>([]);
-  const [specialization, setSpecialization] = useState('');
   
   const [activeTab, setActiveTab] = useState("login"); // MVP: Start with login by default
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);

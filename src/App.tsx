@@ -33,6 +33,7 @@ const Portfolio = lazy(() => import("./pages/Portfolio"));
 const About = lazy(() => import("./pages/About"));
 const Sustainability = lazy(() => import("./pages/Sustainability"));
 const Auth = lazy(() => import("./pages/Auth"));
+const UserTypeSelection = lazy(() => import("./pages/UserTypeSelection"));
 const AIQuoteGenerator = lazy(() => import("./components/AIQuoteGenerator").then(m => ({ default: m.AIQuoteGenerator })));
 
 const OrderDetails = lazy(() => import("./pages/OrderDetails"));
@@ -168,6 +169,7 @@ const router = createBrowserRouter([
       { path: "/sustainability", element: <Sustainability /> },
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
+      { path: "/signup", element: <UserTypeSelection /> },
       { path: "/get-started", element: <GetStarted /> },
       { path: "/instant-quote", element: <InstantQuote /> },
       { path: "/ai-quote-generator", element: <AIQuoteGenerator /> },
