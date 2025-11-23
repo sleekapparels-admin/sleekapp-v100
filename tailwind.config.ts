@@ -155,6 +155,14 @@ export default {
             transform: "scale(1.1)",
           },
         },
+        "shimmer": {
+          "0%": {
+            transform: "translateX(-100%)",
+          },
+          "100%": {
+            transform: "translateX(100%)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -163,6 +171,14 @@ export default {
         "fade-in": "fade-in 0.4s ease-out forwards",
         "slide-in": "slide-in 0.3s ease-out",
         "ken-burns": "ken-burns 20s ease-out infinite alternate",
+        "shimmer": "shimmer 2s infinite",
+      },
+      perspective: {
+        '1000': '1000px',
+        '2000': '2000px',
+      },
+      transformStyle: {
+        'preserve-3d': 'preserve-3d',
       },
       backgroundImage: {
         "gradient-hero": "linear-gradient(135deg, hsl(var(--primary-light)), hsl(var(--primary-dark)))",

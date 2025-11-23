@@ -94,6 +94,7 @@ const ProductionTracking = lazy(() => import("./pages/ProductionTracking"));
 const Samples = lazy(() => import("./pages/Samples"));
 const TechPackServices = lazy(() => import("./pages/TechPackServices"));
 const ForStartups = lazy(() => import("./pages/ForStartups"));
+const InnovationShowcase = lazy(() => import("./pages/InnovationShowcase"));
 // AdminSetup page removed (security hardening)
 // AdminBootstrap page removed (used once, now deleted for security)
 import QuoteHistory from "./pages/QuoteHistory";
@@ -236,6 +237,7 @@ const router = createBrowserRouter([
         { path: "/capabilities", element: <Capabilities /> },
         { path: "/privacy", element: <Privacy /> },
         { path: "/terms", element: <Terms /> },
+        { path: "/innovation-showcase", element: <InnovationShowcase /> },
         // Admin Setup page removed
       
       { path: "*", element: <NotFound /> },
