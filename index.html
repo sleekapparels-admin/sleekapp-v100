@@ -183,35 +183,224 @@
     <meta name="geo.region" content="BD" />
     <meta name="geo.placename" content="Dhaka, Bangladesh" />
 
-    <!-- Business Schema -->
+    <!-- Enhanced Structured Data - Organization + Products + FAQs -->
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Manufacturer",
-        "name": "Sleek Apparels",
-        "description": "Leading apparel manufacturer in Bangladesh specializing in casualwear, activewear, and sustainable apparel production with low MOQ from 50 pieces",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "01, Road 19A, Sector 04, Uttara",
-          "addressLocality": "Dhaka",
-          "postalCode": "1230",
-          "addressCountry": "BD"
-        },
-        "url": "https://sleekapparels.com",
-        "email": "inquiry@sleekapparels.com",
-        "telephone": "+880-186-1011-367",
-        "priceRange": "$$",
-        "areaServed": "Worldwide",
-        "knowsAbout": ["Casualwear Manufacturing", "T-Shirt Production", "Hoodie Manufacturing", "Activewear", "Custom Apparel", "Sustainable Fashion", "Low MOQ Production", "Ethical Manufacturing"],
-        "makesOffer": {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Product",
-            "name": "Custom Casualwear & Apparel Manufacturing",
-            "description": "Low MOQ casualwear and activewear production from 50 pieces. T-shirts, hoodies, sweatshirts, joggers, polo shirts."
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://sleekapparels.com/#organization",
+          "name": "Sleek Apparels",
+          "alternateName": "Sleek Apparels Limited",
+          "url": "https://sleekapparels.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://sleekapparels.com/sleek-logo.webp",
+            "width": 250,
+            "height": 250
+          },
+          "description": "Leading apparel manufacturer in Bangladesh specializing in casualwear, activewear, and sustainable apparel production. Low MOQ 50 pieces, fast 10-20 day production, OEKO-TEX and BSCI certified.",
+          "email": "inquiry@sleekapparels.com",
+          "telephone": "+880-186-1011-367",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "01, Road 19A, Sector 04, Uttara",
+            "addressLocality": "Dhaka",
+            "postalCode": "1230",
+            "addressCountry": "BD",
+            "addressRegion": "Dhaka Division"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "23.8759",
+            "longitude": "90.3795"
+          },
+          "areaServed": {
+            "@type": "Place",
+            "name": "Worldwide"
+          },
+          "sameAs": [
+            "https://www.linkedin.com/company/sleek-apparels",
+            "https://www.facebook.com/sleekapparels"
+          ],
+          "foundingDate": "2010",
+          "numberOfEmployees": {
+            "@type": "QuantitativeValue",
+            "value": 200
+          },
+          "knowsAbout": [
+            "Casualwear Manufacturing",
+            "T-Shirt Production",
+            "Hoodie Manufacturing",
+            "Activewear Production",
+            "Custom Apparel",
+            "Sustainable Fashion",
+            "Low MOQ Production",
+            "Ethical Manufacturing",
+            "OEKO-TEX Certification",
+            "BSCI Compliance",
+            "Knitwear Manufacturing",
+            "Uniform Production"
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Apparel Manufacturing Services",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Custom T-Shirt Manufacturing",
+                  "description": "MOQ 50 pieces. 100% Cotton, Poly-Cotton blends. 145-200 GSM. Crew neck, V-neck styles.",
+                  "category": "T-Shirts",
+                  "brand": {
+                    "@type": "Brand",
+                    "name": "Sleek Apparels"
+                  }
+                },
+                "priceSpecification": {
+                  "@type": "PriceSpecification",
+                  "minPrice": "3.00",
+                  "maxPrice": "6.00",
+                  "priceCurrency": "USD",
+                  "price": "3.00-6.00"
+                },
+                "eligibleQuantity": {
+                  "@type": "QuantitativeValue",
+                  "minValue": 50,
+                  "unitText": "pieces"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Custom Hoodie Manufacturing",
+                  "description": "MOQ 50 pieces. Fleece fabric 280-400 GSM. Pullover and zip-up styles. Custom embroidery available.",
+                  "category": "Hoodies",
+                  "brand": {
+                    "@type": "Brand",
+                    "name": "Sleek Apparels"
+                  }
+                },
+                "priceSpecification": {
+                  "@type": "PriceSpecification",
+                  "minPrice": "8.00",
+                  "maxPrice": "15.00",
+                  "priceCurrency": "USD",
+                  "price": "8.00-15.00"
+                },
+                "eligibleQuantity": {
+                  "@type": "QuantitativeValue",
+                  "minValue": 50,
+                  "unitText": "pieces"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Activewear Manufacturing",
+                  "description": "MOQ 100 pieces. Moisture-wicking polyester, quick-dry fabrics. Athletic tees, performance polos.",
+                  "category": "Activewear",
+                  "brand": {
+                    "@type": "Brand",
+                    "name": "Sleek Apparels"
+                  }
+                },
+                "eligibleQuantity": {
+                  "@type": "QuantitativeValue",
+                  "minValue": 100,
+                  "unitText": "pieces"
+                }
+              }
+            ]
           }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://sleekapparels.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is your minimum order quantity (MOQ)?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Our MOQ is 50 pieces per style per color. Size splits are allowed across 5 standard sizes (S, M, L, XL, 2XL). Example: 10 Small + 15 Medium + 15 Large + 7 XL + 3 XXL = 50 total units."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is your production lead time?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sampling takes 5-7 days, bulk production takes 15-25 days depending on the product type and order quantity. Shipping adds 7-10 days via express courier (DHL/FedEx) or 20-30 days by sea freight."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What certifications do you have?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We are certified by OEKO-TEX Standard 100 (textile safety), BSCI (ethical manufacturing), and WRAP (responsible production). All certifications are annually audited and verified."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do you offer samples?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, samples cost $30-50 per piece. We provide 3-5 free samples with bulk order confirmation. Sample production takes 5-7 days plus shipping time."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What customization options are available?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We offer screen printing, embroidery, appliqué, heat transfer, sublimation printing, custom labels, custom packaging, and hang tags. All customization is included in our manufacturing service."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What are your payment terms?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We require 30% advance payment and 70% before shipment. We accept bank wire transfer, PayPal, and Letter of Credit (LC) for large orders over $10,000."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://sleekapparels.com/#website",
+          "url": "https://sleekapparels.com",
+          "name": "Sleek Apparels",
+          "description": "Low MOQ Apparel Manufacturer Bangladesh | T-Shirts, Hoodies, Activewear | Fast Production",
+          "publisher": {
+            "@id": "https://sleekapparels.com/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sleekapparels.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://sleekapparels.com/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://sleekapparels.com"
+            }
+          ]
         }
-      }
+      ]
+    }
     </script>
     <!-- Additional SEO Meta Tags -->
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -253,27 +442,186 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
-    <!-- Minimal JavaScript Required Warning - OPTIMIZED for performance -->
+    <!-- SEO-Friendly NoScript Content for Search Engines and Non-JS Users -->
     <noscript>
       <style>
-        .no-js-warning{background:#FFF3CD;padding:20px;text-align:center;font-family:system-ui,sans-serif;border-bottom:2px solid #FFC107}
+        .no-js-warning{background:#FFF3CD;padding:16px 20px;text-align:center;font-family:system-ui,sans-serif;border-bottom:2px solid#FFC107}
         .no-js-warning strong{font-size:16px}
         .no-js-warning a{color:#2D5C4E;text-decoration:underline;font-weight:bold}
-        .no-js-info{max-width:800px;margin:40px auto;padding:20px;background:#f9fafb;border-radius:8px;font-family:system-ui,sans-serif}
-        .no-js-info h1{font-size:32px;margin-bottom:16px;text-align:center}
-        .no-js-info p{margin:12px 0;line-height:1.6}
+        .no-js-container{max-width:1200px;margin:0 auto;padding:20px;font-family:system-ui,sans-serif;line-height:1.6}
+        .no-js-header{background:#2D5C4E;color:white;padding:20px;margin-bottom:30px;text-align:center}
+        .no-js-header h1{font-size:28px;margin:0 0 8px 0}
+        .no-js-header p{margin:0;font-size:16px;opacity:0.9}
+        .no-js-nav{background:#f5f5f5;padding:12px;margin-bottom:20px;border-radius:4px}
+        .no-js-nav a{margin:0 12px;color:#2D5C4E;text-decoration:none;font-weight:500}
+        .no-js-nav a:hover{text-decoration:underline}
+        .no-js-section{margin-bottom:30px}
+        .no-js-section h2{font-size:24px;color:#2D5C4E;margin-bottom:12px;border-bottom:2px solid #2D5C4E;padding-bottom:8px}
+        .no-js-section h3{font-size:18px;color:#333;margin:16px 0 8px 0}
+        .no-js-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:20px 0}
+        .no-js-card{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:20px}
+        .no-js-card h4{font-size:16px;font-weight:600;margin:0 0 8px 0;color:#2D5C4E}
+        .no-js-card p{margin:4px 0;font-size:14px;color:#666}
+        .no-js-badge{display:inline-block;background:#2D5C4E;color:white;padding:4px 12px;border-radius:4px;font-size:12px;margin:4px 4px 0 0}
+        .no-js-cta{background:#2D5C4E;color:white;padding:15px 30px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600;margin:10px 5px}
+        .no-js-cta:hover{background:#1e4238}
       </style>
+      
       <div class="no-js-warning">
-        <strong>JavaScript Required</strong><br>
-        Please enable JavaScript for the best experience or <a href="mailto:inquiry@sleekapparels.com">contact us directly</a>
+        <strong>JavaScript Disabled</strong> - Basic content shown below. Enable JavaScript for full interactive experience or <a href="mailto:inquiry@sleekapparels.com">contact us directly</a>
       </div>
-      <div class="no-js-info">
-        <h1>Sleek Apparels - Premium Manufacturer Bangladesh</h1>
-        <p><strong>Services:</strong> T-Shirts, Hoodies, Sweatshirts, Joggers, Activewear</p>
-        <p><strong>MOQ:</strong> 50 pieces | <strong>Production:</strong> 10-20 days</p>
-        <p><strong>Certifications:</strong> OEKO-TEX, BSCI, WRAP certified</p>
-        <p><strong>Contact:</strong> inquiry@sleekapparels.com | +880-186-1011-367</p>
-        <p><strong>Address:</strong> 01, Road 19A, Sector 04, Uttara, Dhaka 1230, Bangladesh</p>
+
+      <div class="no-js-header">
+        <h1>Sleek Apparels - Apparel Manufacturer Bangladesh</h1>
+        <p>Low MOQ 50 Pieces | Fast 10-20 Day Production | OEKO-TEX, BSCI, WRAP Certified</p>
+      </div>
+
+      <div class="no-js-container">
+        <nav class="no-js-nav" role="navigation" aria-label="Main Navigation">
+          <a href="/">Home</a>
+          <a href="/services">Services</a>
+          <a href="/catalog">Product Catalog</a>
+          <a href="/casualwear">Casualwear</a>
+          <a href="/activewear">Activewear</a>
+          <a href="/knitwear">Knitwear</a>
+          <a href="/uniforms-teamwear">Uniforms</a>
+          <a href="/portfolio">Portfolio</a>
+          <a href="/quote-generator">Get Quote</a>
+          <a href="/contact">Contact</a>
+          <a href="/our-story">About Us</a>
+        </nav>
+
+        <section class="no-js-section">
+          <h2>Our Manufacturing Services</h2>
+          <div class="no-js-grid">
+            <div class="no-js-card">
+              <h4>T-Shirts (Casualwear)</h4>
+              <p><strong>MOQ:</strong> 50 pieces per style per color</p>
+              <p><strong>Fabric:</strong> 100% Cotton, Poly-Cotton blends (65/35), CVC, Ring-spun</p>
+              <p><strong>Weight:</strong> 145-200 GSM</p>
+              <p><strong>Styles:</strong> Crew Neck, V-Neck, Henley, Raglan</p>
+              <p><strong>Lead Time:</strong> Sampling 5-7 days, Bulk 15-20 days</p>
+              <p><strong>Starting Price:</strong> Contact for quote</p>
+            </div>
+            <div class="no-js-card">
+              <h4>Hoodies & Sweatshirts</h4>
+              <p><strong>MOQ:</strong> 50 pieces per style per color</p>
+              <p><strong>Fabric:</strong> Fleece (French Terry, Brushed, Loop-back), 280-400 GSM</p>
+              <p><strong>Styles:</strong> Pullover, Zip-up, Oversized, Cropped</p>
+              <p><strong>Features:</strong> Drawstrings, Kangaroo pockets, Custom prints/embroidery</p>
+              <p><strong>Lead Time:</strong> 15-25 days bulk production</p>
+            </div>
+            <div class="no-js-card">
+              <h4>Activewear & Performance Wear</h4>
+              <p><strong>MOQ:</strong> 100 pieces per style (technical fabrics)</p>
+              <p><strong>Fabric:</strong> Moisture-wicking polyester, Spandex blends, Quick-dry</p>
+              <p><strong>Products:</strong> Athletic tees, Performance polos, Sports jerseys, Gym wear</p>
+              <p><strong>Features:</strong> UV protection, Breathable mesh panels, Stretch fabrics</p>
+            </div>
+            <div class="no-js-card">
+              <h4>Joggers & Pants</h4>
+              <p><strong>MOQ:</strong> 50 pieces per style per color</p>
+              <p><strong>Fabric:</strong> French Terry, Fleece, Cotton-Poly blends</p>
+              <p><strong>Features:</strong> Elastic waistband, Drawstrings, Side pockets, Tapered fit</p>
+              <p><strong>Customization:</strong> Screen print, Embroidery, Appliqué</p>
+            </div>
+            <div class="no-js-card">
+              <h4>Uniforms & Teamwear</h4>
+              <p><strong>MOQ:</strong> 50 pieces total order</p>
+              <p><strong>Types:</strong> Corporate polo shirts, School uniforms, Sports team jerseys</p>
+              <p><strong>Customization:</strong> Logo embroidery, Team numbers, Name printing</p>
+              <p><strong>Bulk Pricing:</strong> Volume discounts available</p>
+            </div>
+            <div class="no-js-card">
+              <h4>Knitwear</h4>
+              <p><strong>MOQ:</strong> 50 pieces per style</p>
+              <p><strong>Products:</strong> Cardigans, Sweaters, Knit polos</p>
+              <p><strong>Gauges:</strong> 5GG, 7GG, 12GG, 14GG</p>
+              <p><strong>Fabrics:</strong> Cotton, Acrylic, Cotton-Acrylic blends</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="no-js-section">
+          <h2>MOQ Structure & Pricing</h2>
+          <p><strong>Minimum Order Quantity (MOQ):</strong> 50 units per style per color</p>
+          <p><strong>Size Split Allowed:</strong> Yes - Distribute 50 units across 5 standard sizes (S, M, L, XL, 2XL)</p>
+          <p><strong>Example:</strong> 10 Small + 15 Medium + 15 Large + 7 XL + 3 XXL = 50 total units</p>
+          <p><strong>Multi-Color Orders:</strong> Each color requires separate MOQ of 50 pieces</p>
+          <p><strong>Sampling:</strong> $30-50 per sample (3-5 samples free with bulk order confirmation)</p>
+          <p><strong>Payment Terms:</strong> 30% advance, 70% before shipment (LC available for large orders)</p>
+          <p><strong>Price Range:</strong> T-shirts from $3-6, Hoodies from $8-15 depending on specifications</p>
+        </section>
+
+        <section class="no-js-section">
+          <h2>Certifications & Compliance</h2>
+          <div class="no-js-grid">
+            <div class="no-js-card">
+              <h4>OEKO-TEX Standard 100</h4>
+              <p><strong>Certificate:</strong> Textile safety certification</p>
+              <p><strong>Verified:</strong> Fabrics tested for harmful substances</p>
+              <p><strong>Verification:</strong> Visit oeko-tex.com/en/label-check</p>
+            </div>
+            <div class="no-js-card">
+              <h4>BSCI (Business Social Compliance Initiative)</h4>
+              <p><strong>Status:</strong> Ethical manufacturing certified</p>
+              <p><strong>Coverage:</strong> Worker rights, safe conditions, fair wages</p>
+              <p><strong>Audit:</strong> Annual third-party audits</p>
+            </div>
+            <div class="no-js-card">
+              <h4>WRAP (Worldwide Responsible Accredited Production)</h4>
+              <p><strong>Certified:</strong> Ethical apparel production</p>
+              <p><strong>Standards:</strong> 12 principles including labor laws, workplace safety</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="no-js-section">
+          <h2>Production Capabilities</h2>
+          <p><strong>Monthly Capacity:</strong> 50,000-80,000 pieces (varies by product type)</p>
+          <p><strong>Factory Location:</strong> Dhaka, Bangladesh - Central manufacturing hub</p>
+          <p><strong>Workforce:</strong> 200+ skilled workers</p>
+          <p><strong>Machinery:</strong> 80+ sewing machines, cutting tables, embroidery units, screen printing</p>
+          <p><strong>Quality Control:</strong> In-line + final inspection (AQL 2.5 standard)</p>
+          <p><strong>Lead Times:</strong> Sampling 5-7 days, Bulk production 15-25 days, Shipping 7-10 days</p>
+          <p><strong>Customization:</strong> Screen printing, embroidery, appliqué, heat transfer, sublimation</p>
+        </section>
+
+        <section class="no-js-section">
+          <h2>Why Choose Sleek Apparels?</h2>
+          <ul style="line-height:1.8;margin-left:20px">
+            <li><strong>Low MOQ (50 pieces):</strong> Perfect for startups, small brands, and boutiques</li>
+            <li><strong>Fast Production (10-20 days):</strong> Quicker than industry average of 30-45 days</li>
+            <li><strong>Certified Quality:</strong> OEKO-TEX, BSCI, WRAP certified - verified ethical manufacturing</li>
+            <li><strong>Transparent Pricing:</strong> No hidden fees, clear quotations</li>
+            <li><strong>Full Customization:</strong> Your brand, your design, your specifications</li>
+            <li><strong>Experienced Team:</strong> 15+ years in apparel manufacturing</li>
+            <li><strong>Global Shipping:</strong> DHL, FedEx, Sea freight - worldwide delivery</li>
+            <li><strong>B2B Focused:</strong> Serving fashion brands, retailers, promotional companies, sports teams</li>
+          </ul>
+        </section>
+
+        <section class="no-js-section">
+          <h2>Contact Information</h2>
+          <p><strong>Company:</strong> Sleek Apparels Limited & Sleek Apparels LLC</p>
+          <p><strong>Email:</strong> <a href="mailto:inquiry@sleekapparels.com">inquiry@sleekapparels.com</a></p>
+          <p><strong>Phone:</strong> <a href="tel:+8801861011367">+880-186-1011-367</a></p>
+          <p><strong>WhatsApp:</strong> +880-186-1011-367</p>
+          <p><strong>Address:</strong> 01, Road 19A, Sector 04, Uttara, Dhaka 1230, Bangladesh</p>
+          <p><strong>Business Hours:</strong> Monday-Saturday, 9:00 AM - 6:00 PM (GMT+6)</p>
+          <p><strong>Response Time:</strong> Within 24 hours for all inquiries</p>
+        </section>
+
+        <div style="text-align:center;margin:40px 0">
+          <a href="mailto:inquiry@sleekapparels.com?subject=Quote%20Request" class="no-js-cta">Request Quote</a>
+          <a href="mailto:inquiry@sleekapparels.com?subject=Sample%20Request" class="no-js-cta">Request Sample</a>
+          <a href="tel:+8801861011367" class="no-js-cta">Call Now</a>
+        </div>
+
+        <footer style="border-top:2px solid #e0e0e0;padding-top:20px;margin-top:40px;text-align:center;color:#666">
+          <p>&copy; 2024 Sleek Apparels. All rights reserved. | <a href="/privacy" style="color:#2D5C4E">Privacy Policy</a> | <a href="/terms" style="color:#2D5C4E">Terms of Service</a></p>
+          <p>Bangladesh Apparel Manufacturer | T-Shirts, Hoodies, Activewear | Low MOQ 50 Pieces</p>
+        </footer>
       </div>
     </noscript>
     <div id="root"></div>
