@@ -44,6 +44,14 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      // Track Google signin attempt
+      const { trackDatabaseEvent } = await import('@/lib/analyticsTracking');
+      trackDatabaseEvent({
+        event_name: 'google_signin_clicked',
+        event_category: 'engagement',
+        event_properties: { location: 'auth_page' }
+      });
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -202,6 +210,10 @@ export default function Auth() {
           console.warn('Failed to store user role:', roleError);
         }
       }
+
+      // Track signup completion
+      const { trackSignupComplete } = await import('@/lib/analytics');
+      trackSignupComplete('email', rawData.role);
 
       toast.success("Account created! Please check your email and click the verification link to activate your account.", {
         duration: 8000,
