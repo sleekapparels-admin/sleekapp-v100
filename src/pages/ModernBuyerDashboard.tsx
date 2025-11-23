@@ -151,8 +151,8 @@ export default function ModernBuyerDashboard() {
           stage = 'Processing';
       }
 
-      const dueDate = order.target_delivery_date 
-        ? new Date(order.target_delivery_date)
+      const dueDate = (order as any).target_date 
+        ? new Date((order as any).target_date)
         : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default 30 days
 
       return {
@@ -162,7 +162,7 @@ export default function ModernBuyerDashboard() {
         status: order.status,
         progress,
         stage,
-        supplier: order.suppliers?.company_name || 'Sleek Apparels',
+        supplier: (order as any).suppliers?.company_name || 'Sleek Apparels',
         dueDate: format(dueDate, 'yyyy-MM-dd'),
         daysRemaining: differenceInDays(dueDate, new Date()),
         estimatedDelivery: format(dueDate, 'MMM d, yyyy'),

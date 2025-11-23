@@ -47,18 +47,7 @@ export default function ForStartups() {
       <SEO config={{
         title: "For Startups - Low MOQ Clothing Manufacturer (50 Pieces) | Sleek Apparels",
         description: "Starting a clothing brand? Get started with just 50 pieces. Low MOQ manufacturer in Bangladesh helping startups launch successful apparel brands since 2018.",
-        keywords: [
-          "clothing manufacturer for startups",
-          "low MOQ clothing manufacturer",
-          "how to start a clothing brand",
-          "startup clothing manufacturer",
-          "50 piece MOQ manufacturer",
-          "first time clothing order",
-          "new clothing brand manufacturer",
-          "small batch clothing production",
-          "clothing startup Bangladesh",
-          "apparel manufacturer for new brands"
-        ],
+        keywords: "clothing manufacturer for startups, low MOQ clothing manufacturer, how to start a clothing brand, startup clothing manufacturer, 50 piece MOQ manufacturer, first time clothing order, new clothing brand manufacturer, small batch clothing production, clothing startup Bangladesh, apparel manufacturer for new brands",
         canonical: "https://sleekapparels.com/for-startups"
       }} />
 

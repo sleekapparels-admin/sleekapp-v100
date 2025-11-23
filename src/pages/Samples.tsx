@@ -95,7 +95,7 @@ const Samples = () => {
         config={{
           title: "Sample Program - Order Apparel Samples Before Bulk | Sleek Apparels",
           description: "Order clothing samples before committing to bulk production. $25 per sample, 7-10 day turnaround, cost refunded on bulk orders. Try before you buy with confidence.",
-          keywords: ["apparel samples", "clothing samples before bulk", "sample turnaround time", "manufacturer samples", "t-shirt samples", "hoodie samples", "sample refund policy"],
+          keywords: "apparel samples, clothing samples before bulk, sample turnaround time, manufacturer samples, t-shirt samples, hoodie samples, sample refund policy",
           canonical: "https://sleekapparels.com/samples"
         }}
       />

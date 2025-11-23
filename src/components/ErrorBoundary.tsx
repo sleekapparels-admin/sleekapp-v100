@@ -1,5 +1,4 @@
 import React from 'react';
-import * as Sentry from "@sentry/react";
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -18,44 +17,49 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetError }) => {
         </div>
         
         <p className="text-muted-foreground mb-4">
-          We apologize for the inconvenience. An unexpected error has occurred.
+          We're sorry, but something unexpected happened. Our team has been notified.
         </p>
         
-        {import.meta.env.DEV && (
-          <div className="bg-muted p-3 rounded mb-4 overflow-auto">
-            <p className="text-sm font-mono text-muted-foreground break-all">
-              {error.message}
-            </p>
-          </div>
-        )}
-        
-        <div className="flex gap-2">
-          <Button onClick={resetError} className="flex-1">
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Try Again
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => window.location.href = '/'}
-            className="flex-1"
-          >
-            Go Home
-          </Button>
+        <div className="bg-muted p-3 rounded-md mb-4 overflow-auto max-h-32">
+          <code className="text-sm text-muted-foreground">{error.message}</code>
         </div>
+        
+        <Button 
+          onClick={resetError}
+          className="w-full"
+        >
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Try Again
+        </Button>
       </div>
     </div>
   );
 };
 
-export const SentryErrorBoundary = Sentry.withErrorBoundary(
-  ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  {
-    fallback: (errorData) => (
-      <ErrorFallback 
-        error={errorData.error instanceof Error ? errorData.error : new Error(String(errorData.error))} 
-        resetError={errorData.resetError} 
-      />
-    ),
-    showDialog: false,
+// Simple error boundary without Sentry
+export class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
   }
-);
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError && this.state.error) {
+      return <ErrorFallback error={this.state.error} resetError={() => this.setState({ hasError: false, error: null })} />;
+    }
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;

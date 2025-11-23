@@ -179,7 +179,6 @@ const router = createBrowserRouter([
       { path: "/dashboard", element: <ModernBuyerDashboard /> },
       { path: "/buyer-dashboard-modern", element: <ModernBuyerDashboard /> },
       { path: "/supplier-dashboard-modern", element: <ModernSupplierDashboard /> },
-      { path: "/modern-showcase", element: lazy(() => import("./pages/ModernShowcase")) },
       { path: "/admin", element: <ModernAdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },
       { path: "/admin/orders", element: <OrderManagement /> },

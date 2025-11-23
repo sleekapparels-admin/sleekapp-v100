@@ -121,8 +121,8 @@ export default function ProductUpload() {
   }, []);
 
   useEffect(() => {
-    if (supplier?.factory_location) {
-      setValue('shipping_from', supplier.factory_location);
+    if ((supplier as any)?.factory_location) {
+      setValue('shipping_from', (supplier as any).factory_location);
     }
   }, [supplier, setValue]);
 

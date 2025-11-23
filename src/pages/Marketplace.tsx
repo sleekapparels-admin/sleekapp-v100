@@ -80,7 +80,7 @@ export default function Marketplace() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setFilters({ ...filters, searchQuery, page: 1 });
+    setFilters({ ...filters, query: searchQuery, page: 1 });
   };
 
   const applyFilters = () => {

@@ -202,7 +202,6 @@ export const InstantQuoteCalculator = () => {
           customizationCost,
           urgencyFee,
           fabricMultiplier,
-          qualityMultiplier,
         },
         savings: Math.round(savings * 100) / 100,
       });

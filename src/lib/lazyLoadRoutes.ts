@@ -32,7 +32,6 @@ export const HowItWorks = lazy(() => import('@/pages/HowItWorks'));
 
 // Auth & Dashboard - lazy load
 export const Auth = lazy(() => import('@/pages/Auth'));
-export const Dashboard = lazy(() => import('@/pages/Dashboard'));
 export const Orders = lazy(() => import('@/pages/Orders'));
 export const OrderDetails = lazy(() => import('@/pages/OrderDetails'));
 export const AdminAnalytics = lazy(() => import('@/pages/AdminAnalytics'));

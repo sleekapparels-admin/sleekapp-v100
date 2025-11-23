@@ -136,11 +136,11 @@ export default function ModernSupplierDashboard() {
     })
     .reduce((sum, order) => sum + (Number(order.supplier_price) || 0), 0);
   
-  const capacityUtilization = supplier?.total_capacity_monthly 
-    ? Math.min(100, Math.round((activeOrders * 100) / (supplier.total_capacity_monthly / 500)))
+  const capacityUtilization = (supplier as any)?.total_capacity_monthly 
+    ? Math.min(100, Math.round((activeOrders * 100) / ((supplier as any).total_capacity_monthly / 500)))
     : 0;
   
-  const avgRating = supplier?.supplier_ratings?.[0]?.overall_score || 0;
+  const avgRating = (supplier as any)?.supplier_ratings?.[0]?.overall_score || 0;
 
   // Calculate performance score
   const completedOrders = orders.filter(o => o.status === 'completed');
@@ -160,7 +160,7 @@ export default function ModernSupplierDashboard() {
     qualityScore: avgRating,
     looptraceCompliance,
     communicationScore: Math.round((avgRating / 5) * 100),
-    tier: supplier?.tier || 'BRONZE',
+    tier: (supplier as any)?.tier || 'BRONZE',
     tierProgress: 68,
     pointsToNextTier: 13,
   };
