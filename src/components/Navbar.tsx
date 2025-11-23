@@ -14,7 +14,16 @@ const platformMenu = [
     href: "/looptrace-technology",
     description: "AI-powered instant quotes & real-time tracking",
     highlight: true,
+    highlightColor: "primary",
     icon: Sparkles
+  },
+  {
+    name: "Become a Supplier",
+    href: "/become-supplier",
+    description: "Partner with us & grow your manufacturing business",
+    highlight: true,
+    highlightColor: "green",
+    icon: Factory
   },
   {
     name: "Why Sleek Apparels",
@@ -77,13 +86,6 @@ const resourcesMenu = [
     description: "International shipping information",
     icon: Truck,
     audience: "both"
-  },
-  {
-    name: "Become a Supplier",
-    href: "/become-supplier",
-    description: "Partner with us as a manufacturer",
-    icon: Factory,
-    audience: "supplier"
   }
 ];
 
@@ -95,6 +97,13 @@ const accountMenu = [
     description: "Join our platform today",
     icon: UserPlus,
     primary: true
+  },
+  {
+    name: "Become a Supplier",
+    href: "/become-supplier",
+    description: "Partner with us & grow your business",
+    icon: Factory,
+    highlight: true
   },
   {
     name: "Sign In",
@@ -182,31 +191,40 @@ export const Navbar = () => {
                   <NavigationMenuContent>
                     <div className="w-[420px] p-3 bg-background border border-border shadow-xl rounded-lg">
                       <div className="space-y-1">
-                        {platformMenu.map(item => (
-                          <NavigationMenuLink key={item.name} asChild>
-                            <Link 
-                              to={item.href} 
-                              className={`group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors ${
-                                item.highlight ? 'bg-primary/5 border border-primary/20' : ''
-                              }`}
-                            >
-                              <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
-                                item.highlight ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
-                              }`}>
-                                <item.icon className="h-5 w-5" />
-                              </div>
-                              <div className="flex-1 space-y-1">
-                                <div className="text-sm font-semibold flex items-center gap-2">
-                                  {item.name}
-                                  {item.highlight && <span className="text-[10px] px-1.5 py-0.5 bg-primary text-white rounded-full">AI</span>}
+                        {platformMenu.map(item => {
+                          const isGreenHighlight = item.highlightColor === 'green';
+                          const isPrimaryHighlight = item.highlightColor === 'primary';
+                          
+                          return (
+                            <NavigationMenuLink key={item.name} asChild>
+                              <Link 
+                                to={item.href} 
+                                className={`group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors ${
+                                  isPrimaryHighlight ? 'bg-primary/5 border border-primary/20' : 
+                                  isGreenHighlight ? 'bg-green-500/5 border border-green-500/20' : ''
+                                }`}
+                              >
+                                <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
+                                  isPrimaryHighlight ? 'bg-primary text-white' : 
+                                  isGreenHighlight ? 'bg-green-600 text-white' :
+                                  'bg-primary/10 text-primary'
+                                }`}>
+                                  <item.icon className="h-5 w-5" />
                                 </div>
-                                <p className="text-xs text-muted-foreground">
-                                  {item.description}
-                                </p>
-                              </div>
-                            </Link>
-                          </NavigationMenuLink>
-                        ))}
+                                <div className="flex-1 space-y-1">
+                                  <div className="text-sm font-semibold flex items-center gap-2">
+                                    {item.name}
+                                    {isPrimaryHighlight && <span className="text-[10px] px-1.5 py-0.5 bg-primary text-white rounded-full">AI</span>}
+                                    {isGreenHighlight && <span className="text-[10px] px-1.5 py-0.5 bg-green-600 text-white rounded-full">Partner</span>}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    {item.description}
+                                  </p>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          );
+                        })}
                       </div>
                     </div>
                   </NavigationMenuContent>
@@ -324,16 +342,22 @@ export const Navbar = () => {
                               <Link 
                                 to={item.href} 
                                 className={`group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors ${
-                                  item.primary ? 'bg-primary/5 border border-primary/20' : ''
+                                  item.primary ? 'bg-primary/5 border border-primary/20' : 
+                                  item.highlight ? 'bg-green-500/5 border border-green-500/20' : ''
                                 }`}
                               >
                                 <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
-                                  item.primary ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+                                  item.primary ? 'bg-primary text-white' : 
+                                  item.highlight ? 'bg-green-600 text-white' :
+                                  'bg-primary/10 text-primary'
                                 }`}>
                                   <item.icon className="h-4 w-4" />
                                 </div>
                                 <div className="flex-1">
-                                  <div className="text-sm font-semibold">{item.name}</div>
+                                  <div className="text-sm font-semibold flex items-center gap-2">
+                                    {item.name}
+                                    {item.highlight && <span className="text-[10px] px-1.5 py-0.5 bg-green-600 text-white rounded-full">Partner</span>}
+                                  </div>
                                   <p className="text-xs text-muted-foreground">
                                     {item.description}
                                   </p>
@@ -380,11 +404,19 @@ export const Navbar = () => {
             {/* Platform Section */}
             <div className="pt-2">
               <p className="px-4 py-2 text-xs font-semibold text-foreground/70 uppercase tracking-wide">Platform</p>
-              {platformMenu.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
-                  <item.icon className="h-4 w-4 text-primary" />
-                  {item.name}
-                  {item.highlight && <span className="text-[9px] px-1.5 py-0.5 bg-primary text-white rounded-full ml-auto">AI</span>}
-                </Link>)}
+              {platformMenu.map(item => {
+                const isGreenHighlight = item.highlightColor === 'green';
+                const isPrimaryHighlight = item.highlightColor === 'primary';
+                
+                return (
+                  <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
+                    <item.icon className={`h-4 w-4 ${isGreenHighlight ? 'text-green-600' : 'text-primary'}`} />
+                    {item.name}
+                    {isPrimaryHighlight && <span className="text-[9px] px-1.5 py-0.5 bg-primary text-white rounded-full ml-auto">AI</span>}
+                    {isGreenHighlight && <span className="text-[9px] px-1.5 py-0.5 bg-green-600 text-white rounded-full ml-auto">Partner</span>}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Resources Section */}
