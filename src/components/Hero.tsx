@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Star, Eye, Sparkles, Users, TrendingUp } from "lucide-react";
+import { ArrowRight, Star, Eye, Zap, Shield, Calculator, Sparkles } from "lucide-react";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { useState } from "react";
 import { trackCTAClick } from "@/lib/analyticsTracking";
@@ -22,6 +22,7 @@ export const Hero = () => {
       fetchpriority="high">
           <source src="/videos/homepage-hero.webm" type="video/webm" />
           <source src="/videos/homepage-hero.mp4" type="video/mp4" />
+          {/* Fallback for browsers that don't support video */}
           Your browser does not support the video tag.
         </video>
         {/* Dark gradient overlay from left for better text readability */}
@@ -35,152 +36,132 @@ export const Hero = () => {
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Main Message */}
-          <div className="max-w-2xl">
-            {/* Beta Participation Badge */}
+          {/* Left: Main Professional Message */}
+          <div className="max-w-3xl">
+            {/* Beta Launch Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full mb-6">
-              <Sparkles className="h-4 w-4 text-primary" />
+              <Eye className="h-4 w-4 text-primary" />
               <span className="text-sm font-semibold text-white">
-                🎯 Help Us Build the Future - Beta Access Open
+                🚀 LoopTrace™ BETA - Free Access Until December 31, 2025
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 leading-tight">
-              Connect Buyers & Manufacturers{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                Worldwide
-              </span>
+            <h1 className="text-h1-mobile md:text-h1 font-heading font-bold text-white mb-6 leading-tight">
+              Bangladesh's First AI Powered Apparel Sourcing Platform
+             
+              <span className="block text-primary mt-2 text-base md:text-lg">Powered by LoopTrace™ Technology</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed font-medium">
-              Join our beta program and help train our AI to make apparel sourcing smarter
+              Real-Time Production Tracking • AI-Powered Quotes • 10-20 Day Delivery
             </p>
 
             <p className="text-base md:text-lg text-white/75 mb-8 leading-relaxed">
-              We're building AI-powered tools to revolutionize how buyers find manufacturers and how suppliers get orders. 
-              <span className="text-white font-semibold"> We need your data to make it better.</span>
+              Premium private label clothing manufacturing with low MOQs and full visibility. Watch your order progress through every stage with our revolutionary LoopTrace™ technology. From yarn to finished garment, full transparency guaranteed.
             </p>
 
-            {/* Dual Value Props */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {/* Key Features - Quick Scan */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                <Users className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <Zap className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-white font-semibold text-sm">For Buyers</div>
-                  <div className="text-white/70 text-xs">Access verified manufacturers with transparent pricing</div>
+                  <div className="text-white font-semibold text-sm">Low MOQ</div>
+                  <div className="text-white/70 text-xs">From 50 pieces</div>
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                <TrendingUp className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                <Eye className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-white font-semibold text-sm">For Suppliers</div>
-                  <div className="text-white/70 text-xs">Get connected with global brands and buyers</div>
+                  <div className="text-white font-semibold text-sm">Live Tracking</div>
+                  <div className="text-white/70 text-xs">LoopTrace™ AI</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                <Shield className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-white font-semibold text-sm">Certified</div>
+                  <div className="text-white/70 text-xs">ISO • WRAP • GOTS</div>
                 </div>
               </div>
             </div>
 
-            {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Button 
+                asChild 
                 size="lg" 
                 className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg shadow-primary/20"
-                onClick={() => {
-                  handleCTAClick('join_beta_primary');
-                  setShowLeadForm(true);
-                }}
+                onClick={() => handleCTAClick('get_instant_quote')}
               >
-                <Sparkles className="mr-2 h-5 w-5" />
-                Join Beta Program (Free)
+                <Link to="/instant-quote">
+                  <Calculator className="mr-2 h-5 w-5" />
+                  Get Instant Quote (30s)
+                </Link>
               </Button>
               
               <Button 
                 asChild 
                 size="lg" 
-                variant="outline"
-                className="text-lg px-8 py-6 h-auto border-white/20 text-white hover:bg-white/10"
+                className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                onClick={() => handleCTAClick('start_your_project')}
               >
-                <Link 
-                  to="/quote-generator"
-                  onClick={() => handleCTAClick('get_quote_secondary')}
-                >
-                  Get Instant Quote
+                <Link to="/get-started">
+                  Start Your Project
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
 
-            {/* Social Proof */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 text-white/90">
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 fill-accent text-accent" />
                 <span className="text-sm md:text-base font-medium">
-                  Limited Beta Spots Available
+                  50+ Brands • 15+ Countries
                 </span>
               </div>
               <div className="text-sm md:text-base text-white/70">
-                <span className="font-semibold text-white">100%</span> Free Until Launch
+                <span className="font-semibold text-white">98.5%</span> On-Time Delivery Rate
               </div>
             </div>
           </div>
 
-          {/* Right: Lead Capture Form */}
-          <div className="lg:block">
+          {/* Right: Optional Subtle Lead Capture - Hidden by default on mobile */}
+          <div className="hidden lg:block">
             {showLeadForm ? (
               <LeadCaptureForm 
-                source="hero_section"
+                compact={true}
+                source="hero_sidebar"
                 onSuccess={() => {
                   setTimeout(() => navigate('/auth?intent=beta'), 2000);
                 }}
               />
             ) : (
-              <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Why Join Our Beta?</h3>
-                    <p className="text-white/70 text-sm">Help us build features that actually work for you</p>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Eye className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                      <div>
-                        <div className="text-white font-semibold text-sm">Free Platform Access</div>
-                        <div className="text-white/60 text-xs">Until December 31, 2025 - No credit card needed</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3">
-                      <Sparkles className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
-                      <div>
-                        <div className="text-white font-semibold text-sm">Shape the Product</div>
-                        <div className="text-white/60 text-xs">Your feedback directly influences what we build</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3">
-                      <TrendingUp className="h-5 w-5 text-green-400 mt-1 flex-shrink-0" />
-                      <div>
-                        <div className="text-white font-semibold text-sm">Early Access Benefits</div>
-                        <div className="text-white/60 text-xs">Exclusive features & lifetime discounts</div>
-                      </div>
+              <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Sparkles className="h-6 w-6 text-primary flex-shrink-0" />
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-2">Get Early Access</h3>
+                      <p className="text-sm text-white/70 mb-4">
+                        Join our beta program and be among the first to experience our AI-powered platform. Free until December 2025.
+                      </p>
+                      <Button 
+                        className="w-full bg-primary hover:bg-primary/90"
+                        onClick={() => {
+                          handleCTAClick('early_access_sidebar');
+                          setShowLeadForm(true);
+                        }}
+                      >
+                        Join Beta Program
+                      </Button>
                     </div>
                   </div>
 
-                  <Button 
-                    className="w-full bg-primary hover:bg-primary/90"
-                    size="lg"
-                    onClick={() => {
-                      handleCTAClick('join_beta_sidebar');
-                      setShowLeadForm(true);
-                    }}
-                  >
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Get Started - It's Free
-                  </Button>
-
-                  <p className="text-xs text-white/50 text-center">
-                    No credit card • Cancel anytime • Your data is safe
-                  </p>
+                  <div className="border-t border-white/10 pt-4 space-y-3 text-xs text-white/60">
+                    <p>✓ Free platform access until Dec 31, 2025</p>
+                    <p>✓ AI-powered instant quotes</p>
+                    <p>✓ Real-time production tracking</p>
+                    <p>✓ Priority support access</p>
+                  </div>
                 </div>
               </div>
             )}
