@@ -13,49 +13,46 @@ const WhySleekApparels = () => {
       feature: "Minimum Order Quantity",
       sleek: "50 pieces",
       traditional: "500-1,000 pieces",
-      chinese: "1,000-5,000 pieces",
     },
     {
       feature: "Sampling Speed",
       sleek: "3-7 days",
       traditional: "2-4 weeks",
-      chinese: "3-6 weeks",
     },
     {
       feature: "Communication",
       sleek: "Direct English, LoopTrace™ dashboard",
-      traditional: "Email chains, language barriers",
-      chinese: "Time zone delays, translators",
+      traditional: "Email chains, indirect communication",
     },
     {
       feature: "Transparency",
-      sleek: "LoopTrace™ Platform",
-      traditional: "Weekly status updates",
-      chinese: "Limited visibility",
+      sleek: "LoopTrace™ real-time tracking",
+      traditional: "Weekly status updates via email",
     },
     {
       feature: "Quality Control",
       sleek: "AQL 2.5, photo documentation",
-      traditional: "Variable, limited reporting",
-      chinese: "Third-party required",
+      traditional: "Variable standards, limited reporting",
     },
     {
       feature: "Ethical Standards",
       sleek: "WRAP certified, auditable",
-      traditional: "Self-reported",
-      chinese: "Variable compliance",
+      traditional: "Self-reported, limited transparency",
     },
     {
       feature: "Lead Time (Bulk)",
       sleek: "10-20 days knitwear",
       traditional: "30-45 days",
-      chinese: "45-90 days + shipping",
     },
     {
       feature: "Pricing",
-      sleek: "Mid-range, transparent",
-      traditional: "Mid-high range",
-      chinese: "Lower but hidden costs",
+      sleek: "Transparent, competitive",
+      traditional: "Mid-high range, negotiable",
+    },
+    {
+      feature: "Technology Integration",
+      sleek: "AI-powered platform, instant quotes",
+      traditional: "Manual processes, delayed quotes",
     },
   ];
 
@@ -73,8 +70,8 @@ const WhySleekApparels = () => {
       answer: "Our AI prediction system catches 40% of potential delays before they happen, giving us time to adjust. If issues arise, you see them immediately via dashboard—not weeks later. We maintain 2% production margin for replacements and have never shipped a late order without client approval to extend deadline.",
     },
     {
-      objection: "Isn't working with China cheaper?",
-      answer: "Upfront pricing may appear lower, but hidden costs add up: MOQ lock-in (forcing you to order 5-10x more), longer lead times (tying up cash), communication delays (costly mistakes), and shipping costs from Asia. Our Bangladesh-to-EU shipping is 30-40% cheaper than China-to-EU, and smaller MOQs mean less inventory risk.",
+      objection: "How is your pricing competitive?",
+      answer: "We offer transparent, competitive pricing with no hidden costs. Unlike traditional sourcing companies that add multiple layers of markup, we work directly with you. Our lower MOQs (50 pieces vs 500-1000) mean less capital tied up in inventory, and our faster turnaround times help you respond to market trends quickly—reducing the risk of unsold stock.",
     },
     {
       objection: "What about ethical manufacturing?",
@@ -86,8 +83,8 @@ const WhySleekApparels = () => {
     <>
       <SEO 
         config={{
-          title: "Why Choose Sleek Apparels? | Compare Us vs Traditional Factories",
-          description: "Direct comparison: Sleek vs traditional factories vs Chinese manufacturers. Lower MOQ, faster sampling, ethical production, transparent pricing.",
+          title: "Why Choose Sleek Apparels? | Compare Us vs Traditional Bangladesh Sourcing",
+          description: "Direct comparison: Sleek Apparels vs traditional Bangladesh sourcing companies. Lower MOQ (50 pieces), faster sampling, AI-powered transparency, ethical production.",
           canonical: "/why-sleek-apparels"
         }}
       />
@@ -104,7 +101,7 @@ const WhySleekApparels = () => {
                 Why Fashion Brands Choose Sleek Apparels
               </h1>
               <p className="text-xl sm:text-2xl text-muted-foreground leading-relaxed">
-                Not all manufacturers are created equal. See how we compare to traditional factories and Chinese competitors.
+                Not all manufacturers are created equal. See how we compare to traditional Bangladesh sourcing companies.
               </p>
             </div>
           </div>
@@ -120,8 +117,7 @@ const WhySleekApparels = () => {
                   <tr className="border-b-2 border-border">
                     <th className="p-4 text-left font-bold text-secondary">Feature</th>
                     <th className="p-4 text-center font-bold text-primary bg-primary/5">Sleek Apparels</th>
-                    <th className="p-4 text-center font-bold text-muted-foreground">Traditional Factory</th>
-                    <th className="p-4 text-center font-bold text-muted-foreground">Chinese Factory</th>
+                    <th className="p-4 text-center font-bold text-muted-foreground">Traditional Bangladesh Sourcing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -135,7 +131,6 @@ const WhySleekApparels = () => {
                         </div>
                       </td>
                       <td className="p-4 text-center text-muted-foreground">{point.traditional}</td>
-                      <td className="p-4 text-center text-muted-foreground">{point.chinese}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -175,7 +170,7 @@ const WhySleekApparels = () => {
               <Card className="animate-fade-up">
                 <CardContent className="p-8">
                   <p className="text-lg text-muted-foreground mb-4">
-                    "We switched from a Chinese factory to Sleek Apparels and cut our MOQ from 2,000 to 200 pieces. Game changer for testing new designs."
+                    "We switched from a traditional sourcing agent to Sleek Apparels and cut our MOQ from 1,000 to 50 pieces. Game changer for testing new designs without huge inventory risk."
                   </p>
                   <p className="font-semibold text-secondary">— Lars Hansen, Copenhagen Streetwear</p>
                 </CardContent>
