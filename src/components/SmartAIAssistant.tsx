@@ -7,6 +7,7 @@ import { MessageCircle, X, Send, Bot, User as UserIcon, Loader2, Sparkles, Zap, 
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import DOMPurify from 'dompurify';
 
 interface Message {
   id: string;
@@ -175,7 +176,7 @@ export const SmartAIAssistant = () => {
 
   const formatMessageContent = (content: string) => {
     // Format markdown-style content
-    return content
+    const formatted = content
       .split('\n')
       .map((line, i) => {
         // Bold text
@@ -194,6 +195,12 @@ export const SmartAIAssistant = () => {
         return line ? `<p key=${i} class="mb-2">${line}</p>` : '<br />';
       })
       .join('');
+
+    // Sanitize HTML to prevent XSS attacks
+    return DOMPurify.sanitize(formatted, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'li', 'h3', 'span'],
+      ALLOWED_ATTR: ['class', 'key']
+    });
   };
 
   // Get progress indicator based on stage

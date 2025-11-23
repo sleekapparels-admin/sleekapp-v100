@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { MessageCircle, X, Send, Bot, User as UserIcon, Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import DOMPurify from 'dompurify';
 
 interface Message {
   id: string;
@@ -156,7 +157,7 @@ export const AIAssistantChat = () => {
 
   const formatMessageContent = (content: string) => {
     // Simple markdown-like formatting
-    return content
+    const formatted = content
       .split('\n')
       .map((line, i) => {
         // Bold text
@@ -175,6 +176,12 @@ export const AIAssistantChat = () => {
         return line ? `<p key=${i} class="mb-2">${line}</p>` : '<br />';
       })
       .join('');
+
+    // Sanitize HTML to prevent XSS attacks
+    return DOMPurify.sanitize(formatted, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'li', 'h3', 'span'],
+      ALLOWED_ATTR: ['class', 'key']
+    });
   };
 
   return (
