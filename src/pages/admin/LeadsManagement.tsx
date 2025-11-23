@@ -55,7 +55,7 @@ export default function LeadsManagement() {
     setIsLoading(true);
     try {
       let query = supabase
-        .from('lead_captures')
+        .from('lead_captures' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -71,7 +71,7 @@ export default function LeadsManagement() {
 
       if (error) throw error;
 
-      setLeads(data || []);
+      setLeads((data as any) || []);
     } catch (error: any) {
       console.error('Error fetching leads:', error);
       toast.error('Failed to load leads');
@@ -83,7 +83,7 @@ export default function LeadsManagement() {
   const updateLeadStatus = async (leadId: string, newStatus: string) => {
     try {
       const { error } = await supabase
-        .from('lead_captures')
+        .from('lead_captures' as any)
         .update({ status: newStatus })
         .eq('id', leadId);
 
@@ -100,7 +100,7 @@ export default function LeadsManagement() {
   const updateLeadNotes = async (leadId: string, notes: string) => {
     try {
       const { error } = await supabase
-        .from('lead_captures')
+        .from('lead_captures' as any)
         .update({ admin_notes: notes })
         .eq('id', leadId);
 

@@ -130,9 +130,11 @@ export const Product3DCarousel = ({
         ref={containerRef}
         className="relative h-[600px] perspective-1000"
         onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
         onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        onMouseLeave={() => {
+          handleMouseLeave();
+          setIsPaused(false);
+        }}
       >
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div

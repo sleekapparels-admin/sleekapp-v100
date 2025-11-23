@@ -61,7 +61,7 @@ export function LeadCaptureForm({ onSuccess, compact = false, source = 'homepage
 
       // Insert lead into database
       const { error } = await supabase
-        .from('lead_captures')
+        .from('lead_captures' as any)
         .insert(leadData);
 
       if (error) {
