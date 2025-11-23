@@ -13,7 +13,7 @@
     <!-- Content Security Policy - Strict Configuration with inline script hash -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'sha256-VVbZragXBoCq3xNCSykFl0fLOdZu5q7ku7+o78P0Zn8=' 'sha256-W7CSJa1fR5YqXKxqCXwxhv0EkR+n5xE5PXE2wvxvmyI=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com;
+      script-src 'self' 'sha256-kGUQiECb7HTB3+cdt9SV9OGtiju37vTHScB5TlU3tzo=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com https://sleekapparels.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       img-src 'self' data: blob: https://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://fonts.googleapis.com https://images.unsplash.com https://c.clarity.ms https://www.facebook.com https://px.ads.linkedin.com https://www.genspark.ai https://c.bing.com;
       font-src 'self' data: https://fonts.gstatic.com;
@@ -30,10 +30,11 @@
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts - Optimized (2 families only with font-display:swap) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
@@ -59,10 +60,8 @@
     <link rel="dns-prefetch" href="https://www.google-analytics.com" />
     <link rel="dns-prefetch" href="https://googletagmanager.com" />
     
-    <!-- Preload Critical Assets for Fast LCP -->
+    <!-- Preload Critical Assets for Fast LCP - OPTIMIZED: Only logo, no video preload -->
     <link rel="preload" href="/sleek-logo.webp" as="image" type="image/webp" fetchpriority="high" />
-    <link rel="preload" href="/videos/homepage-hero.webm" as="video" type="video/webm" fetchpriority="high" />
-    <link rel="preload" href="/videos/homepage-hero.mp4" as="video" type="video/mp4" fetchpriority="high" />
     
     <!-- Critical CSS for immediate render - prevents render blocking -->
     <style>
@@ -254,250 +253,27 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
-    <!-- JavaScript Required Warning -->
-    <noscript>
-      <div style="background: #FFF3CD; padding: 20px; text-align: center; font-family: Arial, sans-serif; border-bottom: 2px solid #FFC107; position: relative; z-index: 9999;">
-        <strong style="font-size: 16px;">JavaScript Required:</strong> 
-        <span style="font-size: 14px;">This website requires JavaScript for the best experience. Please enable JavaScript in your browser settings.</span>
-        <br><br>
-        <a href="/contact" style="color: #2D5C4E; text-decoration: underline; font-weight: bold;">Contact us directly</a> 
-        <span style="font-size: 14px;">if you need assistance.</span>
-      </div>
-    </noscript>
-    
+    <!-- Minimal JavaScript Required Warning - OPTIMIZED for performance -->
     <noscript>
       <style>
-        .no-js-nav {
-          background: #ffffff;
-          border-bottom: 1px solid #e5e7eb;
-          padding: 12px 0;
-          margin-bottom: 20px;
-        }
-        .no-js-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 16px;
-          font-family: 'Poppins', Arial, sans-serif;
-        }
-        .no-js-nav-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-        }
-        .no-js-logo {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 24px;
-          font-weight: bold;
-          color: #1a1a1a;
-          text-decoration: none;
-        }
-        .no-js-nav-links {
-          display: flex;
-          gap: 24px;
-          margin: 8px 0;
-        }
-        .no-js-nav-link {
-          color: #6b7280;
-          text-decoration: none;
-          font-weight: 500;
-          font-size: 14px;
-        }
-        .no-js-nav-link:hover {
-          color: #1a1a1a;
-        }
-        .no-js-hero {
-          background: linear-gradient(135deg, #1a1a1a 0%, #4a5568 100%);
-          color: white;
-          padding: 80px 0;
-          text-align: center;
-          margin-bottom: 40px;
-        }
-        .no-js-hero h1 {
-          font-size: 48px;
-          font-weight: bold;
-          margin-bottom: 16px;
-          line-height: 1.1;
-        }
-        .no-js-hero p {
-          font-size: 20px;
-          opacity: 0.9;
-          max-width: 600px;
-          margin: 0 auto 32px;
-        }
-        .no-js-cta {
-          display: inline-block;
-          background: #ffffff;
-          color: #1a1a1a;
-          padding: 16px 32px;
-          border-radius: 8px;
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 16px;
-          margin: 0 8px;
-        }
-        .no-js-section {
-          padding: 40px 0;
-        }
-        .no-js-services {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
-          margin: 32px 0;
-        }
-        .no-js-service-card {
-          background: #f9fafb;
-          padding: 24px;
-          border-radius: 8px;
-          border: 1px solid #e5e7eb;
-        }
-        .no-js-service-card h3 {
-          font-size: 18px;
-          font-weight: bold;
-          margin-bottom: 12px;
-          color: #1a1a1a;
-        }
-        .no-js-portfolio-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 16px;
-          margin: 32px 0;
-        }
-        .no-js-portfolio-item {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          overflow: hidden;
-        }
-        .no-js-portfolio-img {
-          width: 100%;
-          height: 200px;
-          background: #f3f4f6;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #6b7280;
-          font-size: 14px;
-        }
-        .no-js-portfolio-content {
-          padding: 16px;
-        }
-        .no-js-portfolio-title {
-          font-weight: 600;
-          margin-bottom: 8px;
-          color: #1a1a1a;
-        }
-        .no-js-portfolio-desc {
-          font-size: 14px;
-          color: #6b7280;
-        }
-        @media (max-width: 768px) {
-          .no-js-nav-content {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-          .no-js-nav-links {
-            flex-wrap: wrap;
-            gap: 16px;
-          }
-          .no-js-hero h1 {
-            font-size: 32px;
-          }
-          .no-js-hero p {
-            font-size: 16px;
-          }
-        }
+        .no-js-warning{background:#FFF3CD;padding:20px;text-align:center;font-family:system-ui,sans-serif;border-bottom:2px solid #FFC107}
+        .no-js-warning strong{font-size:16px}
+        .no-js-warning a{color:#2D5C4E;text-decoration:underline;font-weight:bold}
+        .no-js-info{max-width:800px;margin:40px auto;padding:20px;background:#f9fafb;border-radius:8px;font-family:system-ui,sans-serif}
+        .no-js-info h1{font-size:32px;margin-bottom:16px;text-align:center}
+        .no-js-info p{margin:12px 0;line-height:1.6}
       </style>
-      
-      <nav class="no-js-nav">
-        <div class="no-js-container">
-          <div class="no-js-nav-content">
-            <a href="/" class="no-js-logo">
-              <img src="/sleek-logo.webp" alt="Sleek Apparels" style="height: 32px; width: 32px;" />
-              Sleek Apparels
-            </a>
-            <div class="no-js-nav-links">
-              <a href="https://sleekapparels.com/" class="no-js-nav-link">Home</a>
-              <a href="https://sleekapparels.com/services" class="no-js-nav-link">Services</a>
-              <a href="https://sleekapparels.com/catalog" class="no-js-nav-link">Catalog</a>
-              <a href="https://sleekapparels.com/casualwear" class="no-js-nav-link">Casualwear</a>
-              <a href="https://sleekapparels.com/activewear" class="no-js-nav-link">Activewear</a>
-              <a href="https://sleekapparels.com/quote-generator" class="no-js-nav-link">AI Quote</a>
-              <a href="https://sleekapparels.com/portfolio" class="no-js-nav-link">Portfolio</a>
-              <a href="https://sleekapparels.com/our-story" class="no-js-nav-link">Our Story</a>
-              <a href="https://sleekapparels.com/blog" class="no-js-nav-link">Blog</a>
-              <a href="https://sleekapparels.com/contact" class="no-js-nav-link">Contact</a>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div class="no-js-hero">
-        <div class="no-js-container">
-          <h1>Premium Apparel Manufacturer Bangladesh</h1>
-          <p>T-Shirts, Hoodies, Sweatshirts, Joggers, Activewear. Low MOQ 50 pieces. Fast production. OEKO-TEX & BSCI certified.</p>
-          <a href="https://sleekapparels.com/quote-generator" class="no-js-cta">Get Quote</a>
-          <a href="https://sleekapparels.com/contact" class="no-js-cta">Contact Us</a>
-        </div>
+      <div class="no-js-warning">
+        <strong>JavaScript Required</strong><br>
+        Please enable JavaScript for the best experience or <a href="mailto:inquiry@sleekapparels.com">contact us directly</a>
       </div>
-
-      <div class="no-js-container">
-        <div class="no-js-section">
-          <h2 style="text-align: center; font-size: 32px; margin-bottom: 16px;">Our Manufacturing Services</h2>
-          <div class="no-js-services">
-            <div class="no-js-service-card">
-              <h3>Casualwear Manufacturing</h3>
-              <p>T-shirts, hoodies, sweatshirts, joggers. MOQ from 50 pieces. Cotton, fleece, French terry blends.</p>
-            </div>
-            <div class="no-js-service-card">
-              <h3>Activewear Production</h3>
-              <p>Performance wear, athletic apparel, sports clothing. Moisture-wicking fabrics. MOQ 50-100 pieces.</p>
-            </div>
-            <div class="no-js-service-card">
-              <h3>Uniforms & Teamwear</h3>
-              <p>Corporate, school, and sports uniform manufacturing from 50 pieces with custom branding.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="no-js-section">
-          <h2 style="text-align: center; font-size: 32px; margin-bottom: 16px;">Featured Portfolio</h2>
-          <div class="no-js-portfolio-grid">
-            <div class="no-js-portfolio-item">
-              <div class="no-js-portfolio-img">T-Shirt Sample</div>
-              <div class="no-js-portfolio-content">
-                <div class="no-js-portfolio-title">Custom T-Shirt Collection</div>
-                <div class="no-js-portfolio-desc">Premium cotton, custom prints, MOQ 50</div>
-              </div>
-            </div>
-            <div class="no-js-portfolio-item">
-              <div class="no-js-portfolio-img">Hoodie Sample</div>
-              <div class="no-js-portfolio-content">
-                <div class="no-js-portfolio-title">Pullover Hoodies</div>
-                <div class="no-js-portfolio-desc">Fleece fabric, custom embroidery</div>
-              </div>
-            </div>
-            <div class="no-js-portfolio-item">
-              <div class="no-js-portfolio-img">Activewear Sample</div>
-              <div class="no-js-portfolio-content">
-                <div class="no-js-portfolio-title">Performance Activewear</div>
-                <div class="no-js-portfolio-desc">Moisture-wicking, athletic fit</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="no-js-section" style="text-align: center; background: #f9fafb; padding: 40px; border-radius: 8px; margin: 40px 0;">
-          <h2 style="font-size: 28px; margin-bottom: 16px;">Contact Us</h2>
-          <p style="margin-bottom: 20px;">
-            <strong>Email:</strong> inquiry@sleekapparels.com<br />
-            <strong>Phone:</strong> +880-186-1011-367<br />
-            <strong>Address:</strong> 01, Road 19A, Sector 04, Uttara, Dhaka 1230, Bangladesh
-          </p>
-          <p style="font-style: italic; color: #6b7280;">Please enable JavaScript to experience the full interactive website with real-time quotes and design tools.</p>
-        </div>
+      <div class="no-js-info">
+        <h1>Sleek Apparels - Premium Manufacturer Bangladesh</h1>
+        <p><strong>Services:</strong> T-Shirts, Hoodies, Sweatshirts, Joggers, Activewear</p>
+        <p><strong>MOQ:</strong> 50 pieces | <strong>Production:</strong> 10-20 days</p>
+        <p><strong>Certifications:</strong> OEKO-TEX, BSCI, WRAP certified</p>
+        <p><strong>Contact:</strong> inquiry@sleekapparels.com | +880-186-1011-367</p>
+        <p><strong>Address:</strong> 01, Road 19A, Sector 04, Uttara, Dhaka 1230, Bangladesh</p>
       </div>
     </noscript>
     <div id="root"></div>

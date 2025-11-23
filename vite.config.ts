@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020', // Modern target for better tree-shaking
     reportCompressedSize: false,
     cssMinify: 'lightningcss', // Faster CSS minification
-    assetsInlineLimit: 0,
+    assetsInlineLimit: 4096, // Inline small assets < 4KB
     rollupOptions: {
       treeshake: {
         preset: 'recommended',
@@ -84,7 +84,7 @@ export default defineConfig(({ mode }) => ({
       },
       output: {
         manualChunks: (id) => {
-          // Core React - split into smaller chunks
+          // Core React - Critical initial bundle
           if (id.includes('node_modules/react/') && !id.includes('react-dom')) {
             return 'react-core';
           }
@@ -95,36 +95,17 @@ export default defineConfig(({ mode }) => ({
             return 'react-core';
           }
           
-          // Router - separate chunk
+          // Router - Critical for navigation
           if (id.includes('react-router-dom') || id.includes('react-router')) {
             return 'router';
           }
           
-          // Three.js - heavy library, split further
-          if (id.includes('node_modules/three/')) {
-            return 'three-core';
-          }
-          if (id.includes('@react-three')) {
-            return 'three-react';
-          }
-          
-          // Radix UI - split by component group
-          if (id.includes('@radix-ui/react-dialog') || id.includes('@radix-ui/react-alert-dialog')) {
-            return 'ui-dialogs';
-          }
-          if (id.includes('@radix-ui/react-dropdown') || id.includes('@radix-ui/react-select') || id.includes('@radix-ui/react-popover')) {
-            return 'ui-menus';
-          }
-          if (id.includes('@radix-ui')) {
-            return 'ui-base';
-          }
-          
-          // React Query
+          // React Query - Essential state management
           if (id.includes('@tanstack/react-query')) {
             return 'query';
           }
           
-          // Supabase - split auth and client
+          // Supabase - Backend critical, split by usage
           if (id.includes('@supabase/auth')) {
             return 'supabase-auth';
           }
@@ -132,32 +113,57 @@ export default defineConfig(({ mode }) => ({
             return 'supabase-client';
           }
           
-          // Framer Motion - animation library
+          // Heavy Libraries - Lazy loaded
+          // Framer Motion - Animation library (lazy)
           if (id.includes('framer-motion')) {
             return 'animation';
           }
           
-          // Charts - admin only
+          // Charts - Admin only (lazy)
           if (id.includes('recharts')) {
             return 'charts';
           }
           
-          // Form libraries
-          if (id.includes('react-hook-form') || id.includes('@hookform')) {
+          // PDF Generation - On-demand (lazy)
+          if (id.includes('jspdf')) {
+            return 'pdf-lib';
+          }
+          
+          // UI Components - Group by frequency of use
+          // Dialog/Modal - Used frequently
+          if (id.includes('@radix-ui/react-dialog') || id.includes('@radix-ui/react-alert-dialog')) {
+            return 'ui-dialogs';
+          }
+          // Dropdown/Select/Popover - Used frequently
+          if (id.includes('@radix-ui/react-dropdown') || id.includes('@radix-ui/react-select') || id.includes('@radix-ui/react-popover')) {
+            return 'ui-menus';
+          }
+          // Base UI - Common components
+          if (id.includes('@radix-ui')) {
+            return 'ui-base';
+          }
+          
+          // Form libraries - Heavy, used on specific pages
+          if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) {
             return 'forms';
           }
           
-          // Icons - separate chunk
+          // Icons - Separate for tree-shaking
           if (id.includes('lucide-react')) {
             return 'icons';
           }
           
-          // Date utilities
+          // Date utilities - Used in specific features
           if (id.includes('date-fns')) {
             return 'date-utils';
           }
           
-          // All other node_modules
+          // Stripe - Payment specific (lazy)
+          if (id.includes('@stripe')) {
+            return 'payment';
+          }
+          
+          // All other node_modules - Generic vendor
           if (id.includes('node_modules')) {
             return 'vendor';
           }
@@ -181,7 +187,7 @@ export default defineConfig(({ mode }) => ({
         },
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
-        experimentalMinChunkSize: 20000, // Merge small chunks
+        experimentalMinChunkSize: 20000, // Merge small chunks for fewer HTTP requests
       },
     },
   },
