@@ -18,6 +18,22 @@ const platformMenu = [
     icon: Sparkles
   },
   {
+    name: "LoopTrace for Buyers",
+    href: "/looptrace-for-buyers",
+    description: "How LoopTrace helps brands, schools & businesses",
+    highlight: true,
+    highlightColor: "blue",
+    icon: Users
+  },
+  {
+    name: "LoopTrace for Suppliers",
+    href: "/looptrace-for-suppliers",
+    description: "Grow your manufacturing business with AI",
+    highlight: true,
+    highlightColor: "green",
+    icon: Factory
+  },
+  {
     name: "Why Sleek Apparels",
     href: "/why-sleek-apparels",
     description: "What makes us different",
@@ -46,14 +62,6 @@ const platformMenu = [
     href: "/services",
     description: "Explore our full manufacturing capabilities",
     icon: LayoutGrid
-  },
-  {
-    name: "Become a Supplier",
-    href: "/become-supplier",
-    description: "Partner with us & grow your manufacturing business",
-    highlight: true,
-    highlightColor: "green",
-    icon: Factory
   }
 ];
 
@@ -194,6 +202,7 @@ export const Navbar = () => {
                         {platformMenu.map(item => {
                           const isGreenHighlight = item.highlightColor === 'green';
                           const isPrimaryHighlight = item.highlightColor === 'primary';
+                          const isBlueHighlight = item.highlightColor === 'blue';
                           
                           return (
                             <NavigationMenuLink key={item.name} asChild>
@@ -201,12 +210,14 @@ export const Navbar = () => {
                                 to={item.href} 
                                 className={`group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors ${
                                   isPrimaryHighlight ? 'bg-primary/5 border border-primary/20' : 
-                                  isGreenHighlight ? 'bg-green-500/5 border border-green-500/20' : ''
+                                  isGreenHighlight ? 'bg-green-500/5 border border-green-500/20' :
+                                  isBlueHighlight ? 'bg-blue-500/5 border border-blue-500/20' : ''
                                 }`}
                               >
                                 <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
                                   isPrimaryHighlight ? 'bg-primary text-white' : 
                                   isGreenHighlight ? 'bg-green-600 text-white' :
+                                  isBlueHighlight ? 'bg-blue-600 text-white' :
                                   'bg-primary/10 text-primary'
                                 }`}>
                                   <item.icon className="h-5 w-5" />
@@ -216,6 +227,7 @@ export const Navbar = () => {
                                     {item.name}
                                     {isPrimaryHighlight && <span className="text-[10px] px-1.5 py-0.5 bg-primary text-white rounded-full">AI</span>}
                                     {isGreenHighlight && <span className="text-[10px] px-1.5 py-0.5 bg-green-600 text-white rounded-full">Partner</span>}
+                                    {isBlueHighlight && <span className="text-[10px] px-1.5 py-0.5 bg-blue-600 text-white rounded-full">Buyers</span>}
                                   </div>
                                   <p className="text-xs text-muted-foreground">
                                     {item.description}

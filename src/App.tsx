@@ -86,6 +86,8 @@ const ShippingLogistics = lazy(() => import("./pages/ShippingLogistics"));
 const MaterialsGuide = lazy(() => import("./pages/MaterialsGuide"));
 const SamplePolicy = lazy(() => import("./pages/SamplePolicy"));
 const LoopTraceTechnology = lazy(() => import("./pages/LoopTraceTechnology"));
+const LoopTraceForBuyers = lazy(() => import("./pages/LoopTraceForBuyers"));
+const LoopTraceForSuppliers = lazy(() => import("./pages/LoopTraceForSuppliers"));
 const WhySleekApparels = lazy(() => import("./pages/WhySleekApparels"));
 const FirstTimeOrdering = lazy(() => import("./pages/FirstTimeOrdering"));
 const Capabilities = lazy(() => import("./pages/Capabilities"));
@@ -234,6 +236,8 @@ const router = createBrowserRouter([
         { path: "/tech-pack-services", element: <TechPackServices /> },
         { path: "/for-startups", element: <ForStartups /> },
         { path: "/looptrace-technology", element: <LoopTraceTechnology /> },
+        { path: "/looptrace-for-buyers", element: <LoopTraceForBuyers /> },
+        { path: "/looptrace-for-suppliers", element: <LoopTraceForSuppliers /> },
         { path: "/production-tracking", element: <ProductionTracking /> },
         { path: "/why-sleek-apparels", element: <WhySleekApparels /> },
         { path: "/first-time-ordering", element: <FirstTimeOrdering /> },
