@@ -1,13 +1,27 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, User, LogOut, Shirt, Zap, Users, Sparkles, LayoutGrid, FileText, Truck, Droplet, BookOpen, Factory } from "lucide-react";
+import { Menu, X, User, LogOut, Shirt, Zap, Users, Sparkles, LayoutGrid, FileText, Truck, Droplet, BookOpen, Factory, Building2, UserPlus, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import sleekLogo from "@/assets/sleek-logo.webp";
-// Services dropdown menu - Educational for buyers
-const servicesMenu = [
+
+// Platform dropdown - Consolidate main platform features
+const platformMenu = [
+  {
+    name: "LoopTrace™ Platform",
+    href: "/looptrace-technology",
+    description: "AI-powered instant quotes & real-time tracking",
+    highlight: true,
+    icon: Sparkles
+  },
+  {
+    name: "Why Sleek Apparels",
+    href: "/why-sleek-apparels",
+    description: "What makes us different",
+    icon: Building2
+  },
   {
     name: "Casualwear",
     href: "/casualwear",
@@ -27,41 +41,20 @@ const servicesMenu = [
     icon: Users
   },
   {
-    name: "LoopTrace™ Platform",
-    href: "/looptrace-technology",
-    description: "AI-powered instant quotes & real-time tracking",
-    highlight: true,
-    icon: Sparkles
-  },
-  {
-    name: "View All Services",
+    name: "All Services",
     href: "/services",
     description: "Explore our full manufacturing capabilities",
     icon: LayoutGrid
   }
 ];
 
-// Resources dropdown menu - Educational content for buyers & suppliers
+// Resources dropdown - Educational content for buyers & suppliers
 const resourcesMenu = [
   {
     name: "Materials Guide",
     href: "/materials-guide",
     description: "Find the right fabric for your project",
     icon: Droplet,
-    audience: "buyer"
-  },
-  {
-    name: "Shipping & Logistics",
-    href: "/shipping-logistics",
-    description: "International shipping information",
-    icon: Truck,
-    audience: "both"
-  },
-  {
-    name: "Sample Policy",
-    href: "/sample-policy",
-    description: "How sampling works with us",
-    icon: FileText,
     audience: "buyer"
   },
   {
@@ -72,6 +65,20 @@ const resourcesMenu = [
     audience: "buyer"
   },
   {
+    name: "Sample Policy",
+    href: "/sample-policy",
+    description: "How sampling works with us",
+    icon: FileText,
+    audience: "buyer"
+  },
+  {
+    name: "Shipping & Logistics",
+    href: "/shipping-logistics",
+    description: "International shipping information",
+    icon: Truck,
+    audience: "both"
+  },
+  {
     name: "Become a Supplier",
     href: "/become-supplier",
     description: "Partner with us as a manufacturer",
@@ -80,8 +87,27 @@ const resourcesMenu = [
   }
 ];
 
-const navigation: { name: string; href: string }[] = [
-  { name: "Why Us", href: "/why-sleek-apparels" },
+// Account dropdown menu for non-logged-in users
+const accountMenu = [
+  {
+    name: "Create Account",
+    href: "/signup",
+    description: "Join our platform today",
+    icon: UserPlus,
+    primary: true
+  },
+  {
+    name: "Sign In",
+    href: "/signup",
+    description: "Access your dashboard",
+    icon: LogIn
+  },
+  {
+    name: "Contact Us",
+    href: "/contact",
+    description: "Get in touch with our team",
+    icon: FileText
+  }
 ];
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -143,23 +169,20 @@ export const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation - With Dropdowns */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {navigation.map(item => <Link key={item.name} to={item.href} className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isHome ? location.pathname === item.href ? "text-white bg-white/20 backdrop-blur drop-shadow-md" : "text-white/90 hover:text-white hover:bg-white/10 drop-shadow-md" : location.pathname === item.href ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-                {item.name}
-              </Link>)}
+          {/* Desktop Navigation - Clean & Simple */}
+          <div className="hidden lg:flex items-center space-x-2">
             
-            {/* Services Dropdown */}
+            {/* Platform Dropdown */}
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
-                    Services
+                  <NavigationMenuTrigger className={`h-9 px-4 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
+                    Platform
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="w-[420px] p-3 bg-background border border-border shadow-xl rounded-lg">
                       <div className="space-y-1">
-                        {servicesMenu.map(item => (
+                        {platformMenu.map(item => (
                           <NavigationMenuLink key={item.name} asChild>
                             <Link 
                               to={item.href} 
@@ -175,7 +198,7 @@ export const Navbar = () => {
                               <div className="flex-1 space-y-1">
                                 <div className="text-sm font-semibold flex items-center gap-2">
                                   {item.name}
-                                  {item.highlight && <span className="text-[10px] px-1.5 py-0.5 bg-primary text-white rounded-full">NEW</span>}
+                                  {item.highlight && <span className="text-[10px] px-1.5 py-0.5 bg-primary text-white rounded-full">AI</span>}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                   {item.description}
@@ -195,7 +218,7 @@ export const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
+                  <NavigationMenuTrigger className={`h-9 px-4 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
                     Resources
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -230,41 +253,101 @@ export const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-
-            <Link to="/contact" className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isHome ? "text-white/90 hover:text-white hover:bg-white/10 drop-shadow-md" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
-              Contact
-            </Link>
             
             {/* Primary CTA - Get Quote */}
             <Button asChild variant={isHome ? "default" : "default"} size="sm" className={`ml-2 font-semibold ${isHome ? "bg-primary text-white hover:bg-primary/90 shadow-lg" : "bg-primary text-white hover:bg-primary/90"}`}>
-                <Link to="/quote-generator">Get Instant Quote</Link>
-              </Button>
+              <Link to="/quote-generator">Get Quote</Link>
+            </Button>
 
-            {user ? <>
-                <Button onClick={() => navigate("/dashboard-router")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
-                  <User className="mr-2 h-4 w-4" />
-                  Dashboard
-                </Button>
-                <Button 
-                  onClick={async () => {
-                    await supabase.auth.signOut();
-                    navigate("/");
-                  }} 
-                  variant="ghost" 
-                  size="sm" 
-                  className={`ml-2 ${isHome ? "text-white hover:bg-white/20" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </Button>
-              </> : <>
-                <Button onClick={() => navigate("/signup")} variant="default" size="sm" className={`ml-2 font-semibold ${isHome ? "bg-white text-black hover:bg-white/90" : "bg-primary text-white hover:bg-primary/90"}`}>
-                  Create Account
-                </Button>
-                <Button onClick={() => navigate("/signup")} variant="outline" size="sm" className={`ml-2 ${isHome ? "border-white text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm drop-shadow-sm" : ""}`}>
-                  Sign In
-                </Button>
-              </>}
+            {/* Account Menu or Dashboard */}
+            {user ? (
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
+                      <User className="mr-2 h-4 w-4" />
+                      Account
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="w-[280px] p-2 bg-background border border-border shadow-xl rounded-lg">
+                        <div className="space-y-1">
+                          <NavigationMenuLink asChild>
+                            <button
+                              onClick={() => navigate("/dashboard-router")}
+                              className="w-full text-left flex items-center gap-3 rounded-lg p-3 hover:bg-accent transition-colors"
+                            >
+                              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                                <User className="h-4 w-4" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-sm font-semibold">Dashboard</div>
+                                <p className="text-xs text-muted-foreground">View your account</p>
+                              </div>
+                            </button>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink asChild>
+                            <button
+                              onClick={async () => {
+                                await supabase.auth.signOut();
+                                navigate("/");
+                              }}
+                              className="w-full text-left flex items-center gap-3 rounded-lg p-3 hover:bg-accent transition-colors"
+                            >
+                              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-red-500/10 text-red-600 flex items-center justify-center">
+                                <LogOut className="h-4 w-4" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-sm font-semibold">Sign Out</div>
+                                <p className="text-xs text-muted-foreground">End your session</p>
+                              </div>
+                            </button>
+                          </NavigationMenuLink>
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            ) : (
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
+                      <User className="mr-2 h-4 w-4" />
+                      Account
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="w-[280px] p-2 bg-background border border-border shadow-xl rounded-lg">
+                        <div className="space-y-1">
+                          {accountMenu.map(item => (
+                            <NavigationMenuLink key={item.name} asChild>
+                              <Link 
+                                to={item.href} 
+                                className={`group flex items-start gap-3 rounded-lg p-3 hover:bg-accent transition-colors ${
+                                  item.primary ? 'bg-primary/5 border border-primary/20' : ''
+                                }`}
+                              >
+                                <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
+                                  item.primary ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+                                }`}>
+                                  <item.icon className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-semibold">{item.name}</div>
+                                  <p className="text-xs text-muted-foreground">
+                                    {item.description}
+                                  </p>
+                                </div>
+                              </Link>
+                            </NavigationMenuLink>
+                          ))}
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -293,16 +376,14 @@ export const Navbar = () => {
           )}
           {!isHome && <div className="absolute inset-0 bg-background/98 backdrop-blur-xl"></div>}
           <div className="px-3 pt-3 pb-4 space-y-2 max-h-[calc(100vh-4rem)] overflow-y-auto relative z-10">
-            {navigation.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${location.pathname === item.href ? "bg-primary text-primary-foreground shadow-sm" : "text-foreground hover:bg-primary/10 active:scale-95"}`}>
-                {item.name}
-              </Link>)}
             
-            {/* Services Section */}
+            {/* Platform Section */}
             <div className="pt-2">
-              <p className="px-4 py-2 text-xs font-semibold text-foreground/70 uppercase tracking-wide">Services</p>
-              {servicesMenu.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
+              <p className="px-4 py-2 text-xs font-semibold text-foreground/70 uppercase tracking-wide">Platform</p>
+              {platformMenu.map(item => <Link key={item.name} to={item.href} onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all text-foreground hover:bg-primary/10">
                   <item.icon className="h-4 w-4 text-primary" />
                   {item.name}
+                  {item.highlight && <span className="text-[9px] px-1.5 py-0.5 bg-primary text-white rounded-full ml-auto">AI</span>}
                 </Link>)}
             </div>
 
@@ -317,15 +398,16 @@ export const Navbar = () => {
             
             {/* Primary CTA */}
             <Button asChild variant="default" className="w-full mt-3 bg-primary hover:bg-primary/90 text-white font-semibold shadow-lg">
-                <Link to="/quote-generator" onClick={() => setIsOpen(false)}>
-                  Get Instant Quote
-                </Link>
-              </Button>
+              <Link to="/quote-generator" onClick={() => setIsOpen(false)}>
+                Get Instant Quote
+              </Link>
+            </Button>
+            
             {user ? <>
                 <Button onClick={() => {
-            navigate("/dashboard-router");
-            setIsOpen(false);
-          }} variant="outline" className="w-full mt-2">
+                  navigate("/dashboard-router");
+                  setIsOpen(false);
+                }} variant="outline" className="w-full mt-2">
                   <User className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
@@ -343,15 +425,15 @@ export const Navbar = () => {
                 </Button>
               </> : <>
                 <Button onClick={() => {
-            navigate("/signup");
-            setIsOpen(false);
-          }} variant="default" className="w-full mt-2 bg-primary hover:bg-primary/90 text-white font-semibold">
+                  navigate("/signup");
+                  setIsOpen(false);
+                }} variant="default" className="w-full mt-2 bg-primary hover:bg-primary/90 text-white font-semibold">
                   Create Account
                 </Button>
                 <Button onClick={() => {
-            navigate("/signup");
-            setIsOpen(false);
-          }} variant="outline" className="w-full mt-2">
+                  navigate("/signup");
+                  setIsOpen(false);
+                }} variant="outline" className="w-full mt-2">
                   Sign In
                 </Button>
               </>}
