@@ -1,22 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { allProductImages } from "@/lib/aiGeneratedProductImages";
 
 export const PortfolioGallery = () => {
-  const portfolioImages = [
-    { url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=2070&auto=format&fit=crop", alt: "Custom printed t-shirts" },
-    { url: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=2070&auto=format&fit=crop", alt: "Premium hoodie" },
-    { url: "https://images.unsplash.com/photo-1604176354204-9268737828e4?q=80&w=2080&auto=format&fit=crop", alt: "Joggers and sweatpants" },
-    { url: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=2070&auto=format&fit=crop", alt: "Polo shirts" },
-    { url: "https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=2070&auto=format&fit=crop", alt: "Sweatshirts" },
-    { url: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=2064&auto=format&fit=crop", alt: "Team uniforms" },
-    { url: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?q=80&w=2015&auto=format&fit=crop", alt: "Custom hoodies" },
-    { url: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=2070&auto=format&fit=crop", alt: "T-shirt designs" },
-    { url: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=2072&auto=format&fit=crop", alt: "Athletic wear" },
-    { url: "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?q=80&w=2071&auto=format&fit=crop", alt: "Custom apparel" },
-    { url: "https://images.unsplash.com/photo-1564859228273-274232fdb516?q=80&w=2073&auto=format&fit=crop", alt: "Branded clothing" },
-    { url: "https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?q=80&w=2070&auto=format&fit=crop", alt: "Quality garments" }
-  ];
+  // Use first 12 AI-generated product images for gallery
+  const portfolioImages = allProductImages.slice(0, 12).map(img => ({
+    url: img.url,
+    alt: img.alt
+  }));
 
   return (
     <section className="py-section-mobile md:py-section bg-background">

@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { useMarketplaceProducts } from '@/hooks/useMarketplace';
 import { staggerContainer, staggerItem, hoverLift, fadeIn } from '@/lib/animations';
 import type { MarketplaceProduct } from '@/types/marketplace';
+import { getRandomImages } from '@/lib/aiGeneratedProductImages';
 
 const PRODUCT_CATEGORIES = [
   { value: 'fabric', label: 'Fabrics', icon: '🧵', color: 'from-blue-500 to-cyan-500' },
@@ -229,9 +230,48 @@ export function FeaturedMarketplace() {
             </motion.div>
           </div>
         ) : (
-          <div className="text-center py-12 mb-16">
-            <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No featured products available yet</p>
+          <div className="mb-16">
+            <div className="text-center py-8 mb-8">
+              <Package className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground mb-1">Marketplace coming soon!</p>
+              <p className="text-sm text-muted-foreground">Check out our product showcase below</p>
+            </div>
+
+            {/* Fallback: Show AI-generated product showcase */}
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {getRandomImages(8).map((img) => (
+                <motion.div key={img.id} variants={staggerItem} whileHover={hoverLift}>
+                  <Card className="overflow-hidden cursor-pointer h-full group">
+                    <div className="aspect-square relative bg-gray-100">
+                      <img
+                        src={img.url}
+                        alt={img.alt}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <Badge className="absolute top-2 left-2 bg-primary">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        New
+                      </Badge>
+                    </div>
+                    <CardContent className="p-4">
+                      <p className="text-xs text-muted-foreground mb-1">{img.category.toUpperCase()}</p>
+                      <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                        {img.alt}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {img.color} • {img.style}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         )}
 
