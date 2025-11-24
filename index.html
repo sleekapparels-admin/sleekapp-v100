@@ -10,10 +10,10 @@
     <meta name="build-id" content="BUILD_TIMESTAMP" />
     <meta name="theme-color" content="#2D5C4E" />
     
-    <!-- Content Security Policy - Strict Configuration with inline script hash -->
+    <!-- Content Security Policy - Strict Configuration with inline script allowance for GA4 -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'sha256-kGUQiECb7HTB3+cdt9SV9OGtiju37vTHScB5TlU3tzo=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com https://sleekapparels.com;
+      script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://scripts.clarity.ms https://connect.facebook.net https://snap.licdn.com https://sleekapparels.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       img-src 'self' data: blob: https://eqpftggctumujhutomom.supabase.co https://www.google-analytics.com https://fonts.googleapis.com https://images.unsplash.com https://c.clarity.ms https://www.facebook.com https://px.ads.linkedin.com https://www.genspark.ai https://c.bing.com;
       font-src 'self' data: https://fonts.gstatic.com;
@@ -38,14 +38,17 @@
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <!-- Google Tag Manager - Initialize dataLayer before GTM loads -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PYKLMP22J"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1PYKLMP22J');
     </script>
     
     <!-- Load CSS optimizer after DOM ready -->
     <script src="/init-critical.js" defer></script>
-    <!-- End Google Tag Manager -->
 
     <!-- Performance Optimizations: Resource Hints -->
     
@@ -437,11 +440,6 @@
   </head>
 
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSTT3GTQ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    
     <!-- SEO-Friendly NoScript Content for Search Engines and Non-JS Users -->
     <noscript>
       <style>

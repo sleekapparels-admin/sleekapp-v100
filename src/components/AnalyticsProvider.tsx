@@ -69,19 +69,7 @@ export const AnalyticsProvider = memo(({
     };
   }, [gaId]);
 
-  // Initialize Google Tag Manager
-  useEffect(() => {
-    if (!gtmId) return;
-    
-    // GTM is loaded via script in index.html
-    // Initialize dataLayer and push initial page view
-    window.dataLayer = window.dataLayer || [];
-    pushToDataLayer({
-      event: 'page_view',
-      page_location: window.location.href,
-      page_title: document.title
-    });
-  }, [gtmId]);
+  // GTM removed - using pure GA4 tracking now
 
   // Microsoft Clarity is loaded via Google Tag Manager
   // No direct initialization needed to avoid duplicate loading
@@ -243,7 +231,7 @@ export const AnalyticsProvider = memo(({
     // GA4 tracking
     trackPageView(window.location.href, document.title);
     
-    // GTM tracking
+    // Also push to dataLayer for GA4 events
     pushToDataLayer({
       event: 'page_view',
       page_location: window.location.href,
