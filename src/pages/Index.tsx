@@ -20,14 +20,17 @@ import { BetaPricingSection } from "@/components/home/BetaPricingSection";
 import { FeaturedMarketplace } from "@/components/home/FeaturedMarketplace";
 import { LoopTraceFeatures } from "@/components/home/LoopTraceFeatures";
 import { BuyerSupplierJourney } from "@/components/home/BuyerSupplierJourney";
+import { ClientTrustSection } from "@/components/home/ClientTrustSection";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { usePerformanceMonitoring, useResourcePreloading } from "@/hooks/usePerformance";
+import { useCoreWebVitals } from "@/hooks/useCoreWebVitals";
 
 function Index() {
   // Performance and analytics tracking
   usePageTracking('home');
   usePerformanceMonitoring();
   useResourcePreloading();
+  useCoreWebVitals();
   
   return (
     <>
@@ -70,6 +73,9 @@ function Index() {
         
         {/* Section 7.7: Buyer/Supplier Journey - NEW */}
         <BuyerSupplierJourney />
+        
+        {/* Section 7.8: Client Trust Section - NEW */}
+        <ClientTrustSection />
         
         {/* Section 8: Main Services */}
         <ServicesSection />
