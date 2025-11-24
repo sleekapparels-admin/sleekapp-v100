@@ -2394,8 +2394,6 @@ export type Database = {
         Row: {
           additional_requirements: string | null
           ai_estimation: Json | null
-          assigned_at: string | null
-          assigned_by: string | null
           buyer_id: string | null
           complexity_level: string | null
           created_at: string
@@ -2411,7 +2409,6 @@ export type Database = {
           reference_image_urls: string[] | null
           session_id: string | null
           status: string
-          supplier_id: string | null
           target_delivery_date: string | null
           target_moq: number | null
           target_price_per_unit: number | null
@@ -2421,8 +2418,6 @@ export type Database = {
         Insert: {
           additional_requirements?: string | null
           ai_estimation?: Json | null
-          assigned_at?: string | null
-          assigned_by?: string | null
           buyer_id?: string | null
           complexity_level?: string | null
           created_at?: string
@@ -2438,7 +2433,6 @@ export type Database = {
           reference_image_urls?: string[] | null
           session_id?: string | null
           status?: string
-          supplier_id?: string | null
           target_delivery_date?: string | null
           target_moq?: number | null
           target_price_per_unit?: number | null
@@ -2448,8 +2442,6 @@ export type Database = {
         Update: {
           additional_requirements?: string | null
           ai_estimation?: Json | null
-          assigned_at?: string | null
-          assigned_by?: string | null
           buyer_id?: string | null
           complexity_level?: string | null
           created_at?: string
@@ -2465,7 +2457,6 @@ export type Database = {
           reference_image_urls?: string[] | null
           session_id?: string | null
           status?: string
-          supplier_id?: string | null
           target_delivery_date?: string | null
           target_moq?: number | null
           target_price_per_unit?: number | null
