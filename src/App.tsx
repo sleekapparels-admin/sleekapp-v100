@@ -8,7 +8,7 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 
 
 import { SmartAIAssistant } from "@/components/SmartAIAssistant";
-import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
+import { GA4_MEASUREMENT_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
 // Lazy load Sonner for better initial page load
@@ -142,7 +142,6 @@ const Root = () => {
   return (
     <AnalyticsProvider 
       gaId={GA4_MEASUREMENT_ID}
-      gtmId={GTM_CONTAINER_ID}
     >
       <ScrollToTop />
       <SmartAIAssistant />
