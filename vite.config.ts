@@ -29,6 +29,21 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     // Remove console logs in production for performance
     mode === "production" && removeConsole(),
+    // Transform CSS links to preload for non-render-blocking loading
+    mode === "production" && {
+      name: 'transform-css-to-preload',
+      enforce: 'post' as const,
+      transformIndexHtml(html: string) {
+        // Replace render-blocking CSS link with preload + async loading
+        return html.replace(
+          /<link rel="stylesheet" crossorigin href="(\/assets\/index-[^"]+\.css)">/g,
+          (_match: string, cssPath: string) => {
+            return `<link rel="preload" href="${cssPath}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="${cssPath}"></noscript>`;
+          }
+        );
+      }
+    },
     // Image optimization
     ViteImageOptimizer({
       test: /\.(jpe?g|png|gif|webp|svg)$/i,
@@ -70,7 +85,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     chunkSizeWarningLimit: 500,
     sourcemap: 'hidden',
-    cssCodeSplit: true,
+    cssCodeSplit: false, // Single CSS file for better caching
     minify: 'esbuild',
     target: 'es2020', // Modern target for better tree-shaking
     reportCompressedSize: false,
