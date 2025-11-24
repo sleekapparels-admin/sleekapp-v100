@@ -72,22 +72,33 @@ export function AssignedQuotesPanel({ supplierId }: SupplierProps) {
   // Fetch assigned quotes for this supplier
   const { data: assignedQuotes = [], isLoading } = useQuery({
     queryKey: ['supplier-assigned-quotes', supplierId],
-    queryFn: async () => {
-      const { data, error } = await supabase
+    queryFn: async (): Promise<AssignedQuote[]> => {
+      const { data, error } = await (supabase as any)
         .from('quotes')
-        .select(`
-          *,
-          profiles:buyer_id (
-            full_name,
-            email,
-            company_name
-          )
-        `)
+        .select('*')
         .eq('supplier_id', supplierId)
-        .order('assigned_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as AssignedQuote[];
+
+      // Fetch buyer profiles separately
+      const buyerIds = [...new Set(data?.map((q: any) => q.buyer_id).filter(Boolean))] as string[];
+      if (buyerIds.length === 0) return [];
+
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, company_name')
+        .in('id', buyerIds);
+
+      return (data || []).map((quote: any) => ({
+        ...quote,
+        assigned_at: quote.created_at,
+        profiles: profiles?.find(p => p.id === quote.buyer_id) || {
+          full_name: '',
+          email: '',
+          company_name: ''
+        }
+      }));
     },
     enabled: !!supplierId,
   });
