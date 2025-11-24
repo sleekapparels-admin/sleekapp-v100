@@ -1210,6 +1210,104 @@ export type Database = {
           },
         ]
       }
+      marketplace_products: {
+        Row: {
+          available_quantity: number
+          base_price: number
+          category: string
+          colors: string[] | null
+          created_at: string | null
+          description: string | null
+          fabric_composition: string | null
+          gsm: number | null
+          id: string
+          image_urls: string[] | null
+          is_featured: boolean | null
+          lead_time_days: number
+          material: string | null
+          moq: number
+          product_type: string
+          quality_score: number | null
+          rating: number | null
+          sales: number | null
+          shipping_from: string | null
+          sizes: string[] | null
+          status: string
+          subcategory: string | null
+          supplier_id: string
+          title: string
+          unit: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          available_quantity?: number
+          base_price: number
+          category: string
+          colors?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          fabric_composition?: string | null
+          gsm?: number | null
+          id?: string
+          image_urls?: string[] | null
+          is_featured?: boolean | null
+          lead_time_days?: number
+          material?: string | null
+          moq?: number
+          product_type: string
+          quality_score?: number | null
+          rating?: number | null
+          sales?: number | null
+          shipping_from?: string | null
+          sizes?: string[] | null
+          status?: string
+          subcategory?: string | null
+          supplier_id: string
+          title: string
+          unit?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          available_quantity?: number
+          base_price?: number
+          category?: string
+          colors?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          fabric_composition?: string | null
+          gsm?: number | null
+          id?: string
+          image_urls?: string[] | null
+          is_featured?: boolean | null
+          lead_time_days?: number
+          material?: string | null
+          moq?: number
+          product_type?: string
+          quality_score?: number | null
+          rating?: number | null
+          sales?: number | null
+          shipping_from?: string | null
+          sizes?: string[] | null
+          status?: string
+          subcategory?: string | null
+          supplier_id?: string
+          title?: string
+          unit?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           attachments: string[] | null
