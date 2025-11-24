@@ -83,7 +83,7 @@ export function BuyerInterestTracker() {
           const buyerQuotes = quotes?.filter(q => q.buyer_id === buyer.id) || [];
           const buyerOrders = orders?.filter(o => o.buyer_id === buyer.id) || [];
           const interestedQuotes = buyerQuotes.filter(q => q.status === 'interested' || q.status === 'assigned');
-          const totalValue = buyerOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+          const totalValue = buyerOrders.reduce((sum, o) => sum + (o.buyer_price || 0), 0);
           const conversionRate = buyerQuotes.length > 0 
             ? (buyerOrders.length / buyerQuotes.length) * 100 
             : 0;

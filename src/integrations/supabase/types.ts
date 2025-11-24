@@ -120,7 +120,10 @@ export type Database = {
           ai_suggestions: string | null
           alternative_options: Json | null
           bangladesh_cost: number | null
+          comparable_products: Json | null
           complexity_level: string | null
+          confidence_score: number | null
+          conversation_history: Json | null
           converted_to_order_id: string | null
           country: string | null
           created_at: string
@@ -131,11 +134,15 @@ export type Database = {
           id: string
           lead_notes: string | null
           lead_status: string | null
+          market_research_id: string | null
           phone_number: string | null
+          price_justification: string | null
           product_type: string
           production_route: string | null
           quantity: number
           quote_data: Json
+          refinement_count: number | null
+          research_sources: Json | null
           session_id: string | null
           specialty_cost: number | null
           specialty_notes: string | null
@@ -150,7 +157,10 @@ export type Database = {
           ai_suggestions?: string | null
           alternative_options?: Json | null
           bangladesh_cost?: number | null
+          comparable_products?: Json | null
           complexity_level?: string | null
+          confidence_score?: number | null
+          conversation_history?: Json | null
           converted_to_order_id?: string | null
           country?: string | null
           created_at?: string
@@ -161,11 +171,15 @@ export type Database = {
           id?: string
           lead_notes?: string | null
           lead_status?: string | null
+          market_research_id?: string | null
           phone_number?: string | null
+          price_justification?: string | null
           product_type: string
           production_route?: string | null
           quantity: number
           quote_data: Json
+          refinement_count?: number | null
+          research_sources?: Json | null
           session_id?: string | null
           specialty_cost?: number | null
           specialty_notes?: string | null
@@ -180,7 +194,10 @@ export type Database = {
           ai_suggestions?: string | null
           alternative_options?: Json | null
           bangladesh_cost?: number | null
+          comparable_products?: Json | null
           complexity_level?: string | null
+          confidence_score?: number | null
+          conversation_history?: Json | null
           converted_to_order_id?: string | null
           country?: string | null
           created_at?: string
@@ -191,11 +208,15 @@ export type Database = {
           id?: string
           lead_notes?: string | null
           lead_status?: string | null
+          market_research_id?: string | null
           phone_number?: string | null
+          price_justification?: string | null
           product_type?: string
           production_route?: string | null
           quantity?: number
           quote_data?: Json
+          refinement_count?: number | null
+          research_sources?: Json | null
           session_id?: string | null
           specialty_cost?: number | null
           specialty_notes?: string | null
@@ -210,6 +231,13 @@ export type Database = {
             columns: ["converted_to_order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_quotes_market_research_id_fkey"
+            columns: ["market_research_id"]
+            isOneToOne: false
+            referencedRelation: "market_research_cache"
             referencedColumns: ["id"]
           },
         ]
@@ -1206,6 +1234,137 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_research_cache: {
+        Row: {
+          confidence_score: number | null
+          created_at: string | null
+          expires_at: string
+          id: string
+          product_category: string
+          quantity_range: string
+          research_data: Json
+          sources: string[] | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          product_category: string
+          quantity_range: string
+          research_data?: Json
+          sources?: string[] | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          product_category?: string
+          quantity_range?: string
+          research_data?: Json
+          sources?: string[] | null
+        }
+        Relationships: []
+      }
+      marketplace_products: {
+        Row: {
+          available_quantity: number
+          base_price: number
+          category: string
+          colors: string[] | null
+          created_at: string | null
+          description: string | null
+          fabric_composition: string | null
+          gsm: number | null
+          id: string
+          image_urls: string[] | null
+          is_featured: boolean | null
+          lead_time_days: number
+          material: string | null
+          moq: number
+          product_type: string
+          quality_score: number | null
+          rating: number | null
+          sales: number | null
+          shipping_from: string | null
+          sizes: string[] | null
+          status: string
+          subcategory: string | null
+          supplier_id: string
+          title: string
+          unit: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          available_quantity?: number
+          base_price: number
+          category: string
+          colors?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          fabric_composition?: string | null
+          gsm?: number | null
+          id?: string
+          image_urls?: string[] | null
+          is_featured?: boolean | null
+          lead_time_days?: number
+          material?: string | null
+          moq?: number
+          product_type: string
+          quality_score?: number | null
+          rating?: number | null
+          sales?: number | null
+          shipping_from?: string | null
+          sizes?: string[] | null
+          status?: string
+          subcategory?: string | null
+          supplier_id: string
+          title: string
+          unit?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          available_quantity?: number
+          base_price?: number
+          category?: string
+          colors?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          fabric_composition?: string | null
+          gsm?: number | null
+          id?: string
+          image_urls?: string[] | null
+          is_featured?: boolean | null
+          lead_time_days?: number
+          material?: string | null
+          moq?: number
+          product_type?: string
+          quality_score?: number | null
+          rating?: number | null
+          sales?: number | null
+          shipping_from?: string | null
+          sizes?: string[] | null
+          status?: string
+          subcategory?: string | null
+          supplier_id?: string
+          title?: string
+          unit?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
         ]
@@ -2394,8 +2553,6 @@ export type Database = {
         Row: {
           additional_requirements: string | null
           ai_estimation: Json | null
-          assigned_at: string | null
-          assigned_by: string | null
           buyer_id: string | null
           complexity_level: string | null
           created_at: string
@@ -2411,7 +2568,6 @@ export type Database = {
           reference_image_urls: string[] | null
           session_id: string | null
           status: string
-          supplier_id: string | null
           target_delivery_date: string | null
           target_moq: number | null
           target_price_per_unit: number | null
@@ -2421,8 +2577,6 @@ export type Database = {
         Insert: {
           additional_requirements?: string | null
           ai_estimation?: Json | null
-          assigned_at?: string | null
-          assigned_by?: string | null
           buyer_id?: string | null
           complexity_level?: string | null
           created_at?: string
@@ -2438,7 +2592,6 @@ export type Database = {
           reference_image_urls?: string[] | null
           session_id?: string | null
           status?: string
-          supplier_id?: string | null
           target_delivery_date?: string | null
           target_moq?: number | null
           target_price_per_unit?: number | null
@@ -2448,8 +2601,6 @@ export type Database = {
         Update: {
           additional_requirements?: string | null
           ai_estimation?: Json | null
-          assigned_at?: string | null
-          assigned_by?: string | null
           buyer_id?: string | null
           complexity_level?: string | null
           created_at?: string
@@ -2465,7 +2616,6 @@ export type Database = {
           reference_image_urls?: string[] | null
           session_id?: string | null
           status?: string
-          supplier_id?: string | null
           target_delivery_date?: string | null
           target_moq?: number | null
           target_price_per_unit?: number | null

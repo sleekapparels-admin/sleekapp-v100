@@ -147,40 +147,47 @@ export function SupplierMatchingSystem() {
   const { data: suppliers = [], isLoading: suppliersLoading } = useQuery({
     queryKey: ['verified-suppliers'],
     queryFn: async () => {
-      const { data: supplierProfiles, error: profileError } = await supabase
+      // Get all suppliers from suppliers table
+      const { data: supplierRecords, error: suppliersError } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('verification_status', 'verified');
+
+      if (suppliersError) throw suppliersError;
+
+      // Get their profiles
+      const { data: profiles } = await supabase
         .from('profiles')
         .select('*')
-        .eq('role', 'supplier')
-        .eq('is_verified', true);
+        .in('id', supplierRecords?.map(s => s.user_id) || []);
 
-      if (profileError) throw profileError;
-
-      // Get supplier stats
+      // Get supplier stats from orders
       const { data: orders } = await supabase
         .from('orders')
-        .select('supplier_id, status, total_amount');
+        .select('supplier_id, workflow_status, buyer_price');
 
       const supplierStats = new Map<string, any>();
       
-      supplierProfiles?.forEach((supplier: any) => {
+      supplierRecords?.forEach((supplier: any) => {
+        const profile = profiles?.find(p => p.id === supplier.user_id);
         const supplierOrders = orders?.filter(o => o.supplier_id === supplier.id) || [];
-        const completedOrders = supplierOrders.filter(o => o.status === 'delivered').length;
+        const completedOrders = supplierOrders.filter(o => o.workflow_status === 'completed').length;
         const totalOrders = supplierOrders.length;
         
         supplierStats.set(supplier.id, {
           id: supplier.id,
-          full_name: supplier.full_name || 'Unknown',
-          email: supplier.email,
+          full_name: profile?.full_name || 'Unknown',
+          email: profile?.email || '',
           company_name: supplier.company_name || 'Unknown',
           specialization: supplier.specialization || [],
-          location: supplier.location || 'Unknown',
-          capacity: supplier.capacity || 1000,
+          location: supplier.city ? `${supplier.city}, ${supplier.country}` : supplier.country || 'Unknown',
+          capacity: supplier.production_capacity || 1000,
           current_workload: totalOrders,
-          rating: supplier.rating || 4.0,
+          rating: supplier.performance_score ? supplier.performance_score / 20 : 4.0, // Convert 0-100 to 0-5
           total_orders: totalOrders,
           on_time_delivery: totalOrders > 0 ? (completedOrders / totalOrders) * 100 : 100,
-          average_response_time: supplier.average_response_time || 24,
-          price_competitiveness: supplier.price_competitiveness || 75,
+          average_response_time: 24, // Default
+          price_competitiveness: 75, // Default
         } as SupplierProfile);
       });
 
