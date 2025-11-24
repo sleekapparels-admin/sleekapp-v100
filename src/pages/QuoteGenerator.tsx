@@ -3,7 +3,7 @@ import { SEO } from "@/components/SEO";
 import { getPageSEO } from "@/lib/seo";
 import { Footer } from "@/components/Footer";
 import { FloatingContactWidget } from "@/components/FloatingContactWidget";
-import { AIQuoteGeneratorWithOTP } from "@/components/AIQuoteGeneratorWithOTP";
+import { ConversationalQuoteBuilder } from "@/components/quote/ConversationalQuoteBuilder";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 const QuoteGenerator = () => {
@@ -20,17 +20,16 @@ const QuoteGenerator = () => {
           fallbackTitle="Quote Generator Error"
           fallbackDescription="The quote generator encountered an issue. Please try again."
         >
-          <div className="pt-20 relative">
-            {/* Subtle Logo Watermark */}
-            <div className="absolute top-8 right-8 opacity-5 pointer-events-none hidden lg:block">
-              <img 
-                src="/sleek-logo.webp" 
-                alt="" 
-                className="w-48 h-48 object-contain"
-                aria-hidden="true"
-              />
+          <div className="container mx-auto px-4 py-12 pt-24">
+            <div className="text-center mb-8 space-y-2">
+              <h1 className="text-4xl font-bold text-foreground">
+                AI-Powered Quote Generator
+              </h1>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Get instant, market-researched quotes backed by real-time pricing data from verified sources
+              </p>
             </div>
-            <AIQuoteGeneratorWithOTP />
+            <ConversationalQuoteBuilder />
           </div>
         </RouteErrorBoundary>
         <Footer />

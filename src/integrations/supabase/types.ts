@@ -120,7 +120,10 @@ export type Database = {
           ai_suggestions: string | null
           alternative_options: Json | null
           bangladesh_cost: number | null
+          comparable_products: Json | null
           complexity_level: string | null
+          confidence_score: number | null
+          conversation_history: Json | null
           converted_to_order_id: string | null
           country: string | null
           created_at: string
@@ -131,11 +134,15 @@ export type Database = {
           id: string
           lead_notes: string | null
           lead_status: string | null
+          market_research_id: string | null
           phone_number: string | null
+          price_justification: string | null
           product_type: string
           production_route: string | null
           quantity: number
           quote_data: Json
+          refinement_count: number | null
+          research_sources: Json | null
           session_id: string | null
           specialty_cost: number | null
           specialty_notes: string | null
@@ -150,7 +157,10 @@ export type Database = {
           ai_suggestions?: string | null
           alternative_options?: Json | null
           bangladesh_cost?: number | null
+          comparable_products?: Json | null
           complexity_level?: string | null
+          confidence_score?: number | null
+          conversation_history?: Json | null
           converted_to_order_id?: string | null
           country?: string | null
           created_at?: string
@@ -161,11 +171,15 @@ export type Database = {
           id?: string
           lead_notes?: string | null
           lead_status?: string | null
+          market_research_id?: string | null
           phone_number?: string | null
+          price_justification?: string | null
           product_type: string
           production_route?: string | null
           quantity: number
           quote_data: Json
+          refinement_count?: number | null
+          research_sources?: Json | null
           session_id?: string | null
           specialty_cost?: number | null
           specialty_notes?: string | null
@@ -180,7 +194,10 @@ export type Database = {
           ai_suggestions?: string | null
           alternative_options?: Json | null
           bangladesh_cost?: number | null
+          comparable_products?: Json | null
           complexity_level?: string | null
+          confidence_score?: number | null
+          conversation_history?: Json | null
           converted_to_order_id?: string | null
           country?: string | null
           created_at?: string
@@ -191,11 +208,15 @@ export type Database = {
           id?: string
           lead_notes?: string | null
           lead_status?: string | null
+          market_research_id?: string | null
           phone_number?: string | null
+          price_justification?: string | null
           product_type?: string
           production_route?: string | null
           quantity?: number
           quote_data?: Json
+          refinement_count?: number | null
+          research_sources?: Json | null
           session_id?: string | null
           specialty_cost?: number | null
           specialty_notes?: string | null
@@ -210,6 +231,13 @@ export type Database = {
             columns: ["converted_to_order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_quotes_market_research_id_fkey"
+            columns: ["market_research_id"]
+            isOneToOne: false
+            referencedRelation: "market_research_cache"
             referencedColumns: ["id"]
           },
         ]
@@ -1209,6 +1237,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      market_research_cache: {
+        Row: {
+          confidence_score: number | null
+          created_at: string | null
+          expires_at: string
+          id: string
+          product_category: string
+          quantity_range: string
+          research_data: Json
+          sources: string[] | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          product_category: string
+          quantity_range: string
+          research_data?: Json
+          sources?: string[] | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          product_category?: string
+          quantity_range?: string
+          research_data?: Json
+          sources?: string[] | null
+        }
+        Relationships: []
       }
       marketplace_products: {
         Row: {
