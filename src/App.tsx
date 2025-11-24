@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createBrowserRouter, RouterProvider, Outlet, Navigate, useLocation } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { WishlistProvider } from "@/contexts/WishlistContext";
@@ -257,43 +258,45 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <WishlistProvider>
-        <Suspense fallback={null}>
-          <Sonner />
-        </Suspense>
-        <noscript>
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: '#ffffff',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-            textAlign: 'center'
-          }}>
-            <div>
-              <h1 style={{ fontSize: '24px', marginBottom: '16px', color: '#000' }}>
-                JavaScript Required
-              </h1>
-              <p style={{ fontSize: '16px', color: '#666', marginBottom: '24px' }}>
-                This website requires JavaScript to function properly. Please enable JavaScript in your browser settings.
-              </p>
-              <div style={{ fontSize: '14px', color: '#999' }}>
-                <p>For the best experience, we recommend using a modern browser with JavaScript enabled.</p>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <WishlistProvider>
+          <Suspense fallback={null}>
+            <Sonner />
+          </Suspense>
+          <noscript>
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: '#ffffff',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px',
+              textAlign: 'center'
+            }}>
+              <div>
+                <h1 style={{ fontSize: '24px', marginBottom: '16px', color: '#000' }}>
+                  JavaScript Required
+                </h1>
+                <p style={{ fontSize: '16px', color: '#666', marginBottom: '24px' }}>
+                  This website requires JavaScript to function properly. Please enable JavaScript in your browser settings.
+                </p>
+                <div style={{ fontSize: '14px', color: '#999' }}>
+                  <p>For the best experience, we recommend using a modern browser with JavaScript enabled.</p>
+                </div>
               </div>
             </div>
-          </div>
-        </noscript>
-        <RouterProvider router={router} />
-      </WishlistProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+          </noscript>
+          <RouterProvider router={router} />
+        </WishlistProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 

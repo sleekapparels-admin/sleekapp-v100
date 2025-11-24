@@ -1,93 +1,206 @@
-import { Helmet } from 'react-helmet';
-import { SEOConfig, organizationSchema } from '@/lib/seo';
-import { localBusinessSchema, serviceSchema } from '@/lib/structuredData';
+import { Helmet } from 'react-helmet-async';
 
 interface SEOProps {
-  config: SEOConfig;
-  includeOrganizationSchema?: boolean;
-  includeLocalBusinessSchema?: boolean;
-  includeServiceSchema?: boolean;
-  publishedTime?: string;
-  modifiedTime?: string;
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  schema?: object | object[];
+  keywords?: string;
+  noindex?: boolean;
 }
 
-export const SEO = ({ 
-  config, 
-  includeOrganizationSchema = false,
-  includeLocalBusinessSchema = false,
-  includeServiceSchema = false,
-  publishedTime,
-  modifiedTime,
-}: SEOProps) => {
-  const {
-    title,
-    description,
-    keywords,
-    canonical,
-    ogTitle,
-    ogDescription,
-    ogImage,
-    ogType = 'website',
-    twitterTitle,
-    twitterDescription,
-    twitterImage,
-  } = config;
+export function SEO({
+  title,
+  description,
+  canonical,
+  ogImage = 'https://sleekapparels.com/sleek-logo.webp',
+  ogType = 'website',
+  schema,
+  keywords,
+  noindex = false,
+}: SEOProps) {
+  const fullTitle = title.includes('Sleek Apparels') ? title : `${title} | Sleek Apparels`;
+  const url = canonical || typeof window !== 'undefined' ? window.location.href : 'https://sleekapparels.com';
 
   return (
     <Helmet>
-      <title>{title}</title>
+      {/* Basic Meta Tags */}
+      <title>{fullTitle}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
-      <link rel="canonical" href={canonical} />
-
-      <meta property="og:title" content={ogTitle || title} />
-      <meta property="og:description" content={ogDescription || description} />
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      
+      {/* Canonical URL */}
+      {canonical && <link rel="canonical" href={canonical} />}
+      
+      {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
-      <meta property="og:url" content={canonical} />
+      <meta property="og:url" content={url} />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={ogImage} />
       <meta property="og:site_name" content="Sleek Apparels" />
-      {ogImage && <meta property="og:image" content={ogImage} />}
-      {ogImage && <meta property="og:image:secure_url" content={ogImage} />}
-      {ogImage && <meta property="og:image:width" content="1200" />}
-      {ogImage && <meta property="og:image:height" content="630" />}
-
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={twitterTitle || ogTitle || title} />
-      <meta name="twitter:description" content={twitterDescription || ogDescription || description} />
-      {(twitterImage || ogImage) && <meta name="twitter:image" content={twitterImage || ogImage} />}
-
-      <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-      <meta name="googlebot" content="index, follow, max-image-preview:large" />
-      <meta name="bingbot" content="index, follow, max-image-preview:large" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-      <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-
-      <meta property="og:locale" content="en_US" />
-      <meta name="language" content="English" />
-
-      <meta name="author" content="Sleek Apparels Limited & Sleek Apparels LLC" />
-      <meta name="geo.region" content="BD" />
-      <meta name="geo.placename" content="Dhaka, Bangladesh" />
-
-      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
-
-      {includeOrganizationSchema && (
+      
+      {/* Twitter */}
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" content={url} />
+      <meta property="twitter:title" content={fullTitle} />
+      <meta property="twitter:description" content={description} />
+      <meta property="twitter:image" content={ogImage} />
+      
+      {/* Schema.org JSON-LD */}
+      {schema && (
         <script type="application/ld+json">
-          {JSON.stringify(organizationSchema)}
-        </script>
-      )}
-
-      {includeLocalBusinessSchema && (
-        <script type="application/ld+json">
-          {JSON.stringify(localBusinessSchema)}
-        </script>
-      )}
-
-      {includeServiceSchema && (
-        <script type="application/ld+json">
-          {JSON.stringify(serviceSchema)}
+          {JSON.stringify(Array.isArray(schema) ? schema : [schema])}
         </script>
       )}
     </Helmet>
   );
+}
+
+// Predefined schema objects for common use cases
+export const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "ClothingManufacturer",
+  "name": "Sleek Apparels Limited",
+  "alternateName": "Sleek Apparels",
+  "url": "https://sleekapparels.com",
+  "logo": "https://sleekapparels.com/sleek-logo.webp",
+  "description": "Low MOQ clothing manufacturer in Bangladesh. 50-piece minimum order. OEKO-TEX & BSCI certified. Fast 15-20 day production for fashion startups and DTC brands.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "01, Road 19A, Sector 04, Uttara",
+    "addressLocality": "Dhaka",
+    "postalCode": "1230",
+    "addressCountry": "BD"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+880-186-1011-367",
+    "contactType": "Customer Service",
+    "areaServed": ["US", "GB", "DE", "CA", "AU"],
+    "availableLanguage": ["English", "Bengali"]
+  },
+  "areaServed": ["United States", "United Kingdom", "Germany", "Canada", "Australia"],
+  "hasCredential": [
+    {
+      "@type": "Certification",
+      "name": "OEKO-TEX Standard 100",
+      "credentialCategory": "Textile Safety"
+    },
+    {
+      "@type": "Certification",
+      "name": "BSCI Certification",
+      "credentialCategory": "Ethical Production"
+    },
+    {
+      "@type": "Certification",
+      "name": "WRAP Certification",
+      "credentialCategory": "Social Compliance"
+    }
+  ],
+  "makesOffer": {
+    "@type": "Offer",
+    "itemOffered": {
+      "@type": "Product",
+      "name": "Custom Apparel Manufacturing",
+      "description": "T-shirts, hoodies, activewear, uniforms, knitwear with 50-piece minimum order"
+    },
+    "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "minPrice": "50",
+      "priceCurrency": "USD"
+    }
+  },
+  "sameAs": [
+    "https://www.linkedin.com/company/sleek-apparels",
+    "https://www.facebook.com/sleekapparels"
+  ]
 };
+
+export const breadcrumbSchema = (items: Array<{ name: string; url: string }>) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": item.url
+  }))
+});
+
+export const productSchema = (product: {
+  name: string;
+  description: string;
+  image?: string;
+  minPrice: string;
+  maxPrice?: string;
+  currency?: string;
+  availability?: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.name,
+  "description": product.description,
+  "image": product.image || "https://sleekapparels.com/sleek-logo.webp",
+  "brand": {
+    "@type": "Brand",
+    "name": "Sleek Apparels"
+  },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Sleek Apparels Limited"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": product.minPrice,
+    "priceCurrency": product.currency || "USD",
+    "availability": product.availability || "https://schema.org/InStock",
+    "priceValidUntil": "2026-12-31",
+    "url": typeof window !== 'undefined' ? window.location.href : "https://sleekapparels.com"
+  }
+});
+
+export const faqSchema = (faqs: Array<{ question: string; answer: string }>) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+});
+
+export const articleSchema = (article: {
+  headline: string;
+  description: string;
+  image?: string;
+  datePublished: string;
+  dateModified?: string;
+  author?: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": article.headline,
+  "description": article.description,
+  "image": article.image || "https://sleekapparels.com/sleek-logo.webp",
+  "datePublished": article.datePublished,
+  "dateModified": article.dateModified || article.datePublished,
+  "author": {
+    "@type": "Person",
+    "name": article.author || "Sleek Apparels Team"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sleek Apparels",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sleekapparels.com/sleek-logo.webp"
+    }
+  }
+});
