@@ -44,6 +44,7 @@ const FAQPage = lazy(() => import("./pages/FAQPage"));
 const OurStory = lazy(() => import("./pages/OurStory"));
 const DesignStudio = lazy(() => import("./pages/DesignStudio"));
 const QuoteGenerator = lazy(() => import("./pages/QuoteGenerator"));
+const QuoteAnalytics = lazy(() => import("./pages/QuoteAnalytics"));
 const Brochure = lazy(() => import("./pages/Brochure"));
 const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
 const AdminLeads = lazy(() => import("./pages/AdminLeads"));
@@ -199,6 +200,7 @@ const router = createBrowserRouter([
       { path: "/our-story", element: <OurStory /> },
       { path: "/design-studio", element: <DesignStudio /> },
       { path: "/quote-generator", element: <QuoteGenerator /> },
+      { path: "/quote-analytics", element: <QuoteAnalytics /> },
       { path: "/brochure", element: <Brochure /> },
       { path: "/admin/leads", element: <AdminLeads /> },
       { path: "/admin/blog", element: <AdminBlog /> },
