@@ -106,6 +106,10 @@ const AdvancedFeatures = lazy(() => import("./pages/AdvancedFeatures"));
 import QuoteHistory from "./pages/QuoteHistory";
 import QuoteDetails from "./pages/QuoteDetails";
 
+// SEO Landing Pages
+const LowMOQManufacturer = lazy(() => import("./pages/seo/LowMOQManufacturer"));
+const PrivateLabelManufacturer = lazy(() => import("./pages/seo/PrivateLabelManufacturer"));
+
 // Optimized React Query configuration
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -250,6 +254,10 @@ const router = createBrowserRouter([
         { path: "/innovation-showcase", element: <InnovationShowcase /> },
         { path: "/advanced-features", element: <AdvancedFeatures /> },
         // Admin Setup page removed
+        
+        // SEO Landing Pages (High-Priority Keywords)
+        { path: "/low-moq-clothing-manufacturer-bangladesh", element: <LowMOQManufacturer /> },
+        { path: "/private-label-clothing-manufacturer", element: <PrivateLabelManufacturer /> },
       
       { path: "*", element: <NotFound /> },
     ],
