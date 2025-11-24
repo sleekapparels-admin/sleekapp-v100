@@ -96,6 +96,10 @@
     <!-- Preload Critical Assets for Fast LCP - OPTIMIZED: Only logo, no video preload -->
     <link rel="preload" href="/sleek-logo.webp" as="image" type="image/webp" fetchpriority="high" />
     
+    <!-- Preload hero video for LCP optimization -->
+    <link rel="preload" href="/hero-video.webm" as="video" type="video/webm" />
+    <link rel="preload" href="/hero-video.mp4" as="video" type="video/mp4" fetchpriority="low" />
+    
     <!-- Critical CSS for immediate render - prevents render blocking -->
     <style>
       /* Reset & Base */
