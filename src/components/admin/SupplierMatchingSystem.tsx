@@ -235,12 +235,16 @@ export function SupplierMatchingSystem() {
   // Assign supplier mutation
   const assignSupplierMutation = useMutation({
     mutationFn: async ({ quoteId, supplierId }: { quoteId: string; supplierId: string }) => {
+      // Get current admin user
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { error } = await supabase
         .from('quotes')
         .update({ 
           supplier_id: supplierId,
           status: 'assigned',
           assigned_at: new Date().toISOString(),
+          assigned_by: user?.id || null,
         })
         .eq('id', quoteId);
 

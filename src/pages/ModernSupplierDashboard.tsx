@@ -30,6 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSupplierByUser } from '@/hooks/queries/useSuppliers';
 import { useOrdersByFactory } from '@/hooks/queries/useOrders';
 import { useSupplierQuotes } from '@/hooks/useQuotes';
+import { AssignedQuotesPanel } from '@/components/supplier/AssignedQuotesPanel';
 
 // Mock data
 const performanceScore = {
@@ -528,11 +529,24 @@ export default function ModernSupplierDashboard() {
                 </div>
               </motion.div>
 
+              {/* Assigned Quotes Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.75 }}
+              >
+                <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <Package className="h-6 w-6 text-blue-500" />
+                  Assigned Quotes
+                </h2>
+                <AssignedQuotesPanel supplierId={supplier?.id || ''} />
+              </motion.div>
+
               {/* Achievements */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
+                transition={{ delay: 0.85 }}
               >
                 <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                   <Award className="h-6 w-6 text-yellow-500" />
