@@ -18,7 +18,10 @@ import {
   BarChart3,
   ArrowUpRight,
   ArrowDownRight,
-  Clock
+  Clock,
+  Zap,
+  Target,
+  TrendingUpIcon
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -42,6 +45,10 @@ import { EnhancedCMSPanel } from "@/components/admin/EnhancedCMSPanel";
 import { ProductDescriptionGenerator } from "@/components/admin/ProductDescriptionGenerator";
 import { BlogEditor } from "@/components/blog/BlogEditor";
 import { RateLimitMonitoringDashboard } from "@/components/admin/RateLimitMonitoringDashboard";
+import { AIQuoteDashboard } from "@/components/admin/AIQuoteDashboard";
+import { BuyerInterestTracker } from "@/components/admin/BuyerInterestTracker";
+import { SupplierMatchingSystem } from "@/components/admin/SupplierMatchingSystem";
+import { DashboardAnalytics } from "@/components/admin/DashboardAnalytics";
 import { pageTransition, staggerContainer, staggerItem, hoverLift, slideInBottom, fadeIn } from '@/lib/animations';
 import { Helmet } from 'react-helmet';
 
@@ -272,7 +279,7 @@ export default function ModernAdminDashboard() {
           {/* Main Content Tabs */}
           <motion.div variants={fadeIn}>
             <Tabs defaultValue="board" className="space-y-6">
-              <TabsList className="bg-card border">
+              <TabsList className="bg-card border flex-wrap">
                 <TabsTrigger value="board" className="flex items-center gap-2 data-[state=active]:bg-primary/10">
                   <LayoutGrid className="h-4 w-4" />
                   Order Board
@@ -283,6 +290,22 @@ export default function ModernAdminDashboard() {
                   {newOrders && newOrders.length > 0 && (
                     <Badge variant="destructive" className="ml-2">{newOrders.length}</Badge>
                   )}
+                </TabsTrigger>
+                <TabsTrigger value="ai-quotes" className="flex items-center gap-2 data-[state=active]:bg-primary/10">
+                  <Sparkles className="h-4 w-4" />
+                  AI Quotes
+                </TabsTrigger>
+                <TabsTrigger value="buyer-interest" className="flex items-center gap-2 data-[state=active]:bg-primary/10">
+                  <Target className="h-4 w-4" />
+                  Buyer Interest
+                </TabsTrigger>
+                <TabsTrigger value="supplier-matching" className="flex items-center gap-2 data-[state=active]:bg-primary/10">
+                  <Zap className="h-4 w-4" />
+                  Supplier Match
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-primary/10">
+                  <BarChart3 className="h-4 w-4" />
+                  Analytics
                 </TabsTrigger>
                 <TabsTrigger value="quotes" className="flex items-center gap-2 data-[state=active]:bg-primary/10">
                   <DollarSign className="h-4 w-4" />
@@ -315,6 +338,30 @@ export default function ModernAdminDashboard() {
                   <OrderStatusBoard 
                     onOrderClick={(order) => setSelectedOrderForDetails(order)}
                   />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="ai-quotes">
+                <motion.div variants={fadeIn}>
+                  <AIQuoteDashboard />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="buyer-interest">
+                <motion.div variants={fadeIn}>
+                  <BuyerInterestTracker />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="supplier-matching">
+                <motion.div variants={fadeIn}>
+                  <SupplierMatchingSystem />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="analytics">
+                <motion.div variants={fadeIn}>
+                  <DashboardAnalytics />
                 </motion.div>
               </TabsContent>
 
