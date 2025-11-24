@@ -25,6 +25,32 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
+    // Rate limiting: 10 requests per hour per IP
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+    const { data: rateLimitData } = await supabase
+      .from('ai_quote_rate_limits')
+      .select('request_count, window_start')
+      .eq('identifier', ip)
+      .eq('identifier_type', 'ip')
+      .gte('window_start', oneHourAgo)
+      .single();
+
+    if (rateLimitData && rateLimitData.request_count >= 10) {
+      console.log('Rate limit exceeded for IP:', ip);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Rate limit exceeded. Please try again later.' 
+        }),
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     const { productType, quantity, fabricType, complexity, additionalRequirements }: MarketResearchRequest = await req.json();
 
     console.log('Market research request:', { productType, quantity, fabricType, complexity });
@@ -208,6 +234,15 @@ Return ONLY valid JSON with this structure:
     if (cacheError) {
       console.error('Failed to cache research:', cacheError);
     }
+
+    // Update rate limit counter
+    await supabase.from('ai_quote_rate_limits').upsert({
+      identifier: ip,
+      identifier_type: 'ip',
+      request_count: (rateLimitData?.request_count || 0) + 1,
+      window_start: rateLimitData?.window_start || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
     // Log usage
     await supabase.from('ai_usage_logs').insert({

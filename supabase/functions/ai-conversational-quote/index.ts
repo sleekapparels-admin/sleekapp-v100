@@ -32,6 +32,58 @@ serve(async (req) => {
     );
 
     const request: QuoteRequest = await req.json();
+
+    // Rate limiting: 5 requests per hour per IP
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: ipRateLimit } = await supabase
+      .from('ai_quote_rate_limits')
+      .select('request_count, window_start')
+      .eq('identifier', ip)
+      .eq('identifier_type', 'ip')
+      .gte('window_start', oneHourAgo)
+      .single();
+
+    if (ipRateLimit && ipRateLimit.request_count >= 5) {
+      console.log('IP rate limit exceeded:', ip);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Rate limit exceeded. Please try again in 1 hour.' 
+        }),
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Email-based rate limiting: 10 requests per day
+    if (request.customerEmail) {
+      const { data: emailRateLimit } = await supabase
+        .from('ai_quote_rate_limits')
+        .select('request_count, window_start')
+        .eq('identifier', request.customerEmail)
+        .eq('identifier_type', 'email')
+        .gte('window_start', oneDayAgo)
+        .single();
+
+      if (emailRateLimit && emailRateLimit.request_count >= 10) {
+        console.log('Email rate limit exceeded:', request.customerEmail);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Daily quote limit reached for this email address.' 
+          }),
+          { 
+            status: 429, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+    }
     console.log('Quote request:', request);
 
     // Get or create market research
@@ -203,6 +255,33 @@ Return ONLY valid JSON with this structure:
     if (saveError) {
       console.error('Failed to save quote:', saveError);
       throw new Error('Failed to save quote');
+    }
+
+    // Update rate limit counters
+    await supabase.from('ai_quote_rate_limits').upsert({
+      identifier: ip,
+      identifier_type: 'ip',
+      request_count: (ipRateLimit?.request_count || 0) + 1,
+      window_start: ipRateLimit?.window_start || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+
+    if (request.customerEmail) {
+      const { data: existingEmailLimit } = await supabase
+        .from('ai_quote_rate_limits')
+        .select('request_count, window_start')
+        .eq('identifier', request.customerEmail)
+        .eq('identifier_type', 'email')
+        .gte('window_start', oneDayAgo)
+        .single();
+
+      await supabase.from('ai_quote_rate_limits').upsert({
+        identifier: request.customerEmail,
+        identifier_type: 'email',
+        request_count: (existingEmailLimit?.request_count || 0) + 1,
+        window_start: existingEmailLimit?.window_start || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
     }
 
     // Log usage
