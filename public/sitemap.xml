@@ -183,6 +183,43 @@
     <priority>1.0</priority>
   </url>
 
+  <!-- Product-Specific Pages -->
+  <url>
+    <loc>https://sleekapparels.com/t-shirts-manufacturer</loc>
+    <lastmod>2025-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://sleekapparels.com/hoodies-manufacturer</loc>
+    <lastmod>2025-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://sleekapparels.com/joggers-manufacturer</loc>
+    <lastmod>2025-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Target Market Pages -->
+  <url>
+    <loc>https://sleekapparels.com/usa-buyers</loc>
+    <lastmod>2025-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://sleekapparels.com/european-brands</loc>
+    <lastmod>2025-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
   <!-- Wishlist -->
   <url>
     <loc>https://sleekapparels.com/wishlist</loc>

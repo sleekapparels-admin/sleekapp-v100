@@ -93,6 +93,11 @@ const LoopTraceForBuyers = lazy(() => import("./pages/LoopTraceForBuyers"));
 const LoopTraceForSuppliers = lazy(() => import("./pages/LoopTraceForSuppliers"));
 const WhySleekApparels = lazy(() => import("./pages/WhySleekApparels"));
 const FirstTimeOrdering = lazy(() => import("./pages/FirstTimeOrdering"));
+const TShirtsManufacturer = lazy(() => import("./pages/TShirtsManufacturer"));
+const HoodiesManufacturer = lazy(() => import("./pages/HoodiesManufacturer"));
+const JoggersManufacturer = lazy(() => import("./pages/JoggersManufacturer"));
+const USABuyers = lazy(() => import("./pages/USABuyers"));
+const EuropeanBrands = lazy(() => import("./pages/EuropeanBrands"));
 const Capabilities = lazy(() => import("./pages/Capabilities"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -260,6 +265,15 @@ const router = createBrowserRouter([
         // SEO Landing Pages (High-Priority Keywords)
         { path: "/low-moq-clothing-manufacturer-bangladesh", element: <LowMOQManufacturer /> },
         { path: "/private-label-clothing-manufacturer", element: <PrivateLabelManufacturer /> },
+        
+        // Product-Specific Pages
+        { path: "/t-shirts-manufacturer", element: <TShirtsManufacturer /> },
+        { path: "/hoodies-manufacturer", element: <HoodiesManufacturer /> },
+        { path: "/joggers-manufacturer", element: <JoggersManufacturer /> },
+        
+        // Target Market Pages
+        { path: "/usa-buyers", element: <USABuyers /> },
+        { path: "/european-brands", element: <EuropeanBrands /> },
       
       { path: "*", element: <NotFound /> },
     ],
