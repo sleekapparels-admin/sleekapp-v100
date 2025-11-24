@@ -8,6 +8,7 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 
 
 import { SmartAIAssistant } from "@/components/SmartAIAssistant";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -146,6 +147,7 @@ const Root = () => {
     >
       <ScrollToTop />
       <SmartAIAssistant />
+      <CookieConsentBanner />
       {isAdminSubdomain && location.pathname !== '/admin' ? (
         <Navigate to="/admin" replace />
       ) : (
