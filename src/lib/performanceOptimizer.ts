@@ -10,25 +10,9 @@ export const preloadCriticalAssets = () => {
 };
 
 
-// Load third-party tracking scripts after page load - deferred for better FCP/LCP
+// GTM removed - using pure GA4 tracking now (loaded via index.html)
 export const loadTrackingScripts = () => {
-  // Only load once
-  if ((window as any).__trackingLoaded) return;
-  (window as any).__trackingLoaded = true;
-  
-  // Defer GTM load to not block initial render (after hero video loads)
-  setTimeout(() => {
-    (function(w: any, d: Document, s: string, l: string, i: string) {
-      w[l] = w[l] || [];
-      w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
-      const f = d.getElementsByTagName(s)[0];
-      const j = d.createElement(s) as HTMLScriptElement;
-      const dl = l != 'dataLayer' ? '&l=' + l : '';
-      j.async = true;
-      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-      f.parentNode?.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', 'GTM-NSTT3GTQ');
-  }, 5000); // Load after 5 seconds - video takes priority
+  // No longer needed - GA4 loaded directly via gtag.js in index.html
 };
 
 // Resource hints
@@ -38,8 +22,7 @@ export const addResourceHints = () => {
   
   // DNS prefetch for external resources
   const dnsPrefetch = [
-    'https://eqpftggctumujhutomom.supabase.co',
-    'https://www.googletagmanager.com'
+    'https://eqpftggctumujhutomom.supabase.co'
   ];
 
   // Preconnect to backend origin
