@@ -69,7 +69,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     chunkSizeWarningLimit: 500,
-    sourcemap: false,
+    sourcemap: 'hidden',
     cssCodeSplit: true,
     minify: 'esbuild',
     target: 'es2020', // Modern target for better tree-shaking

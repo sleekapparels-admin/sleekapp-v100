@@ -1,11 +1,13 @@
 # Cache configuration for static assets
 # More specific patterns first, then general patterns
 
-# HTML - no cache
+# HTML - no cache + CSP headers
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+  Content-Security-Policy: frame-ancestors 'self'
 /
   Cache-Control: public, max-age=0, must-revalidate
+  Content-Security-Policy: frame-ancestors 'self'
 
 # Static assets with content hashes - immutable 1 year cache
 /assets/js/*.js
