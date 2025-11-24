@@ -22,7 +22,8 @@ export const addResourceHints = () => {
   
   // DNS prefetch for external resources
   const dnsPrefetch = [
-    'https://eqpftggctumujhutomom.supabase.co'
+    'https://eqpftggctumujhutomom.supabase.co',
+    'https://www.googletagmanager.com'
   ];
 
   // Preconnect to backend origin
