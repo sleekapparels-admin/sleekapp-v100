@@ -96,6 +96,9 @@ const FirstTimeOrdering = lazy(() => import("./pages/FirstTimeOrdering"));
 const TShirtsManufacturer = lazy(() => import("./pages/TShirtsManufacturer"));
 const HoodiesManufacturer = lazy(() => import("./pages/HoodiesManufacturer"));
 const JoggersManufacturer = lazy(() => import("./pages/JoggersManufacturer"));
+const ActivewearManufacturer = lazy(() => import("./pages/ActivewearManufacturer"));
+const UniformsManufacturer = lazy(() => import("./pages/UniformsManufacturer"));
+const PrivateLabelClothing = lazy(() => import("./pages/PrivateLabelClothing"));
 const USABuyers = lazy(() => import("./pages/USABuyers"));
 const EuropeanBrands = lazy(() => import("./pages/EuropeanBrands"));
 const Capabilities = lazy(() => import("./pages/Capabilities"));
@@ -270,6 +273,9 @@ const router = createBrowserRouter([
         { path: "/t-shirts-manufacturer", element: <TShirtsManufacturer /> },
         { path: "/hoodies-manufacturer", element: <HoodiesManufacturer /> },
         { path: "/joggers-manufacturer", element: <JoggersManufacturer /> },
+        { path: "/activewear-manufacturer", element: <ActivewearManufacturer /> },
+        { path: "/uniforms-manufacturer", element: <UniformsManufacturer /> },
+        { path: "/private-label-clothing", element: <PrivateLabelClothing /> },
         
         // Target Market Pages
         { path: "/usa-buyers", element: <USABuyers /> },
