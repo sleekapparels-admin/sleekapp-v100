@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider, Outlet, Navigate, useLocation } fr
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { WishlistProvider } from "@/contexts/WishlistContext";
-import { AuthProvider } from "@/hooks/useFirebaseAuth";
 
 
 import { SmartAIAssistant } from "@/components/SmartAIAssistant";
@@ -104,7 +103,6 @@ const AdvancedFeatures = lazy(() => import("./pages/AdvancedFeatures"));
 // AdminBootstrap page removed (used once, now deleted for security)
 import QuoteHistory from "./pages/QuoteHistory";
 import QuoteDetails from "./pages/QuoteDetails";
-const FirebaseSeed = lazy(() => import("./pages/FirebaseSeed"));
 
 // Optimized React Query configuration
 const queryClient = new QueryClient({
@@ -177,7 +175,6 @@ const router = createBrowserRouter([
       { path: "/get-started", element: <GetStarted /> },
       { path: "/instant-quote", element: <InstantQuote /> },
       { path: "/ai-quote-generator", element: <AIQuoteGenerator /> },
-      { path: "/firebase-seed", element: <FirebaseSeed /> },
       
       // Route aliases for SEO/legacy URLs (prevent 404s)
       { path: "/sign-in", element: <Navigate to="/auth" replace /> },
@@ -259,11 +256,10 @@ const router = createBrowserRouter([
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <WishlistProvider>
-          <Suspense fallback={null}>
-            <Sonner />
-          </Suspense>
+      <WishlistProvider>
+        <Suspense fallback={null}>
+          <Sonner />
+        </Suspense>
         <noscript>
           <div style={{
             position: 'fixed',
@@ -293,8 +289,7 @@ function App() {
           </div>
         </noscript>
         <RouterProvider router={router} />
-        </WishlistProvider>
-      </AuthProvider>
+      </WishlistProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
