@@ -1,5 +1,5 @@
 import { SEO, organizationSchema, productSchema, faqSchema, breadcrumbSchema } from '@/components/SEO';
-import { Navigation } from '@/components/Navigation';
+import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Check, Package, Palette, Tag, Truck, Users, Shield, Zap, Award, FileText } from 'lucide-react';
@@ -77,7 +77,7 @@ export default function PrivateLabelManufacturer() {
       />
 
       <div className="min-h-screen bg-white">
-        <Navigation />
+        <Navbar />
         
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-purple-600 to-blue-600 text-white py-20">
@@ -363,7 +363,7 @@ export default function PrivateLabelManufacturer() {
                     <div>
                       <h3 className="font-semibold text-lg mb-2">Quality Guarantee (AQL 2.5)</h3>
                       <p className="text-gray-600">
-                        Every garment inspected using AQL 2.5 standard. Defect rate <2.5%. Third-party inspection available. 
+                        Every garment inspected using AQL 2.5 standard. Defect rate {'<'}2.5%. Third-party inspection available. 
                         We stand behind our quality—if issues arise, we'll remake garments at no charge (within reason).
                       </p>
                     </div>
@@ -741,7 +741,7 @@ export default function PrivateLabelManufacturer() {
                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
                   <p className="font-semibold mb-2">Additional Costs:</p>
                   <ul className="space-y-1 text-sm">
-                    <li>• <strong>Samples:</strong> $30-60 per piece (refundable with order >100 pcs)</li>
+                    <li>• <strong>Samples:</strong> $30-60 per piece (refundable with order {'>'}100 pcs)</li>
                     <li>• <strong>Tech Pack Development:</strong> $50-150 per design</li>
                     <li>• <strong>Custom Hang Tags:</strong> $0.10-0.25 per tag (50 pc minimum)</li>
                     <li>• <strong>Custom Packaging:</strong> $0.50-2.00 per unit (depends on complexity)</li>

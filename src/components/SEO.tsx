@@ -1,28 +1,56 @@
 import { Helmet } from 'react-helmet-async';
+import { SEOConfig } from '@/lib/seo';
 
 interface SEOProps {
-  title: string;
-  description: string;
+  // Support both direct props and config object
+  config?: SEOConfig;
+  title?: string;
+  description?: string;
   canonical?: string;
   ogImage?: string;
   ogType?: string;
   schema?: object | object[];
   keywords?: string;
   noindex?: boolean;
+  // Additional props for structured data
+  includeOrganizationSchema?: boolean;
+  includeLocalBusinessSchema?: boolean;
+  includeServiceSchema?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
 export function SEO({
-  title,
-  description,
-  canonical,
-  ogImage = 'https://sleekapparels.com/sleek-logo.webp',
-  ogType = 'website',
-  schema,
-  keywords,
+  config,
+  title: directTitle,
+  description: directDescription,
+  canonical: directCanonical,
+  ogImage: directOgImage,
+  ogType: directOgType,
+  schema: directSchema,
+  keywords: directKeywords,
   noindex = false,
+  includeOrganizationSchema = false,
+  includeLocalBusinessSchema = false,
+  includeServiceSchema = false,
+  publishedTime,
+  modifiedTime,
 }: SEOProps) {
+  // Use config values if provided, otherwise fall back to direct props
+  const title = config?.title || directTitle || 'Sleek Apparels';
+  const description = config?.description || directDescription || '';
+  const canonical = config?.canonical || directCanonical;
+  const ogImage = config?.ogImage || directOgImage || 'https://sleekapparels.com/sleek-logo.webp';
+  const ogType = config?.ogType || directOgType || 'website';
+  const keywords = config?.keywords || directKeywords;
+  const ogTitle = config?.ogTitle;
+  const ogDescription = config?.ogDescription;
+  const twitterTitle = config?.twitterTitle;
+  const twitterDescription = config?.twitterDescription;
+  const twitterImage = config?.twitterImage;
+  
   const fullTitle = title.includes('Sleek Apparels') ? title : `${title} | Sleek Apparels`;
-  const url = canonical || typeof window !== 'undefined' ? window.location.href : 'https://sleekapparels.com';
+  const url = canonical || (typeof window !== 'undefined' ? window.location.href : 'https://sleekapparels.com');
 
   return (
     <Helmet>
@@ -38,27 +66,47 @@ export function SEO({
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
       <meta property="og:url" content={url} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={ogTitle || fullTitle} />
+      <meta property="og:description" content={ogDescription || description} />
       <meta property="og:image" content={ogImage} />
       <meta property="og:site_name" content="Sleek Apparels" />
+      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
       
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
       <meta property="twitter:url" content={url} />
-      <meta property="twitter:title" content={fullTitle} />
-      <meta property="twitter:description" content={description} />
-      <meta property="twitter:image" content={ogImage} />
+      <meta property="twitter:title" content={twitterTitle || ogTitle || fullTitle} />
+      <meta property="twitter:description" content={twitterDescription || ogDescription || description} />
+      <meta property="twitter:image" content={twitterImage || ogImage} />
       
       {/* Schema.org JSON-LD */}
-      {schema && (
+      {directSchema && (
         <script type="application/ld+json">
-          {JSON.stringify(Array.isArray(schema) ? schema : [schema])}
+          {JSON.stringify(Array.isArray(directSchema) ? directSchema : [directSchema])}
+        </script>
+      )}
+      {includeOrganizationSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(organizationSchema)}
+        </script>
+      )}
+      {includeLocalBusinessSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(localBusinessSchema)}
+        </script>
+      )}
+      {includeServiceSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(serviceSchema)}
         </script>
       )}
     </Helmet>
   );
 }
+
+// Import structured data schemas
+import { localBusinessSchema, serviceSchema } from '@/lib/structuredData';
 
 // Predefined schema objects for common use cases
 export const organizationSchema = {

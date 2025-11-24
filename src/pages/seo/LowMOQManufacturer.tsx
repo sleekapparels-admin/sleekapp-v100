@@ -1,5 +1,5 @@
 import { SEO, organizationSchema, productSchema, faqSchema, breadcrumbSchema } from '@/components/SEO';
-import { Navigation } from '@/components/Navigation';
+import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Check, Factory, Shield, Clock, TrendingUp, Users, Package, Zap, Award, Globe } from 'lucide-react';
@@ -77,7 +77,7 @@ export default function LowMOQManufacturer() {
       />
 
       <div className="min-h-screen bg-white">
-        <Navigation />
+        <Navbar />
         
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-primary to-secondary text-white py-20">
@@ -625,7 +625,7 @@ export default function LowMOQManufacturer() {
                       <h3 className="font-semibold text-lg mb-2">Quality Control (AQL 2.5 Inspection)</h3>
                       <p className="text-gray-600">
                         Every garment inspected using AQL 2.5 standard. Check stitching, fabric defects, measurements, 
-                        colors, prints/embroidery alignment. Defect rate <2.5%. Third-party inspection available on request.
+                        colors, prints/embroidery alignment. Defect rate {'<'}2.5%. Third-party inspection available on request.
                       </p>
                     </div>
                   </div>
