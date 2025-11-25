@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import JsonLd from '@/components/JsonLd';
+import ContactForm from '@/components/ContactForm';
 import { generateBreadcrumbSchema } from '@/lib/schema';
 import { generateMetadata as generateMeta } from '@/lib/metadata';
 
@@ -18,7 +19,7 @@ export default function ContactPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
-      
+
       <div className="bg-white">
         <section className="bg-gradient-to-br from-primary-50 to-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,7 +36,7 @@ export default function ContactPage() {
               {/* Contact Info */}
               <div>
                 <h2 className="text-3xl font-bold mb-8">Get in Touch</h2>
-                
+
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-xl font-bold mb-2">Company Address</h3>
@@ -85,89 +86,7 @@ export default function ContactPage() {
               </div>
 
               {/* Contact Form */}
-              <div className="bg-gray-50 p-8 rounded-lg">
-                <h2 className="text-3xl font-bold mb-6">Request a Quote</h2>
-                <form className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Full Name *</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600"
-                      placeholder="John Doe"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Email Address *</label>
-                    <input
-                      type="email"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600"
-                      placeholder="john@example.com"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Company Name</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600"
-                      placeholder="Your Brand"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600"
-                      placeholder="+1 234 567 8900"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Product Type *</label>
-                    <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600" required>
-                      <option value="">Select Product</option>
-                      <option value="t-shirts">T-Shirts</option>
-                      <option value="hoodies">Hoodies & Sweatshirts</option>
-                      <option value="activewear">Activewear</option>
-                      <option value="knitwear">Knitwear</option>
-                      <option value="uniforms">Uniforms</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Quantity *</label>
-                    <input
-                      type="number"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600"
-                      placeholder="100"
-                      min="50"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">Message / Requirements *</label>
-                    <textarea
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600"
-                      rows={5}
-                      placeholder="Please describe your requirements in detail..."
-                      required
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 font-semibold transition-colors"
-                  >
-                    Send Inquiry
-                  </button>
-                </form>
-              </div>
+              <ContactForm />
             </div>
           </div>
         </section>
