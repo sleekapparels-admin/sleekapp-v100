@@ -23,7 +23,8 @@ export interface Organization {
 export function generateOrganizationSchema(org: Organization) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'ClothingManufacturer',
+    '@type': 'Corporation',
+    naics: '3152',
     name: org.name,
     alternateName: org.alternateName,
     description: org.description,
