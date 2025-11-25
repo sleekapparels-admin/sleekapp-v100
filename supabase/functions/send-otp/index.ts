@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createLogger, sanitizeEmail as maskEmail, sanitizePhone as maskPhone } from '../_shared/logger.ts';
+
+const logger = createLogger('send-otp');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -113,11 +116,11 @@ async function sendEmailWithRetry(
       
       // Wait before retry with exponential backoff
       if (attempt < maxRetries) {
-        console.log(`[${new Date().toISOString()}] ⏳ Retrying email send (attempt ${attempt + 1}/${maxRetries})...`);
+        logger.info('Retrying email send', { attempt: attempt + 1, maxRetries });
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
     } catch (error) {
-      console.error(`[${new Date().toISOString()}] ❌ Email send attempt ${attempt} failed:`, error);
+      logger.error('Email send attempt failed', error, { attempt, maxRetries });
       if (attempt === maxRetries) throw error;
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
     }
@@ -127,7 +130,7 @@ async function sendEmailWithRetry(
 
 serve(async (req) => {
   if (!Deno.env.get('RESEND_API_KEY')) {
-    console.error(`[${new Date().toISOString()}] ❌ RESEND_API_KEY not configured`);
+    logger.error('RESEND_API_KEY not configured');
     return new Response(
       JSON.stringify({ error: 'Service temporarily unavailable', code: 'EMAIL_001' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -153,7 +156,7 @@ serve(async (req) => {
       const recaptchaSecret = Deno.env.get('RECAPTCHA_SECRET_KEY');
       
       if (!recaptchaSecret) {
-        console.error(`[${new Date().toISOString()}] ❌ RECAPTCHA_SECRET_KEY not configured`);
+        logger.error('RECAPTCHA_SECRET_KEY not configured');
         return new Response(
           JSON.stringify({ error: 'CAPTCHA verification unavailable' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -167,16 +170,16 @@ serve(async (req) => {
         const captchaData = await captchaResponse.json();
         
         if (!captchaData.success) {
-          console.log(`[${new Date().toISOString()}] ⚠️ CAPTCHA verification failed:`, captchaData['error-codes']);
+          logger.warn('CAPTCHA verification failed', { errorCodes: captchaData['error-codes'] });
           return new Response(
             JSON.stringify({ error: 'CAPTCHA verification failed. Please try again.' }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
         
-        console.log(`[${new Date().toISOString()}] ✅ CAPTCHA verified successfully`);
+        logger.success('CAPTCHA verified');
       } catch (captchaError) {
-        console.error(`[${new Date().toISOString()}] ❌ CAPTCHA verification error:`, captchaError);
+        logger.error('CAPTCHA verification error', captchaError);
         return new Response(
           JSON.stringify({ error: 'CAPTCHA verification error. Please try again.' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -197,7 +200,7 @@ serve(async (req) => {
         );
       }
 
-      console.log(`[${new Date().toISOString()}] 📱 Phone OTP request - Phone: ${phone.substring(0, 4)}***`);
+      logger.info('Phone OTP request', { phone: maskPhone(phone) });
 
       // Rate limiting for phone
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
@@ -233,7 +236,7 @@ serve(async (req) => {
         });
 
       if (insertError) {
-        console.error(`[${new Date().toISOString()}] ❌ Phone OTP insert error:`, insertError);
+        logger.error('Phone OTP insert error', insertError, { phone: maskPhone(phone) });
         return new Response(
           JSON.stringify({ error: 'Failed to generate verification code' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -241,7 +244,7 @@ serve(async (req) => {
       }
 
       // In production, integrate with SMS service here
-      console.log(`[${new Date().toISOString()}] ✅ Phone OTP generated for ${phone}: ${otp}`);
+      logger.success('Phone OTP generated', { phone: maskPhone(phone) });
 
       return new Response(
         JSON.stringify({ 
@@ -261,7 +264,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`[${new Date().toISOString()}] 📧 Email OTP request - Type: ${type}, Email: ${email.substring(0, 3)}***`);
+    logger.info('Email OTP request', { type, email: maskEmail(email) });
 
     // Validate email format
     const emailValidation = validateEmail(email);
@@ -323,7 +326,7 @@ serve(async (req) => {
         .eq('verified', true);
 
       if (countError) {
-        console.error(`[${new Date().toISOString()}] ⚠️ Error checking daily limit:`, countError);
+        logger.warn('Error checking daily limit', { error: countError });
       }
 
       const maxQuotesPerDay = 3;
@@ -357,7 +360,7 @@ serve(async (req) => {
       .single();
 
     if (insertError) {
-      console.error(`[${new Date().toISOString()}] ❌ Email OTP insert error:`, insertError);
+      logger.error('Email OTP insert error', insertError, { email: maskEmail(sanitizedEmail) });
       return new Response(
         JSON.stringify({ error: 'Failed to generate verification code' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -407,7 +410,7 @@ serve(async (req) => {
 
       // Check for Resend API errors
       if (emailResponse.error) {
-        console.error(`[${new Date().toISOString()}] ❌ Resend API error:`, emailResponse.error);
+        logger.error('Resend API error', emailResponse.error, { email: maskEmail(sanitizedEmail) });
         
         // Update OTP record with failure
         await supabase
@@ -439,7 +442,10 @@ serve(async (req) => {
         .eq('email', sanitizedEmail)
         .eq('otp', otp);
 
-      console.log(`[${new Date().toISOString()}] ✅ Email sent successfully - Resend ID: ${emailResponse.data?.id}, To: ${sanitizedEmail.substring(0, 3)}***`);
+      logger.success('Email sent successfully', { 
+        resendId: emailResponse.data?.id, 
+        email: maskEmail(sanitizedEmail) 
+      });
 
       return new Response(
         JSON.stringify({ 
@@ -451,7 +457,7 @@ serve(async (req) => {
       );
 
     } catch (emailError: any) {
-      console.error(`[${new Date().toISOString()}] ❌ Email sending error:`, emailError);
+      logger.error('Email sending error', emailError, { email: maskEmail(sanitizedEmail) });
       
       // Update OTP record with failure
       await supabase
@@ -473,7 +479,7 @@ serve(async (req) => {
     }
 
   } catch (error: any) {
-    console.error(`[${new Date().toISOString()}] ❌ Error in send-otp function:`, error);
+    logger.error('Error in send-otp function', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

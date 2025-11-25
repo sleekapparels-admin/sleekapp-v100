@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { createLogger, sanitizeEmail as maskEmail, sanitizePhone as maskPhone } from '../_shared/logger.ts';
+
+const logger = createLogger('verify-otp');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -69,9 +72,10 @@ serve(async (req) => {
       });
 
     if (rateLimitError) {
-      console.error('Rate limit check error:', rateLimitError);
+      logger.error('Rate limit check error', rateLimitError);
     } else if (rateLimitData && !rateLimitData.allowed) {
-      console.log(`Rate limit exceeded for ${identifierType}: ${identifier}`);
+      const sanitizedId = identifierType === 'phone' ? maskPhone(identifier) : maskEmail(identifier);
+      logger.warn('Rate limit exceeded', { identifierType, identifier: sanitizedId });
       return new Response(
         JSON.stringify({ 
           error: 'Too many verification attempts. Please try again in 1 hour.',
@@ -125,7 +129,7 @@ serve(async (req) => {
         .eq('id', otpRecord.id);
 
       if (updateError) {
-        console.error('Phone OTP update error:', updateError);
+        logger.error('Phone OTP update error', updateError, { phone: maskPhone(phone) });
         
         // Log failed attempt
         await supabase.rpc('log_otp_attempt', {
@@ -290,7 +294,7 @@ serve(async (req) => {
       .eq('id', otpRecord.id);
 
     if (updateError) {
-      console.error('Email OTP update error:', updateError);
+      logger.error('Email OTP update error', updateError, { email: maskEmail(email) });
       
       // Log failed attempt
       await supabase.rpc('log_otp_attempt', {
@@ -342,7 +346,7 @@ serve(async (req) => {
     );
 
   } catch (error: any) {
-    console.error('Error in verify-otp function:', error);
+    logger.error('Error in verify-otp function', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

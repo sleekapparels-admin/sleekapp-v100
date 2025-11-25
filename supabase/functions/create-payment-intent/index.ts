@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from 'https://esm.sh/stripe@14.21.0';
+import { createLogger, sanitizeOrderId } from '../_shared/logger.ts';
+
+const logger = createLogger('create-payment-intent');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -44,7 +47,7 @@ serve(async (req) => {
     const orderPrice = order.buyer_price || order.total_price;
     
     if (!orderPrice || orderPrice <= 0) {
-      console.error(`[${new Date().toISOString()}] ❌ Invalid order price - Order: ${orderId}, Price: ${orderPrice}`);
+      logger.error('Invalid order price', null, { orderId: sanitizeOrderId(orderId), price: orderPrice });
       throw new Error('Invalid order price - payment cannot be processed');
     }
 
@@ -65,7 +68,11 @@ serve(async (req) => {
         const minAllowedPrice = quote.total_price * 0.995;
 
         if (orderPrice < minAllowedPrice || orderPrice > maxAllowedPrice) {
-          console.error(`[${new Date().toISOString()}] ❌ Price mismatch - Order: ${orderId}, Order price: ${orderPrice}, Quote price: ${quote.total_price}`);
+          logger.error('Price mismatch detected', null, { 
+            orderId: sanitizeOrderId(orderId), 
+            orderPrice, 
+            quotePrice: quote.total_price 
+          });
           throw new Error('Order price does not match quote. Please refresh and try again.');
         }
       }
@@ -80,13 +87,16 @@ serve(async (req) => {
       
       // Alert if order was modified within 5 minutes before payment
       if (timeSinceUpdate < 5 * 60 * 1000 && timeSinceCreation > timeSinceUpdate) {
-        console.warn(`[${new Date().toISOString()}] ⚠️ Order recently modified - Order: ${orderId}, Updated: ${order.updated_at}`);
+        logger.warn('Order recently modified before payment', { 
+          orderId: sanitizeOrderId(orderId), 
+          updatedAt: order.updated_at 
+        });
       }
     }
 
     // Verify order is in valid state for payment
     if (order.payment_status === 'paid') {
-      console.error(`[${new Date().toISOString()}] ❌ Order already paid - Order: ${orderId}`);
+      logger.error('Order already paid', null, { orderId: sanitizeOrderId(orderId) });
       throw new Error('Order has already been paid');
     }
 
@@ -107,11 +117,15 @@ serve(async (req) => {
 
     // Final validation: ensure amount is reasonable
     if (amount < 100) { // Minimum $1.00
-      console.error(`[${new Date().toISOString()}] ❌ Payment amount too low - Order: ${orderId}, Amount: ${amount}`);
+      logger.error('Payment amount too low', null, { orderId: sanitizeOrderId(orderId), amount });
       throw new Error('Payment amount is too low');
     }
 
-    console.log(`[${new Date().toISOString()}] 💳 Creating payment intent - Order: ${orderId}, Amount: $${(amount/100).toFixed(2)}, Type: ${paymentType}`);
+    logger.info('Creating payment intent', { 
+      orderId: sanitizeOrderId(orderId), 
+      amount: `$${(amount/100).toFixed(2)}`, 
+      type: paymentType 
+    });
 
     // Create or retrieve Stripe customer
     let customerId = order.stripe_customer_id;
@@ -198,7 +212,7 @@ serve(async (req) => {
       }),
     });
 
-    console.log('Payment intent created:', paymentIntent.id);
+    logger.success('Payment intent created', { paymentIntentId: paymentIntent.id });
 
     return new Response(
       JSON.stringify({
@@ -209,7 +223,7 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error creating payment intent:', error);
+    logger.error('Error creating payment intent', error);
     const errorMessage = error instanceof Error ? error.message : 'An error occurred';
     return new Response(
       JSON.stringify({ error: errorMessage }),
