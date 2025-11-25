@@ -3,7 +3,7 @@ export const GA4_MEASUREMENT_ID = 'G-1PYKLMP22J';
 export const GA4_STREAM_ID = '13041825408';
 
 // Google Tag Manager configuration
-export const GTM_CONTAINER_ID = 'GTM-NSTT3GTQ';
+export const GTM_CONTAINER_ID = 'GTM-WGTH2FQ9';
 
 // Microsoft Clarity configuration
 export const CLARITY_PROJECT_ID = 'txi3rcrykl';
