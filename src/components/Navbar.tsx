@@ -291,7 +291,7 @@ export const Navbar = () => {
 
             {/* Account Menu or Dashboard */}
             {user ? (
-              <NavigationMenu>
+              <NavigationMenu className="[&>div]:!right-0 [&>div]:!left-auto">
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
@@ -339,7 +339,7 @@ export const Navbar = () => {
                 </NavigationMenuList>
               </NavigationMenu>
             ) : (
-              <NavigationMenu>
+              <NavigationMenu className="[&>div]:!right-0 [&>div]:!left-auto">
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className={`h-9 px-3 text-sm font-medium ${isHome ? "!bg-transparent !text-white hover:!bg-white/10" : "!bg-transparent hover:!bg-muted"}`}>
