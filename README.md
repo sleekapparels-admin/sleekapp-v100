@@ -1,347 +1,552 @@
-# Sleek Apparels Limited - Official Website
+# Sleek Apparels Backend API
 
-**Low MOQ Clothing Manufacturer in Bangladesh**
+**Backend-Only Supabase Edge Functions API**
 
-🌐 **Production Status:** ✅ Ready for Deployment  
-🎯 **SEO Status:** ✅ Fully Optimized with SSR  
-🔍 **Crawlability:** ✅ 100% Googlebot Compatible  
+🎯 **Status:** ✅ Backend-Only Project (No Frontend)  
+🔌 **Purpose:** API Endpoints for External Next.js Frontend  
+⚡ **Functions:** 23 Edge Functions Deployed  
 
 ---
 
 ## 🎉 Project Overview
 
-This is the official website for **Sleek Apparels Limited**, a premium clothing manufacturer based in Dhaka, Bangladesh, specializing in low minimum order quantities (MOQ 50 pieces) for fashion startups, DTC brands, and small businesses worldwide.
+This is a **backend-only project** that provides Supabase Edge Functions as API endpoints for the external Next.js frontend. This Lovable project only contains the `/supabase` folder with Edge Functions - no frontend code.
 
 ---
 
-## ✨ Key Features
+## ⚠️ IMPORTANT SETUP INSTRUCTIONS
 
-### 🚀 Technical Excellence
-- ✅ **Next.js 16 with App Router** - Modern React framework
-- ✅ **100% Server-Side Rendering (SSR)** - All content in HTML
-- ✅ **Static Site Generation** - Lightning-fast load times
-- ✅ **TypeScript** - Type-safe codebase
-- ✅ **TailwindCSS 4** - Responsive, mobile-first design
+### Required: Add Build Script to package.json
 
-### 🔍 SEO Optimization
-- ✅ **Complete Meta Tags** - Title, description, keywords on every page
-- ✅ **Structured Data (JSON-LD)** - Organization, Product, FAQ schemas
-- ✅ **Open Graph Tags** - Social media optimization
-- ✅ **Breadcrumb Navigation** - Clear site hierarchy
-- ✅ **Semantic HTML** - Proper heading structure (H1-H3)
-
-### 📄 Complete Page Coverage
-- **Homepage** (`/`) - Company overview, key features, products
-- **Services** (`/services`) - Manufacturing services and capabilities
-- **Products** (`/products`) - Complete product catalog
-- **T-Shirts** (`/products/t-shirts`) - Detailed product page example
-- **Contact** (`/contact`) - Contact form and information
-- **FAQ** (`/faq`) - 16 comprehensive Q&A pairs
-- **Certifications** (`/certifications`) - OEKO-TEX, BSCI, WRAP
-- **Portfolio** (`/portfolio`) - Past projects and case studies
-- **Blog** (`/blog`) - Industry insights and guides
-
----
-
-## 🛠️ Technology Stack
+**You MUST manually add this script to your `package.json` file for Lovable to build correctly:**
 
 ```json
 {
-  "framework": "Next.js 16 (App Router)",
-  "language": "TypeScript 5.9",
-  "styling": "TailwindCSS 4.1",
-  "rendering": "Static Site Generation (SSG)",
-  "deployment": "Cloudflare Pages (recommended)",
-  "seo": "JSON-LD Schema, Meta Tags, Open Graph"
+  "scripts": {
+    "build:dev": "vite build --mode development"
+  }
+}
+```
+
+### TypeScript Errors (Expected & Safe to Ignore)
+
+**All TypeScript errors in edge function files are EXPECTED and will NOT affect deployment:**
+- Edge functions use Deno runtime with Deno-specific imports (`https://deno.land/...`)
+- These Deno types are not available during Vite build process
+- Functions will work perfectly when deployed to Supabase
+- Build errors related to `supabase/functions/*.ts` can be safely ignored
+
+---
+
+## 🔌 API Base URL
+
+```
+https://eqpftggctumujhutomom.supabase.co/functions/v1/
+```
+
+## 🔑 Required Headers
+
+```typescript
+{
+  'apikey': NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer <JWT_TOKEN>' // For authenticated endpoints only
 }
 ```
 
 ---
 
-## 📦 Installation & Setup
+## 📋 API Endpoints
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+### Public API Endpoints (No Auth Required)
 
-### Quick Start
-
-```bash
-# Install dependencies
-npm install
-
-# Development server (local testing)
-npm run dev
-
-# Build for production
-npm run build
-
-# The 'out' directory contains static HTML files ready for deployment
-```
-
----
-
-## 🧪 Testing
-
-### Run Crawlability Test
-
-We've built an automated test to verify Googlebot compatibility:
-
-```bash
-# Build first
-npm run build
-
-# Run test
-node test-crawlability.js
-```
-
-**Expected Output:**
-```
-🤖 Googlebot Crawlability Test
-
-✅ PASS: / is fully crawlable
-✅ PASS: /services is fully crawlable
-✅ PASS: /products is fully crawlable
-✅ PASS: /products/t-shirts is fully crawlable
-✅ PASS: /contact is fully crawlable
-✅ PASS: /faq is fully crawlable
-✅ PASS: /certifications is fully crawlable
-✅ PASS: /portfolio is fully crawlable
-✅ PASS: /blog is fully crawlable
-
-✅ ALL TESTS PASSED
-🎉 Website is fully crawlable by Googlebot without JavaScript
-```
-
----
-
-## 🚀 Deployment
-
-### Option 1: Cloudflare Pages (Recommended)
-
-**Automatic Deployment from GitHub:**
-1. Push code to GitHub
-2. Connect repository to Cloudflare Pages
-3. Build command: `npm run build`
-4. Output directory: `out`
-5. Done! Your site will be live at `https://sleekapparels.pages.dev`
-
-**Manual Deployment:**
-```bash
-# Build
-npm run build
-
-# Deploy using Wrangler
-npx wrangler pages deploy out --project-name sleekapparels
-
-# Custom domain setup
-# Configure DNS in Cloudflare dashboard
-```
-
-### Option 2: Vercel (Alternative)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
-### Option 3: Any Static Hosting
-
-The `out` directory contains ready-to-deploy static files:
-- Netlify: Drag & drop `out` folder
-- AWS S3 + CloudFront: Upload to S3 bucket
-- GitHub Pages: Push to gh-pages branch
-
----
-
-## 📁 Project Structure
-
-```
-webapp/
-├── app/                      # Next.js App Router pages
-│   ├── layout.tsx           # Root layout with header/footer
-│   ├── page.tsx             # Homepage
-│   ├── services/            # Services page
-│   ├── products/            # Products pages
-│   │   ├── page.tsx         # Products listing
-│   │   └── t-shirts/        # Product detail pages
-│   ├── contact/             # Contact page
-│   ├── faq/                 # FAQ page
-│   ├── certifications/      # Certifications page
-│   ├── portfolio/           # Portfolio page
-│   └── blog/                # Blog page
-├── components/              # Reusable React components
-│   ├── Header.tsx           # Site header with navigation
-│   ├── Footer.tsx           # Site footer
-│   └── JsonLd.tsx           # JSON-LD structured data
-├── lib/                     # Utility libraries
-│   ├── metadata.ts          # SEO metadata generators
-│   └── schema.ts            # JSON-LD schema helpers
-├── out/                     # Build output (static HTML)
-├── public/                  # Static assets
-├── test-crawlability.js     # Automated SSR test
-├── SSR_AUDIT_REPORT.md      # Comprehensive audit report
-└── package.json             # Dependencies
-```
-
----
-
-## 🎯 SEO Keywords Targeted
-
-### Primary Keywords (High Volume)
-1. **low moq clothing manufacturer bangladesh** (1,200/mo)
-2. **private label clothing manufacturer** (2,100/mo)
-3. **custom t-shirt manufacturer bangladesh** (1,400/mo)
-4. **bangladesh clothing manufacturer usa export** (800/mo)
-5. **ethical clothing factory bangladesh** (850/mo)
-
-### Secondary Keywords
-- small batch clothing manufacturer
-- startup clothing manufacturer low moq
-- oeko-tex certified clothing factory
-- amazon fba apparel supplier bangladesh
-- knitwear manufacturer bangladesh
-
----
-
-## 📊 Expected SEO Performance
-
-Based on proper SSR implementation:
-
-| Metric | Baseline (Before) | Expected (3 months) | Improvement |
-|--------|------------------|---------------------|-------------|
-| Pages Indexed | 0 | 100% (all pages) | +∞% |
-| Organic Traffic | ~0/month | 500-1000/month | +500-1000% |
-| Keyword Rankings | Not ranking | Top 10 for 5-10 keywords | Significant |
-| Crawl Errors | 100% | 0% | -100% |
-
----
-
-## 🔧 Development
-
-### Add New Pages
-
-1. Create file in `app/` directory:
+#### Get Products
 ```typescript
-// app/new-page/page.tsx
-import { Metadata } from 'next';
-import { generateMetadata } from '@/lib/metadata';
-
-export const metadata: Metadata = generateMetadata({
-  title: 'Page Title',
-  description: 'Page description',
-  keywords: ['keyword1', 'keyword2'],
+// GET /get-products?category=t-shirts&search=cotton&featured=true&limit=20
+const response = await fetch(`${API_BASE}/get-products?category=t-shirts`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
 });
 
-export default function NewPage() {
-  return <div>Your content</div>;
+// Response: { success: true, data: [...products] }
+```
+
+#### Get Single Product
+```typescript
+// GET /get-product?id=uuid or ?slug=product-slug
+const response = await fetch(`${API_BASE}/get-product?slug=classic-crew-neck-tee`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { id, title, description, price, ... } }
+```
+
+#### Get Blog Posts
+```typescript
+// GET /get-blog-posts?category=guides&limit=10
+const response = await fetch(`${API_BASE}/get-blog-posts?category=guides`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...posts] }
+```
+
+#### Get Single Blog Post
+```typescript
+// GET /get-blog-post?slug=post-slug
+const response = await fetch(`${API_BASE}/get-blog-post?slug=low-moq-guide`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { id, title, content, ... } }
+```
+
+#### Get Certifications
+```typescript
+// GET /get-certifications
+const response = await fetch(`${API_BASE}/get-certifications`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...certifications] }
+```
+
+#### Get Company Info
+```typescript
+// GET /get-company-info
+const response = await fetch(`${API_BASE}/get-company-info`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { company details } }
+```
+
+#### Get Marketplace Products
+```typescript
+// GET /get-marketplace-products?category=activewear&supplier_id=uuid&min_price=10&max_price=50
+const response = await fetch(`${API_BASE}/get-marketplace-products?category=activewear`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...marketplace_products] }
+```
+
+#### Get Single Marketplace Product
+```typescript
+// GET /get-marketplace-product?id=uuid
+const response = await fetch(`${API_BASE}/get-marketplace-product?id=uuid`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { marketplace product details } }
+```
+
+#### Get Suppliers
+```typescript
+// GET /get-suppliers?specialization=knitwear&min_capacity=1000
+const response = await fetch(`${API_BASE}/get-suppliers`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...suppliers] }
+```
+
+#### Get Single Supplier
+```typescript
+// GET /get-supplier?id=uuid
+const response = await fetch(`${API_BASE}/get-supplier?id=uuid`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { supplier details } }
+```
+
+---
+
+### Lead Capture API Endpoints (No Auth Required)
+
+#### Subscribe to Newsletter
+```typescript
+// POST /subscribe-newsletter
+const response = await fetch(`${API_BASE}/subscribe-newsletter`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    name: 'John Doe' // optional
+  })
+});
+
+// Response: { success: true, message: 'Subscribed successfully' }
+```
+
+#### Submit Sample Request
+```typescript
+// POST /submit-sample-request
+const response = await fetch(`${API_BASE}/submit-sample-request`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'John Doe',
+    email: 'buyer@example.com',
+    company: 'Fashion Brand Inc',
+    product_interest: 't-shirts'
+  })
+});
+
+// Response: { success: true, message: 'Sample request submitted' }
+```
+
+---
+
+### Authenticated API Endpoints (JWT Required)
+
+#### Get User Profile
+```typescript
+// GET /get-user-profile
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/get-user-profile`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { user profile } }
+```
+
+#### Get User Quotes
+```typescript
+// GET /get-user-quotes
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/get-user-quotes`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...quotes] }
+```
+
+#### Get User Orders
+```typescript
+// GET /get-user-orders
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/get-user-orders`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...orders] }
+```
+
+#### Get Order Tracking (LoopTrace)
+```typescript
+// GET /get-order-tracking?order_id=uuid
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/get-order-tracking?order_id=uuid`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: { order, production_stages, qc_checks, timeline } }
+```
+
+---
+
+### Order Management Endpoints (JWT Required)
+
+#### Create Order
+```typescript
+// POST /create-order
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/create-order`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    product_type: 't-shirts',
+    quantity: 500,
+    specifications: { color: 'black', size: 'M' },
+    target_date: '2025-03-01',
+    special_requirements: 'Custom label'
+  })
+});
+
+// Response: { success: true, data: { order }, message: 'Order created successfully' }
+```
+
+#### Update Order Status
+```typescript
+// POST /update-order-status
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/update-order-status`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    order_id: 'uuid',
+    status: 'in_production',
+    notes: 'Production started'
+  })
+});
+
+// Response: { success: true, data: { updated order } }
+```
+
+#### Get Production Stages
+```typescript
+// GET /get-production-stages?order_id=uuid
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/get-production-stages?order_id=uuid`, {
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+// Response: { success: true, data: [...production_stages] }
+```
+
+#### Update Production Stage
+```typescript
+// POST /update-production-stage
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/update-production-stage`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    stage_id: 'uuid',
+    completion_percentage: 75,
+    notes: 'Progress update',
+    photos: ['url1', 'url2']
+  })
+});
+
+// Response: { success: true, data: { updated stage } }
+```
+
+---
+
+## 💳 Payment Processing Endpoints
+
+### Create Payment Intent
+```typescript
+// POST /create-payment-intent
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/create-payment-intent`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    amount: 1500.00,
+    currency: 'usd',
+    order_id: 'uuid',
+    customer_email: 'buyer@example.com'
+  })
+});
+
+// Response: { success: true, data: { client_secret: 'pi_xxx', payment_intent_id: 'pi_xxx' } }
+```
+
+### Process Payment
+```typescript
+// POST /process-payment
+// Headers: { Authorization: Bearer <JWT> }
+const response = await fetch(`${API_BASE}/process-payment`, {
+  method: 'POST',
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${userToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    payment_intent_id: 'pi_xxx',
+    order_id: 'uuid'
+  })
+});
+
+// Response: { success: true, data: { payment_status: 'succeeded', amount_received: 1500.00 } }
+```
+
+### Handle Webhooks
+```typescript
+// POST /handle-webhooks
+// Public endpoint for Stripe webhook events
+// Configure in Stripe Dashboard: https://dashboard.stripe.com/webhooks
+// Webhook URL: https://eqpftggctumujhutomom.supabase.co/functions/v1/handle-webhooks
+
+// Handled events:
+// - payment_intent.succeeded
+// - payment_intent.payment_failed
+// - payment_intent.canceled
+
+// Stripe will send webhook with signature header
+```
+
+---
+
+## 🔧 Environment Variables for Next.js
+
+Add these to your Next.js `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://eqpftggctumujhutomom.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcGZ0Z2djdHVtdWpodXRvbW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNjc5NzAsImV4cCI6MjA3ODc0Mzk3MH0.7KkuzAPJlU7PR6lOIKi_zZi31oUhWk_MGUzYhxGYehw
+```
+
+---
+
+## 🚀 Integration Example (Next.js)
+
+```typescript
+// lib/api.ts
+const API_BASE = process.env.NEXT_PUBLIC_SUPABASE_URL + '/functions/v1';
+const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+export async function getProducts(category?: string) {
+  const url = new URL(`${API_BASE}/get-products`);
+  if (category) url.searchParams.set('category', category);
+  
+  const res = await fetch(url.toString(), {
+    headers: {
+      'apikey': ANON_KEY,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  return res.json();
+}
+
+export async function getUserOrders(token: string) {
+  const res = await fetch(`${API_BASE}/get-user-orders`, {
+    headers: {
+      'apikey': ANON_KEY,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  return res.json();
 }
 ```
 
-2. Build and test:
-```bash
-npm run build
-node test-crawlability.js
-```
+---
 
-### Add Product Pages
+## 📊 Complete API Reference
 
-Follow the pattern in `app/products/t-shirts/page.tsx`:
-- Include product schema
-- Add breadcrumb navigation
-- Provide detailed specifications
-- Include pricing information
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/get-products` | GET | No | List all products |
+| `/get-product` | GET | No | Get single product |
+| `/get-blog-posts` | GET | No | List blog posts |
+| `/get-blog-post` | GET | No | Get single blog post |
+| `/get-certifications` | GET | No | List certifications |
+| `/get-company-info` | GET | No | Get company details |
+| `/get-marketplace-products` | GET | No | List marketplace products |
+| `/get-marketplace-product` | GET | No | Get single marketplace product |
+| `/get-suppliers` | GET | No | List suppliers |
+| `/get-supplier` | GET | No | Get single supplier |
+| `/subscribe-newsletter` | POST | No | Newsletter signup |
+| `/submit-sample-request` | POST | No | Sample pack request |
+| `/get-user-profile` | GET | Yes | Get user profile |
+| `/get-user-quotes` | GET | Yes | Get user quotes |
+| `/get-user-orders` | GET | Yes | Get user orders |
+| `/get-order-tracking` | GET | Yes | Track order production |
+| `/create-order` | POST | Yes | Create new order |
+| `/update-order-status` | POST | Yes | Update order status |
+| `/get-production-stages` | GET | Yes | Get production stages |
+| `/update-production-stage` | POST | Yes | Update production stage |
+| `/create-payment-intent` | POST | Yes | Create Stripe payment intent |
+| `/process-payment` | POST | Yes | Process payment |
+| `/handle-webhooks` | POST | No | Stripe webhook handler |
 
 ---
 
-## ✅ Quality Assurance
+## 🔐 Authentication Flow
 
-### All Pages Pass:
-- ✅ HTML content present (30KB+ per page)
-- ✅ Meta tags implemented
-- ✅ Open Graph tags present
-- ✅ JSON-LD structured data
-- ✅ Semantic HTML structure
-- ✅ Mobile responsive
-- ✅ Fast loading (<2s)
-
-### Browser Compatibility
-- ✅ Chrome/Edge (modern)
-- ✅ Firefox (modern)
-- ✅ Safari (iOS + macOS)
-- ✅ Mobile browsers
+1. User signs up/logs in via Supabase Auth in Next.js frontend
+2. Get JWT token from `supabase.auth.getSession()`
+3. Pass token in `Authorization: Bearer <token>` header
+4. Backend validates JWT and returns user-specific data
 
 ---
 
-## 📞 Support & Contact
+## ⚠️ Important Notes
 
-**Company:** Sleek Apparels Limited  
-**Location:** Dhaka, Bangladesh  
-**Website:** https://sleekapparels.com (when deployed)  
+**TypeScript Errors:** You will see TypeScript errors for Edge Functions in the Lovable build output. These are **expected** and **do not affect deployment**. Edge Functions use Deno runtime, and TypeScript cannot find Deno type definitions during build. The functions will work perfectly when deployed.
 
-**Technical Documentation:**
-- [SSR Audit Report](./SSR_AUDIT_REPORT.md) - Complete technical audit
-- [Next.js Docs](https://nextjs.org/docs) - Framework documentation
-- [TailwindCSS Docs](https://tailwindcss.com/docs) - Styling reference
-
----
-
-## 🎉 Achievements
-
-- ✅ **9 Routes Implemented** - All key pages complete
-- ✅ **100% SSR Coverage** - No JavaScript dependencies
-- ✅ **43KB+ HTML Per Page** - Rich, detailed content
-- ✅ **Full SEO Optimization** - Meta tags, schema, OG tags
-- ✅ **Automated Testing** - Crawlability verification script
-- ✅ **Production Ready** - Ready for immediate deployment
-
----
-
-## 🚧 Future Enhancements
-
-### Phase 2 (Optional)
-- [ ] Add more product detail pages (hoodies, activewear, knitwear)
-- [ ] Implement actual blog articles (currently placeholders)
-- [ ] Add image optimization with real product photos
-- [ ] Set up contact form backend (currently static HTML)
-- [ ] Add customer testimonials section
-- [ ] Implement multi-language support (English + Chinese)
-
-### Phase 3 (Advanced)
-- [ ] Add CMS integration (Sanity, Contentful)
-- [ ] Implement real-time chat widget
-- [ ] Add product configurator tool
-- [ ] Build quote calculator
-- [ ] Add factory virtual tour (video/360°)
-
----
-
-## 📄 License
-
-Copyright © 2025 Sleek Apparels Limited. All rights reserved.
-
----
-
-## 🎯 Quick Commands
-
-```bash
-# Development
-npm run dev           # Start development server
-npm run build         # Build for production
-npm run lint          # Check code quality
-
-# Testing
-node test-crawlability.js    # Test SSR compliance
-
-# Deployment
-npx wrangler pages deploy out --project-name sleekapparels
+**Build Script:** Add this to your `package.json` scripts section manually:
+```json
+{
+  "scripts": {
+    "build:dev": "vite build --mode development"
+  }
+}
 ```
 
 ---
 
-**Last Updated:** 2025-11-24  
-**Version:** 1.0.0  
-**Status:** 🟢 Production Ready
+## 📞 Support
+
+This backend API serves the external Next.js frontend at Sleek Apparels Limited.
+
+**Backend Status:** ✅ All 23 Edge Functions Deployed

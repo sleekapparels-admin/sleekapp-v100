@@ -1,1 +1,79 @@
 project_id = "eqpftggctumujhutomom"
+
+# Public API endpoints (no JWT required)
+[functions.get-products]
+verify_jwt = false
+
+[functions.get-product]
+verify_jwt = false
+
+[functions.get-blog-posts]
+verify_jwt = false
+
+[functions.get-blog-post]
+verify_jwt = false
+
+[functions.get-certifications]
+verify_jwt = false
+
+[functions.get-company-info]
+verify_jwt = false
+
+[functions.subscribe-newsletter]
+verify_jwt = false
+
+[functions.submit-sample-request]
+verify_jwt = false
+
+[functions.submit-contact-form]
+verify_jwt = false
+
+[functions.submit-quote-request]
+verify_jwt = false
+
+[functions.get-marketplace-products]
+verify_jwt = false
+
+[functions.get-marketplace-product]
+verify_jwt = false
+
+[functions.get-suppliers]
+verify_jwt = false
+
+[functions.get-supplier]
+verify_jwt = false
+
+# Authenticated API endpoints (JWT required)
+[functions.get-user-profile]
+verify_jwt = true
+
+[functions.get-user-quotes]
+verify_jwt = true
+
+[functions.get-user-orders]
+verify_jwt = true
+
+[functions.get-order-tracking]
+verify_jwt = true
+
+[functions.create-order]
+verify_jwt = true
+
+[functions.update-order-status]
+verify_jwt = true
+
+[functions.get-production-stages]
+verify_jwt = true
+
+[functions.update-production-stage]
+verify_jwt = true
+
+# Payment processing endpoints
+[functions.create-payment-intent]
+verify_jwt = true
+
+[functions.process-payment]
+verify_jwt = true
+
+[functions.handle-webhooks]
+verify_jwt = false
