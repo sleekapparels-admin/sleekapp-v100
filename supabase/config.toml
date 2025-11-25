@@ -1,1 +1,7 @@
 project_id = "eqpftggctumujhutomom"
+
+[functions.submit-contact-form]
+verify_jwt = false
+
+[functions.submit-quote-request]
+verify_jwt = false
