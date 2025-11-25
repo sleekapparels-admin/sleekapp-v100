@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Modern Warm Sustainable Color Scheme */
+    /* Primary: Deep Forest Green #2D5C4E */
+    --primary: 158 35% 27%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 158 35% 37%;
+    --primary-dark: 158 35% 20%;
+
+    /* Secondary: Warm Terracotta #C9846D */
+    --secondary: 18 47% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent: Soft Sage #B5C4A3 */
+    --accent: 90 23% 70%;
+    --accent-foreground: 0 0% 17%;
+
+    /* Coral kept for compatibility */
+    --coral: 18 47% 60%;
+    --coral-foreground: 0 0% 100%;
+
+    /* Neutrals */
+    --background: 30 25% 96%; /* Warm off-white/cream #F9F7F4 */
+    --foreground: 0 0% 17%; /* Deep charcoal #2C2C2C */
+    
+    --card: 0 0% 100%; /* Pure White */
+    --card-foreground: 0 0% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 17%;
+
+    /* Muted: Soft warm gray */
+    --muted: 30 15% 92%;
+    --muted-foreground: 0 0% 40%;
+
+    /* Borders & Inputs */
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 158 35% 27%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --radius: 0.75rem;
+
+    /* Chart colors */
+    --chart-1: 158 35% 27%;
+    --chart-2: 18 47% 60%;
+    --chart-3: 90 23% 70%;
+    --chart-4: 158 35% 40%;
+    --chart-5: 18 47% 50%;
+
+    /* Gradients */
+    --gradient-subtle: linear-gradient(180deg, hsl(30 25% 96%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(158 35% 27%), hsl(158 35% 20%));
+    --gradient-warm: linear-gradient(135deg, hsl(18 47% 60%), hsl(18 47% 70%));
+    --gradient-craft: linear-gradient(180deg, hsl(158 35% 27% / 0.05), hsl(158 35% 27% / 0.02));
+
+    /* Shadows - Soft and subtle */
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+    --shadow-button-hover: 0 6px 20px rgba(45, 92, 78, 0.15);
+    --shadow-glow: 0 0 40px hsl(158 35% 27% / 0.15);
+  }
+
+  .dark {
+    /* Dark mode - maintaining warmth */
+    --primary: 158 35% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 158 35% 50%;
+    --primary-dark: 158 35% 30%;
+
+    --secondary: 18 47% 65%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 90 23% 60%;
+    --accent-foreground: 0 0% 10%;
+
+    --coral: 18 47% 65%;
+    --coral-foreground: 0 0% 100%;
+
+    --background: 0 0% 12%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 95%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 158 35% 40%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --chart-1: 158 35% 40%;
+    --chart-2: 18 47% 65%;
+    --chart-3: 90 23% 60%;
+    --chart-4: 158 35% 50%;
+    --chart-5: 18 47% 55%;
+
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 15%), hsl(0 0% 12%));
+    --gradient-hero: linear-gradient(135deg, hsl(158 35% 27%), hsl(158 35% 35%));
+    --gradient-warm: linear-gradient(135deg, hsl(18 47% 60%), hsl(18 47% 70%));
+    --gradient-craft: linear-gradient(180deg, hsl(158 35% 40% / 0.08), hsl(158 35% 40% / 0.03));
+
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.6);
+    --shadow-button-hover: 0 6px 20px rgba(45, 92, 78, 0.3);
+    --shadow-glow: 0 0 40px hsl(158 35% 40% / 0.25);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* Fix deprecated H1UserAgentFontSizeInSection warning */
+  h1 {
+    font-size: revert-layer;
+  }
+}
+
+/* Performance optimizations to reduce forced reflows */
+@layer utilities {
+  /* Hint browser to optimize animations - apply to motion elements */
+  [data-radix-scroll-area-viewport],
+  [data-state] {
+    will-change: auto;
+  }
+
+  /* Optimize GPU-accelerated transforms */
+  .transform-gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  /* Batch layout reads */
+  img,
+  video {
+    content-visibility: auto;
+  }
+}
+
+/* CRITICAL FIX: Force NavigationMenu to have transparent background and inherit text color */
+/* This prevents Radix UI from applying popover styles after initial render */
+[data-radix-navigation-menu-viewport] {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Force navigation menu triggers to be transparent and inherit text color */
+button[data-radix-collection-item] {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Ensure dropdown chevron icons inherit text color */
+button[data-radix-collection-item] svg {
+  color: inherit !important;
+}

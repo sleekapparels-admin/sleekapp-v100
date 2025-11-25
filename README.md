@@ -1,552 +1,361 @@
-# Sleek Apparels Backend API
+# Sleek Apparels - Loop Trace Web Application
 
-**Backend-Only Supabase Edge Functions API**
+## 🎯 Project Overview
 
-🎯 **Status:** ✅ Backend-Only Project (No Frontend)  
-🔌 **Purpose:** API Endpoints for External Next.js Frontend  
-⚡ **Functions:** 23 Edge Functions Deployed  
+Sleek Apparels is a comprehensive knitwear manufacturing and supply chain management platform featuring AI-powered production tracking (LoopTrace™ Technology) and intelligent quote generation.
 
----
-
-## 🎉 Project Overview
-
-This is a **backend-only project** that provides Supabase Edge Functions as API endpoints for the external Next.js frontend. This Lovable project only contains the `/supabase` folder with Edge Functions - no frontend code.
+**Project URL**: https://lovable.dev/projects/ef7f6ef1-09a5-4126-a41c-4351a354e52f
 
 ---
 
-## ⚠️ IMPORTANT SETUP INSTRUCTIONS
+## ✨ Key Features
 
-### Required: Add Build Script to package.json
+### 🔄 **LoopTrace™ Production Tracking** (NEW!)
+Real-time production visibility across 8 manufacturing stages:
 
-**You MUST manually add this script to your `package.json` file for Lovable to build correctly:**
+1. **Order Confirmation** - Initial order processing
+2. **Fabric Sourcing** - Material procurement tracking
+3. **Accessories Procurement** - Component sourcing
+4. **Cutting & Pattern Making** - Pre-production setup
+5. **Sewing & Assembly** - Main production phase
+6. **Quality Control** - Inspection and validation
+7. **Finishing & Packaging** - Final touches
+8. **Shipment & Delivery** - Logistics tracking
 
-```json
-{
-  "scripts": {
-    "build:dev": "vite build --mode development"
-  }
-}
-```
+**Features:**
+- ✅ Real-time stage updates with completion percentage
+- ✅ AI-powered predictive delay alerts
+- ✅ Multi-supplier coordination panel
+- ✅ Automated status notifications
+- ✅ Production analytics dashboard
+- ✅ Photo documentation at each stage
+- ✅ Direct messaging with suppliers
 
-### TypeScript Errors (Expected & Safe to Ignore)
-
-**All TypeScript errors in edge function files are EXPECTED and will NOT affect deployment:**
-- Edge functions use Deno runtime with Deno-specific imports (`https://deno.land/...`)
-- These Deno types are not available during Vite build process
-- Functions will work perfectly when deployed to Supabase
-- Build errors related to `supabase/functions/*.ts` can be safely ignored
-
----
-
-## 🔌 API Base URL
-
-```
-https://eqpftggctumujhutomom.supabase.co/functions/v1/
-```
-
-## 🔑 Required Headers
-
-```typescript
-{
-  'apikey': NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer <JWT_TOKEN>' // For authenticated endpoints only
-}
-```
+**Access:** `/production-tracking`
 
 ---
 
-## 📋 API Endpoints
+### 🤖 **AI Quote Generator**
+Intelligent pricing system with:
+- Real-time market research integration (coming soon)
+- OTP verification for security
+- Historical quote comparison
+- Alternative material suggestions
+- Automated lead capture
 
-### Public API Endpoints (No Auth Required)
-
-#### Get Products
-```typescript
-// GET /get-products?category=t-shirts&search=cotton&featured=true&limit=20
-const response = await fetch(`${API_BASE}/get-products?category=t-shirts`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: [...products] }
-```
-
-#### Get Single Product
-```typescript
-// GET /get-product?id=uuid or ?slug=product-slug
-const response = await fetch(`${API_BASE}/get-product?slug=classic-crew-neck-tee`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: { id, title, description, price, ... } }
-```
-
-#### Get Blog Posts
-```typescript
-// GET /get-blog-posts?category=guides&limit=10
-const response = await fetch(`${API_BASE}/get-blog-posts?category=guides`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: [...posts] }
-```
-
-#### Get Single Blog Post
-```typescript
-// GET /get-blog-post?slug=post-slug
-const response = await fetch(`${API_BASE}/get-blog-post?slug=low-moq-guide`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: { id, title, content, ... } }
-```
-
-#### Get Certifications
-```typescript
-// GET /get-certifications
-const response = await fetch(`${API_BASE}/get-certifications`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: [...certifications] }
-```
-
-#### Get Company Info
-```typescript
-// GET /get-company-info
-const response = await fetch(`${API_BASE}/get-company-info`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: { company details } }
-```
-
-#### Get Marketplace Products
-```typescript
-// GET /get-marketplace-products?category=activewear&supplier_id=uuid&min_price=10&max_price=50
-const response = await fetch(`${API_BASE}/get-marketplace-products?category=activewear`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: [...marketplace_products] }
-```
-
-#### Get Single Marketplace Product
-```typescript
-// GET /get-marketplace-product?id=uuid
-const response = await fetch(`${API_BASE}/get-marketplace-product?id=uuid`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: { marketplace product details } }
-```
-
-#### Get Suppliers
-```typescript
-// GET /get-suppliers?specialization=knitwear&min_capacity=1000
-const response = await fetch(`${API_BASE}/get-suppliers`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: [...suppliers] }
-```
-
-#### Get Single Supplier
-```typescript
-// GET /get-supplier?id=uuid
-const response = await fetch(`${API_BASE}/get-supplier?id=uuid`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: { supplier details } }
-```
+**Access:** `/quote-generator`
 
 ---
 
-### Lead Capture API Endpoints (No Auth Required)
-
-#### Subscribe to Newsletter
-```typescript
-// POST /subscribe-newsletter
-const response = await fetch(`${API_BASE}/subscribe-newsletter`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    email: 'user@example.com',
-    name: 'John Doe' // optional
-  })
-});
-
-// Response: { success: true, message: 'Subscribed successfully' }
-```
-
-#### Submit Sample Request
-```typescript
-// POST /submit-sample-request
-const response = await fetch(`${API_BASE}/submit-sample-request`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    name: 'John Doe',
-    email: 'buyer@example.com',
-    company: 'Fashion Brand Inc',
-    product_interest: 't-shirts'
-  })
-});
-
-// Response: { success: true, message: 'Sample request submitted' }
-```
+### 👥 **Role-Based Access Control**
+- **Buyers**: View their orders and track production
+- **Suppliers**: Update production stages and communicate
+- **Admin/Staff**: Full oversight and management capabilities
 
 ---
 
-### Authenticated API Endpoints (JWT Required)
+## 🛠️ Technologies Used
 
-#### Get User Profile
-```typescript
-// GET /get-user-profile
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/get-user-profile`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  }
-});
+### Frontend
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **shadcn/ui** - Component library
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animations
+- **React Query** - Data fetching
 
-// Response: { success: true, data: { user profile } }
+### Backend
+- **Supabase** - Backend as a Service
+  - PostgreSQL database
+  - Real-time subscriptions
+  - Edge Functions (Lovable AI)
+  - Authentication & Authorization
+  - Storage
+
+### Key Libraries
+- `date-fns` - Date manipulation
+- `react-router-dom` - Routing
+- `zod` - Schema validation
+- `lucide-react` - Icons
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ & npm
+- Supabase account (for backend)
+- Lovable account (for deployment)
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone <YOUR_GIT_URL>
+
+# Navigate to project directory
+cd sleek-apparels
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+# Create .env.local with:
+# VITE_SUPABASE_URL=your_supabase_url
+# VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Start development server
+npm run dev
 ```
 
-#### Get User Quotes
-```typescript
-// GET /get-user-quotes
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/get-user-quotes`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  }
-});
+The app will run at `http://localhost:5173`
 
-// Response: { success: true, data: [...quotes] }
-```
+---
 
-#### Get User Orders
-```typescript
-// GET /get-user-orders
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/get-user-orders`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  }
-});
+## 📊 Database Schema
 
-// Response: { success: true, data: [...orders] }
-```
+### Production Tracking Tables
 
-#### Get Order Tracking (LoopTrace)
-```typescript
-// GET /get-order-tracking?order_id=uuid
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/get-order-tracking?order_id=uuid`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  }
-});
+**`production_stages`**
+- `id` - UUID primary key
+- `supplier_order_id` - Foreign key to supplier_orders
+- `stage_number` - Integer (1-8)
+- `stage_name` - Stage description
+- `status` - pending | in_progress | completed | delayed
+- `started_at` - Timestamp
+- `completed_at` - Timestamp
+- `target_date` - Expected completion
+- `completion_percentage` - Progress tracking
+- `notes` - Stage notes
+- `photos` - Array of photo URLs
+- `updated_by` - User ID
 
-// Response: { success: true, data: { order, production_stages, qc_checks, timeline } }
+**`order_messages`**
+- Real-time communication between buyers and suppliers
+- Message history and audit trail
+
+**`supplier_orders`**
+- Main order tracking
+- Links to production stages
+- Supplier assignment
+
+---
+
+## 🎨 Key Components
+
+### Production Tracking Components
+Located in `/src/components/production/`:
+
+1. **ProductionStageTimeline.tsx**
+   - Visual timeline of all stages
+   - Progress indicators
+   - Date tracking
+
+2. **ProductionStageCard.tsx**
+   - Individual stage management
+   - Progress updates
+   - Photo uploads
+   - Notes and documentation
+
+3. **PredictiveDelayAlert.tsx**
+   - AI-powered delay detection
+   - Risk level assessment
+   - Proactive recommendations
+
+4. **SupplierCoordinationPanel.tsx**
+   - Real-time messaging
+   - Supplier information
+   - Communication history
+
+5. **ProductionAnalytics.tsx**
+   - Overall progress metrics
+   - Performance analytics
+   - Quality insights
+   - Estimated completion dates
+
+---
+
+## 🔐 Authentication & Roles
+
+### User Roles
+1. **Buyer** - Customers placing orders
+2. **Supplier** - Manufacturing partners
+3. **Admin** - Platform administrators
+4. **Staff** - Operations team
+
+### Permissions
+- Buyers: View own orders, track production, message suppliers
+- Suppliers: Update stages, upload photos, communicate
+- Admin/Staff: Full access, analytics, user management
+
+---
+
+## 📱 Pages & Routes
+
+### Public Pages
+- `/` - Homepage
+- `/products` - Product catalog
+- `/services` - Services overview
+- `/quote-generator` - AI quote tool
+- `/looptrace-technology` - Technology overview
+- `/contact` - Contact form
+
+### Authenticated Pages
+- `/production-tracking` - **NEW!** Real-time tracking
+- `/dashboard` - User dashboard
+- `/orders` - Order management
+- `/orders/:orderId` - Order details
+- `/quote-history` - Past quotes
+
+### Admin Pages
+- `/admin` - Admin dashboard
+- `/admin/orders` - Order management
+- `/admin/analytics` - Business analytics
+- `/admin/supplier-orders` - Supplier coordination
+- `/admin/quotes` - Quote management
+
+---
+
+## 🚢 Deployment
+
+### Using Lovable (Recommended)
+
+1. Visit [Lovable Project](https://lovable.dev/projects/ef7f6ef1-09a5-4126-a41c-4351a354e52f)
+2. Click **Share → Publish**
+3. Your app will be deployed automatically
+
+### Manual Deployment
+
+```bash
+# Build for production
+npm run build
+
+# Deploy to Vercel, Netlify, or other platforms
+# Make sure to set environment variables:
+# - VITE_SUPABASE_URL
+# - VITE_SUPABASE_ANON_KEY
 ```
 
 ---
 
-### Order Management Endpoints (JWT Required)
+## 🔄 Recent Updates
 
-#### Create Order
-```typescript
-// POST /create-order
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/create-order`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    product_type: 't-shirts',
-    quantity: 500,
-    specifications: { color: 'black', size: 'M' },
-    target_date: '2025-03-01',
-    special_requirements: 'Custom label'
-  })
-});
+### v1.1.0 - Production Tracking System (Latest)
+**Date:** November 17, 2025
 
-// Response: { success: true, data: { order }, message: 'Order created successfully' }
-```
+**Added:**
+- ✅ Complete LoopTrace™ production tracking system
+- ✅ 8-stage production workflow
+- ✅ Real-time status updates
+- ✅ AI predictive delay alerts
+- ✅ Supplier coordination panel
+- ✅ Production analytics dashboard
+- ✅ Multi-role access control
+- ✅ Direct messaging system
+- ✅ Photo documentation capability
+- ✅ Progress tracking with percentages
 
-#### Update Order Status
-```typescript
-// POST /update-order-status
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/update-order-status`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    order_id: 'uuid',
-    status: 'in_production',
-    notes: 'Production started'
-  })
-});
+**Enhanced:**
+- Navigation menu with Production Tracking link
+- Role-based UI rendering
+- Real-time subscriptions for live updates
+- Mobile-responsive design
 
-// Response: { success: true, data: { updated order } }
-```
-
-#### Get Production Stages
-```typescript
-// GET /get-production-stages?order_id=uuid
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/get-production-stages?order_id=uuid`, {
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  }
-});
-
-// Response: { success: true, data: [...production_stages] }
-```
-
-#### Update Production Stage
-```typescript
-// POST /update-production-stage
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/update-production-stage`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    stage_id: 'uuid',
-    completion_percentage: 75,
-    notes: 'Progress update',
-    photos: ['url1', 'url2']
-  })
-});
-
-// Response: { success: true, data: { updated stage } }
-```
+**Technical:**
+- Created 5 new production components
+- Added route `/production-tracking`
+- Integrated with existing database schema
+- Real-time Supabase subscriptions
 
 ---
 
-## 💳 Payment Processing Endpoints
+## 📈 Future Enhancements
 
-### Create Payment Intent
-```typescript
-// POST /create-payment-intent
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/create-payment-intent`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    amount: 1500.00,
-    currency: 'usd',
-    order_id: 'uuid',
-    customer_email: 'buyer@example.com'
-  })
-});
+### Planned Features
 
-// Response: { success: true, data: { client_secret: 'pi_xxx', payment_intent_id: 'pi_xxx' } }
-```
+#### 1. Enhanced AI Quote Generator
+- [ ] Real-time web research for market pricing
+- [ ] Integration with industry databases
+- [ ] Competitive analysis
+- [ ] Material cost predictions
 
-### Process Payment
-```typescript
-// POST /process-payment
-// Headers: { Authorization: Bearer <JWT> }
-const response = await fetch(`${API_BASE}/process-payment`, {
-  method: 'POST',
-  headers: {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${userToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    payment_intent_id: 'pi_xxx',
-    order_id: 'uuid'
-  })
-});
+#### 2. Advanced Production Features
+- [ ] IoT sensor integration
+- [ ] Barcode/QR code scanning
+- [ ] Automated photo capture
+- [ ] Machine learning quality predictions
 
-// Response: { success: true, data: { payment_status: 'succeeded', amount_received: 1500.00 } }
-```
+#### 3. Analytics & Reporting
+- [ ] Predictive analytics for production times
+- [ ] Supplier performance scoring
+- [ ] Cost optimization recommendations
+- [ ] Export capabilities (PDF, Excel)
 
-### Handle Webhooks
-```typescript
-// POST /handle-webhooks
-// Public endpoint for Stripe webhook events
-// Configure in Stripe Dashboard: https://dashboard.stripe.com/webhooks
-// Webhook URL: https://eqpftggctumujhutomom.supabase.co/functions/v1/handle-webhooks
-
-// Handled events:
-// - payment_intent.succeeded
-// - payment_intent.payment_failed
-// - payment_intent.canceled
-
-// Stripe will send webhook with signature header
-```
+#### 4. Mobile App
+- [ ] React Native mobile application
+- [ ] Push notifications
+- [ ] Offline mode
+- [ ] Photo capture integration
 
 ---
 
-## 🔧 Environment Variables for Next.js
+## 🐛 Known Issues
 
-Add these to your Next.js `.env.local`:
+### Production Tracking
+- Photo upload feature requires Supabase storage configuration
+- Real-time notifications need additional setup in Supabase
+- Some delay predictions may need calibration based on historical data
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://eqpftggctumujhutomom.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcGZ0Z2djdHVtdWpodXRvbW9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNjc5NzAsImV4cCI6MjA3ODc0Mzk3MH0.7KkuzAPJlU7PR6lOIKi_zZi31oUhWk_MGUzYhxGYehw
-```
-
----
-
-## 🚀 Integration Example (Next.js)
-
-```typescript
-// lib/api.ts
-const API_BASE = process.env.NEXT_PUBLIC_SUPABASE_URL + '/functions/v1';
-const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-export async function getProducts(category?: string) {
-  const url = new URL(`${API_BASE}/get-products`);
-  if (category) url.searchParams.set('category', category);
-  
-  const res = await fetch(url.toString(), {
-    headers: {
-      'apikey': ANON_KEY,
-      'Content-Type': 'application/json'
-    }
-  });
-  
-  return res.json();
-}
-
-export async function getUserOrders(token: string) {
-  const res = await fetch(`${API_BASE}/get-user-orders`, {
-    headers: {
-      'apikey': ANON_KEY,
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
-  
-  return res.json();
-}
-```
+### General
+- Edge functions require Lovable backend deployment
+- OTP system needs email/SMS service configuration
 
 ---
 
-## 📊 Complete API Reference
+## 🤝 Contributing
 
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/get-products` | GET | No | List all products |
-| `/get-product` | GET | No | Get single product |
-| `/get-blog-posts` | GET | No | List blog posts |
-| `/get-blog-post` | GET | No | Get single blog post |
-| `/get-certifications` | GET | No | List certifications |
-| `/get-company-info` | GET | No | Get company details |
-| `/get-marketplace-products` | GET | No | List marketplace products |
-| `/get-marketplace-product` | GET | No | Get single marketplace product |
-| `/get-suppliers` | GET | No | List suppliers |
-| `/get-supplier` | GET | No | Get single supplier |
-| `/subscribe-newsletter` | POST | No | Newsletter signup |
-| `/submit-sample-request` | POST | No | Sample pack request |
-| `/get-user-profile` | GET | Yes | Get user profile |
-| `/get-user-quotes` | GET | Yes | Get user quotes |
-| `/get-user-orders` | GET | Yes | Get user orders |
-| `/get-order-tracking` | GET | Yes | Track order production |
-| `/create-order` | POST | Yes | Create new order |
-| `/update-order-status` | POST | Yes | Update order status |
-| `/get-production-stages` | GET | Yes | Get production stages |
-| `/update-production-stage` | POST | Yes | Update production stage |
-| `/create-payment-intent` | POST | Yes | Create Stripe payment intent |
-| `/process-payment` | POST | Yes | Process payment |
-| `/handle-webhooks` | POST | No | Stripe webhook handler |
+### Development Workflow
+
+1. Create feature branch from `main`
+2. Make changes and test locally
+3. Commit with descriptive messages
+4. Push to Lovable (auto-syncs to GitHub)
+5. Deploy via Lovable dashboard
+
+### Code Standards
+- TypeScript for type safety
+- ESLint for code quality
+- Prettier for formatting
+- Follow existing component patterns
 
 ---
 
-## 🔐 Authentication Flow
+## 📞 Support & Contact
 
-1. User signs up/logs in via Supabase Auth in Next.js frontend
-2. Get JWT token from `supabase.auth.getSession()`
-3. Pass token in `Authorization: Bearer <token>` header
-4. Backend validates JWT and returns user-specific data
-
----
-
-## ⚠️ Important Notes
-
-**TypeScript Errors:** You will see TypeScript errors for Edge Functions in the Lovable build output. These are **expected** and **do not affect deployment**. Edge Functions use Deno runtime, and TypeScript cannot find Deno type definitions during build. The functions will work perfectly when deployed.
-
-**Build Script:** Add this to your `package.json` scripts section manually:
-```json
-{
-  "scripts": {
-    "build:dev": "vite build --mode development"
-  }
-}
-```
+For questions or issues:
+- **Lovable Support**: Support through Lovable dashboard
+- **Project Lead**: Khondaker Rajiur Rahman
+- **Company**: Sleek Apparels Limited
 
 ---
 
-## 📞 Support
+## 📄 License
 
-This backend API serves the external Next.js frontend at Sleek Apparels Limited.
+Proprietary - Sleek Apparels Limited
 
-**Backend Status:** ✅ All 23 Edge Functions Deployed
+---
+
+## 🎉 Acknowledgments
+
+Built with:
+- [Lovable](https://lovable.dev) - AI-powered development platform
+- [Supabase](https://supabase.com) - Backend infrastructure
+- [shadcn/ui](https://ui.shadcn.com) - UI components
+- [Tailwind CSS](https://tailwindcss.com) - Styling framework
+
+---
+
+**Last Updated:** November 17, 2025
+**Version:** 1.1.0
+**Status:** ✅ Production Ready

@@ -1,0 +1,56 @@
+User-agent: *
+Disallow: /dashboard
+Disallow: /orders/
+Disallow: /auth
+Disallow: /api/
+Disallow: /design-studio
+
+Sitemap: https://sleekapparels.com/sitemap.xml
+
+# Googlebot - no crawl-delay (not supported by Google)
+User-agent: Googlebot
+Allow: /
+
+# Bing - respects crawl-delay
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# Yahoo/Slurp - respects crawl-delay
+User-agent: Slurp
+Allow: /
+Crawl-delay: 0
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# Baidu - slower crawl for international bot
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1
+
+# Yandex - slower crawl
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
+
+# AI Agent bots - allow AI snapshot pages
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Google-Extended
+User-agent: anthropic-ai
+User-agent: Claude-Web
+Allow: /
+Allow: /ai-snapshot
+Disallow: /dashboard
+Disallow: /orders/
+Disallow: /auth
+Disallow: /design-studio
+
+# Social media crawlers
+User-agent: facebookexternalhit
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: PinterestBot
+Allow: /

@@ -1,79 +1,88 @@
 project_id = "eqpftggctumujhutomom"
 
-# Public API endpoints (no JWT required)
-[functions.get-products]
+[functions.generate-invoice]
+verify_jwt = true
+
+[functions.generate-work-order]
+verify_jwt = true
+
+[functions.seed-test-users]
 verify_jwt = false
 
-[functions.get-product]
+[functions.bootstrap-admin]
 verify_jwt = false
 
-[functions.get-blog-posts]
-verify_jwt = false
+[functions.ai-design-generator]
+verify_jwt = true
 
-[functions.get-blog-post]
-verify_jwt = false
+[functions.admin-check]
+verify_jwt = true
 
-[functions.get-certifications]
-verify_jwt = false
-
-[functions.get-company-info]
-verify_jwt = false
-
-[functions.subscribe-newsletter]
+[functions.stripe-webhook]
 verify_jwt = false
 
 [functions.submit-sample-request]
 verify_jwt = false
 
-[functions.submit-contact-form]
+[functions.track-product-interaction]
 verify_jwt = false
 
-[functions.submit-quote-request]
+[functions.wishlist-add]
+verify_jwt = true
+
+[functions.wishlist-remove]
+verify_jwt = true
+
+[functions.wishlist-get]
+verify_jwt = true
+
+[functions.wishlist-check]
+verify_jwt = true
+
+[functions.resend-webhook]
 verify_jwt = false
 
-[functions.get-marketplace-products]
+[functions.auto-confirm-supplier]
 verify_jwt = false
 
-[functions.get-marketplace-product]
-verify_jwt = false
-
-[functions.get-suppliers]
-verify_jwt = false
-
-[functions.get-supplier]
-verify_jwt = false
-
-# Authenticated API endpoints (JWT required)
-[functions.get-user-profile]
+[functions.initialize-production-stages]
 verify_jwt = true
 
-[functions.get-user-quotes]
+[functions.ai-supplier-assignment]
 verify_jwt = true
 
-[functions.get-user-orders]
+[functions.predict-quality-risks]
 verify_jwt = true
 
-[functions.get-order-tracking]
+[functions.send-notification-email]
 verify_jwt = true
 
-[functions.create-order]
+[functions.execute-automation-rules]
 verify_jwt = true
 
-[functions.update-order-status]
+[functions.generate-product-description]
 verify_jwt = true
 
-[functions.get-production-stages]
+[functions.ai-blog-assistant]
 verify_jwt = true
 
-[functions.update-production-stage]
-verify_jwt = true
-
-# Payment processing endpoints
 [functions.create-payment-intent]
 verify_jwt = true
 
-[functions.process-payment]
+[functions.predict-delivery-timeline]
 verify_jwt = true
 
-[functions.handle-webhooks]
+[functions.log-audit-action]
+verify_jwt = true
+
+[functions.create-database-backup]
+verify_jwt = true
+
+[functions.submit-blog-comment]
+verify_jwt = false
+
+[functions.ai-market-research]
+verify_jwt = false
+
+[functions.ai-conversational-quote]
 verify_jwt = false
