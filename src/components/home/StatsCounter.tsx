@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { TrendingUp, Users, Globe, Package } from "lucide-react";
 
 interface CounterProps {
@@ -9,40 +10,32 @@ interface CounterProps {
 }
 
 const Counter = ({ end, duration = 2000, suffix = "", prefix = "" }: CounterProps) => {
-  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, {
+    damping: 50,
+    stiffness: 100,
+  });
+  const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    let startTime: number;
-    let animationFrame: number;
+    if (isInView) {
+      motionValue.set(end);
+    }
+  }, [isInView, motionValue, end]);
 
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const progress = Math.min((currentTime - startTime) / duration, 1);
-      
-      // Easing function for smooth animation
-      const easeOutQuad = (t: number) => t * (2 - t);
-      const currentCount = Math.floor(easeOutQuad(progress) * end);
-      
-      setCount(currentCount);
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrame = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-    };
-  }, [end, duration]);
+  useEffect(() => {
+    const unsubscribe = springValue.on("change", (latest) => {
+      setDisplayValue(Math.floor(latest));
+    });
+    return unsubscribe;
+  }, [springValue]);
 
   return (
-    <span>
+    <span ref={ref}>
       {prefix}
-      {count.toLocaleString()}
+      {displayValue.toLocaleString()}
       {suffix}
     </span>
   );
@@ -50,69 +43,99 @@ const Counter = ({ end, duration = 2000, suffix = "", prefix = "" }: CounterProp
 
 export const StatsCounter = () => {
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+    <section className="py-16 bg-gradient-to-b from-background to-muted/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Trusted by Brands Worldwide
           </h2>
           <p className="text-lg text-muted-foreground">
             Real numbers from real partnerships
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Stat 1: Products Delivered */}
-          <div className="text-center group hover:scale-105 transition-transform duration-300">
+          {/* Stat 1: Active Orders */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-center group hover:scale-105 transition-transform duration-300"
+          >
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4 group-hover:bg-primary/20 transition-colors">
               <Package className="h-8 w-8 text-primary" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold mb-2">
-              <Counter end={10000} suffix="+" />
+            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+              <Counter end={500} suffix="+" />
             </div>
             <div className="text-sm md:text-base text-muted-foreground font-medium">
-              Products Delivered
+              Active Orders
             </div>
-          </div>
+          </motion.div>
 
-          {/* Stat 2: Brands Served */}
-          <div className="text-center group hover:scale-105 transition-transform duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-4 group-hover:bg-accent/20 transition-colors">
-              <Users className="h-8 w-8 text-accent" />
+          {/* Stat 2: Partner Factories */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-center group hover:scale-105 transition-transform duration-300"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/10 mb-4 group-hover:bg-secondary/20 transition-colors">
+              <Users className="h-8 w-8 text-secondary" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold mb-2">
+            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-secondary to-coral bg-clip-text text-transparent">
               <Counter end={50} suffix="+" />
             </div>
             <div className="text-sm md:text-base text-muted-foreground font-medium">
-              Brands Worldwide
+              Partner Factories
             </div>
-          </div>
+          </motion.div>
 
-          {/* Stat 3: Countries Served */}
-          <div className="text-center group hover:scale-105 transition-transform duration-300">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4 group-hover:bg-blue-500/20 transition-colors">
-              <Globe className="h-8 w-8 text-blue-500" />
+          {/* Stat 3: Products Shipped */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-center group hover:scale-105 transition-transform duration-300"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-4 group-hover:bg-accent/20 transition-colors">
+              <Globe className="h-8 w-8 text-accent" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold mb-2">
-              <Counter end={15} suffix="+" />
+            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+              <Counter end={5000} suffix="+" />
             </div>
             <div className="text-sm md:text-base text-muted-foreground font-medium">
-              Countries Served
+              Products Shipped Monthly
             </div>
-          </div>
+          </motion.div>
 
-          {/* Stat 4: On-Time Delivery */}
-          <div className="text-center group hover:scale-105 transition-transform duration-300">
+          {/* Stat 4: Quality Score */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center group hover:scale-105 transition-transform duration-300"
+          >
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 mb-4 group-hover:bg-green-500/20 transition-colors">
               <TrendingUp className="h-8 w-8 text-green-500" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold mb-2">
-              <Counter end={98.5} suffix="%" />
+            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent">
+              <Counter end={98} suffix="%" />
             </div>
             <div className="text-sm md:text-base text-muted-foreground font-medium">
-              On-Time Delivery
+              Quality Score
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Additional Context */}
