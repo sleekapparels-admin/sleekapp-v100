@@ -14,6 +14,30 @@ This is a **backend-only project** that provides Supabase Edge Functions as API 
 
 ---
 
+## ⚠️ IMPORTANT SETUP INSTRUCTIONS
+
+### Required: Add Build Script to package.json
+
+**You MUST manually add this script to your `package.json` file for Lovable to build correctly:**
+
+```json
+{
+  "scripts": {
+    "build:dev": "vite build --mode development"
+  }
+}
+```
+
+### TypeScript Errors (Expected & Safe to Ignore)
+
+**All TypeScript errors in edge function files are EXPECTED and will NOT affect deployment:**
+- Edge functions use Deno runtime with Deno-specific imports (`https://deno.land/...`)
+- These Deno types are not available during Vite build process
+- Functions will work perfectly when deployed to Supabase
+- Build errors related to `supabase/functions/*.ts` can be safely ignored
+
+---
+
 ## 🔌 API Base URL
 
 ```
