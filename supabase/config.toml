@@ -67,3 +67,13 @@ verify_jwt = true
 
 [functions.update-production-stage]
 verify_jwt = true
+
+# Payment processing endpoints
+[functions.create-payment-intent]
+verify_jwt = true
+
+[functions.process-payment]
+verify_jwt = true
+
+[functions.handle-webhooks]
+verify_jwt = false
