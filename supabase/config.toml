@@ -31,6 +31,18 @@ verify_jwt = false
 [functions.submit-quote-request]
 verify_jwt = false
 
+[functions.get-marketplace-products]
+verify_jwt = false
+
+[functions.get-marketplace-product]
+verify_jwt = false
+
+[functions.get-suppliers]
+verify_jwt = false
+
+[functions.get-supplier]
+verify_jwt = false
+
 # Authenticated API endpoints (JWT required)
 [functions.get-user-profile]
 verify_jwt = true
@@ -42,4 +54,16 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.get-order-tracking]
+verify_jwt = true
+
+[functions.create-order]
+verify_jwt = true
+
+[functions.update-order-status]
+verify_jwt = true
+
+[functions.get-production-stages]
+verify_jwt = true
+
+[functions.update-production-stage]
 verify_jwt = true
