@@ -132,6 +132,7 @@ export type Database = {
           estimated_delivery_days: number
           fabric_type: string | null
           id: string
+          ip_address: string | null
           lead_notes: string | null
           lead_status: string | null
           market_research_id: string | null
@@ -169,6 +170,7 @@ export type Database = {
           estimated_delivery_days: number
           fabric_type?: string | null
           id?: string
+          ip_address?: string | null
           lead_notes?: string | null
           lead_status?: string | null
           market_research_id?: string | null
@@ -206,6 +208,7 @@ export type Database = {
           estimated_delivery_days?: number
           fabric_type?: string | null
           id?: string
+          ip_address?: string | null
           lead_notes?: string | null
           lead_status?: string | null
           market_research_id?: string | null
@@ -548,6 +551,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "capacity_utilization_logs_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1144,6 +1154,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "factory_capacity_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       industry_knowledge: {
@@ -1365,6 +1382,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1801,6 +1825,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       otp_rate_limits: {
@@ -2110,6 +2141,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "production_batches_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
             referencedColumns: ["id"]
           },
         ]
@@ -2866,6 +2904,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "supplier_capabilities_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       supplier_certifications: {
@@ -2910,6 +2955,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "supplier_certifications_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       supplier_media: {
@@ -2946,6 +2998,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_media_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
             referencedColumns: ["id"]
           },
         ]
@@ -3048,6 +3107,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "supplier_mou_terms_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: true
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       supplier_orders: {
@@ -3141,6 +3207,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "supplier_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       supplier_payables: {
@@ -3198,6 +3271,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "supplier_payables_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       supplier_performance: {
@@ -3246,6 +3326,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_performance_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
             referencedColumns: ["id"]
           },
           {
@@ -3324,6 +3411,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "supplier_quotes_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       supplier_ratings: {
@@ -3382,6 +3476,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_ratings_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
             referencedColumns: ["id"]
           },
         ]
@@ -3675,6 +3776,13 @@ export type Database = {
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "work_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -3694,6 +3802,63 @@ export type Database = {
           unique_sessions: number | null
           view_details_count: number | null
           wishlist_count: number | null
+        }
+        Relationships: []
+      }
+      suppliers_public: {
+        Row: {
+          about: string | null
+          address: string | null
+          company_name: string | null
+          created_at: string | null
+          factory_location: string | null
+          id: string | null
+          lead_time_days: number | null
+          moq_maximum: number | null
+          moq_minimum: number | null
+          specializations: string[] | null
+          tier: Database["public"]["Enums"]["supplier_tier"] | null
+          updated_at: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url: string | null
+        }
+        Insert: {
+          about?: string | null
+          address?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          factory_location?: string | null
+          id?: string | null
+          lead_time_days?: number | null
+          moq_maximum?: number | null
+          moq_minimum?: number | null
+          specializations?: string[] | null
+          tier?: Database["public"]["Enums"]["supplier_tier"] | null
+          updated_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url?: string | null
+        }
+        Update: {
+          about?: string | null
+          address?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          factory_location?: string | null
+          id?: string | null
+          lead_time_days?: number | null
+          moq_maximum?: number | null
+          moq_minimum?: number | null
+          specializations?: string[] | null
+          tier?: Database["public"]["Enums"]["supplier_tier"] | null
+          updated_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          website_url?: string | null
         }
         Relationships: []
       }
