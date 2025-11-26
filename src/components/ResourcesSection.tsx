@@ -1,22 +1,37 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FileText, BarChart3 } from "lucide-react";
+import { ResourceDownloadModal } from "./ResourceDownloadModal";
 
 export const ResourcesSection = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedResource, setSelectedResource] = useState<{
+    type: 'buyers_guide' | 'material_chart';
+    title: string;
+  } | null>(null);
+
   const resources = [
     {
       icon: FileText,
       title: "Custom Apparel Buyer's Guide",
       description: "Everything you need to know about manufacturing custom t-shirts, hoodies, and more. 25-page comprehensive guide.",
-      buttonText: "Download Free Guide"
+      buttonText: "Download Free Guide",
+      type: 'buyers_guide' as const,
     },
     {
       icon: BarChart3,
       title: "Material Comparison Chart",
       description: "Compare cotton, poly-cotton, French terry, fleece and more. Make informed decisions about your fabrics.",
-      buttonText: "Get the Chart"
+      buttonText: "Get the Chart",
+      type: 'material_chart' as const,
     }
   ];
+
+  const handleDownloadClick = (type: 'buyers_guide' | 'material_chart', title: string) => {
+    setSelectedResource({ type, title });
+    setModalOpen(true);
+  };
 
   return (
     <section className="py-section-mobile md:py-section bg-background">
@@ -47,7 +62,10 @@ export const ResourcesSection = () => {
                 </p>
                 
                 <div className="text-center">
-                  <Button size="lg">
+                  <Button 
+                    size="lg"
+                    onClick={() => handleDownloadClick(resource.type, resource.title)}
+                  >
                     {resource.buttonText}
                   </Button>
                 </div>
@@ -56,6 +74,15 @@ export const ResourcesSection = () => {
           })}
         </div>
       </div>
+
+      {selectedResource && (
+        <ResourceDownloadModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          resourceType={selectedResource.type}
+          resourceTitle={selectedResource.title}
+        />
+      )}
     </section>
   );
 };

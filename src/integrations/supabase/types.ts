@@ -2624,6 +2624,48 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_downloads: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          email: string
+          email_sent: boolean | null
+          email_sent_at: string | null
+          full_name: string | null
+          id: string
+          ip_address: string | null
+          resource_type: string
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          email: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: string | null
+          resource_type: string
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          email?: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: string | null
+          resource_type?: string
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       sample_requests: {
         Row: {
           approved_at: string | null
