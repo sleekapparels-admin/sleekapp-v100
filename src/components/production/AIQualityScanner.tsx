@@ -180,11 +180,10 @@ export const AIQualityScanner = () => {
                   <span className="font-mono font-bold">{analysisResult.score}/100</span>
                 </div>
                 <Progress value={analysisResult.score} className={`h-3 ${
-                  analysisResult.score > 90 ? "bg-green-100" : "bg-yellow-100"
-                }`} indicatorClassName={
-                  analysisResult.score > 90 ? "bg-green-500" :
-                  analysisResult.score > 80 ? "bg-yellow-500" : "bg-red-500"
-                } />
+                  analysisResult.score > 90 ? "bg-green-100 [&>div]:bg-green-500" : 
+                  analysisResult.score > 80 ? "bg-yellow-100 [&>div]:bg-yellow-500" : 
+                  "bg-red-100 [&>div]:bg-red-500"
+                }`} />
               </div>
 
               {analysisResult.defects.length > 0 ? (
