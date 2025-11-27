@@ -11,6 +11,8 @@ export interface AIQuoteRequest {
   quantity: number;
   complexityLevel?: 'simple' | 'medium' | 'complex';
   fabricType?: string;
+  gsm?: string;
+  printType?: string;
   additionalRequirements?: string;
   customerEmail: string;
   customerName?: string;
@@ -88,6 +90,10 @@ function getLocalPricingEstimate(request: AIQuoteRequest) {
   const complexity = request.complexityLevel || 'medium';
   const fabric = request.fabricType || 'cotton';
   const customizations = parseCustomizations(request.additionalRequirements || '');
+
+  if (request.printType && request.printType !== 'none') {
+    customizations.push(request.printType);
+  }
 
   const pricingFactors = calculatePricing({
     productType: request.productType,
