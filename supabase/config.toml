@@ -6,9 +6,6 @@ verify_jwt = false
 [functions.generate-invoice]
 verify_jwt = true
 
-[functions.generate-work-order]
-verify_jwt = true
-
 [functions.bootstrap-admin]
 verify_jwt = false
 
