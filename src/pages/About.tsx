@@ -242,6 +242,59 @@ const About = () => {
         </div>
       </section>
 
+      {/* Built on Real Foundations */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="order-2 md:order-1">
+              <div className="rounded-xl overflow-hidden shadow-2xl border border-border">
+                <img
+                  src="/sleek-factory-exterior.png"
+                  alt="Sleek Apparels Factory Exterior - Uttara, Dhaka"
+                  className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+                <span className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" /> Uttara, Dhaka
+                </span>
+                <span>Established 2024</span>
+              </div>
+            </div>
+            <div className="order-1 md:order-2 space-y-6">
+              <Badge variant="outline" className="mb-2">Our Infrastructure</Badge>
+              <h2 className="text-3xl font-bold">Built on Real Foundations</h2>
+              <p className="text-lg text-muted-foreground">
+                We're not just a digital platform—we are a physical manufacturing hub. Located in Uttara, Dhaka, our facility combines traditional craftsmanship with modern production management.
+              </p>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="h-6 w-6 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-foreground">Central Location</strong>
+                    <span className="text-muted-foreground">Strategically positioned near Dhaka's international airport for efficient logistics and client visits.</span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="h-6 w-6 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-foreground">Direct Oversight</strong>
+                    <span className="text-muted-foreground">Our in-house team manages every stage of production on-site, ensuring the quality we promise is the quality you receive.</span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="h-6 w-6 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-foreground">Open Door Policy</strong>
+                    <span className="text-muted-foreground">We welcome buyers to visit our facility. Radical transparency means you can always see where and how your products are made.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Why Choose Us */}
       <section className="py-20 px-4 bg-gradient-to-b from-background to-secondary/10">
         <div className="max-w-4xl mx-auto text-center">

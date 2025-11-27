@@ -32,7 +32,9 @@ import { PredictiveDelayAlert } from "@/components/production/PredictiveDelayAle
 import { SupplierCoordinationPanel } from "@/components/production/SupplierCoordinationPanel";
 import { ProductionAnalytics } from "@/components/production/ProductionAnalytics";
 import { ConnectionStatusIndicator } from "@/components/production/ConnectionStatusIndicator";
+import { AIQualityScanner } from "@/components/production/AIQualityScanner";
 import type { Database } from "@/integrations/supabase/types";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 // Production stages for RMG manufacturing
 const PRODUCTION_STAGES = [
@@ -290,18 +292,34 @@ const ProductionTracking = () => {
         <div className="pt-20 pb-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <Activity className="h-8 w-8 text-primary" />
-                <h1 className="text-3xl font-bold">Production Tracking</h1>
-                <Badge variant="secondary" className="ml-2">
-                  LoopTrace™ Technology
-                </Badge>
-                <ConnectionStatusIndicator className="ml-auto" />
+            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Activity className="h-8 w-8 text-primary" />
+                  <h1 className="text-3xl font-bold">Production Tracking</h1>
+                  <Badge variant="secondary" className="ml-2">
+                    LoopTrace™ Technology
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground">
+                  Real-time visibility into your manufacturing pipeline
+                </p>
               </div>
-              <p className="text-muted-foreground">
-                Real-time visibility into your manufacturing pipeline
-              </p>
+
+              <div className="flex items-center gap-4">
+                <ConnectionStatusIndicator />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      <Camera className="h-4 w-4" />
+                      AI Quality Scan
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <AIQualityScanner />
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
 
             {/* Stats Overview */}
