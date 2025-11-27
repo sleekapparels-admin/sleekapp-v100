@@ -110,6 +110,7 @@ const TechPackServices = lazy(() => import("./pages/TechPackServices"));
 const ForStartups = lazy(() => import("./pages/ForStartups"));
 const InnovationShowcase = lazy(() => import("./pages/InnovationShowcase"));
 const AdvancedFeatures = lazy(() => import("./pages/AdvancedFeatures"));
+const AIVisualShowcase = lazy(() => import("./pages/AIVisualShowcase"));
 // AdminSetup page removed (security hardening)
 // AdminBootstrap page removed (used once, now deleted for security)
 import QuoteHistory from "./pages/QuoteHistory";
@@ -195,6 +196,7 @@ const router = createBrowserRouter([
       { path: "/get-started", element: <GetStarted /> },
       { path: "/instant-quote", element: <InstantQuote /> },
       { path: "/ai-quote-generator", element: <AIQuoteGenerator /> },
+      { path: "/ai-visual-showcase", element: <AIVisualShowcase /> },
       
       // Route aliases for SEO/legacy URLs (prevent 404s)
       { path: "/sign-in", element: <Navigate to="/auth" replace /> },
