@@ -71,3 +71,9 @@ verify_jwt = false
 
 [functions.ai-conversational-quote]
 verify_jwt = false
+
+[functions.log-security-event]
+verify_jwt = true
+
+[functions.log-ai-cost]
+verify_jwt = true

@@ -5,12 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle, TrendingUp, Clock, CheckCircle2, Zap } from "lucide-react";
-import { differenceInDays } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { AlertTriangle, TrendingUp, Clock, CheckCircle2, Zap } from "lucide-react";
 import { differenceInDays, format, addDays } from "date-fns";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface ProductionStage {
