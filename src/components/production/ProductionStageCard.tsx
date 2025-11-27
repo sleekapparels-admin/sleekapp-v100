@@ -18,7 +18,9 @@ import {
   Save,
   X,
   Upload,
-  LucideIcon
+  LucideIcon,
+  ImageIcon,
+  FileText
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -281,9 +283,48 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
               )}
             </div>
 
+            {/* Photo Evidence Section (LoopTrace™) */}
+            <div className="border-t pt-3 mt-3">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-sm flex items-center gap-2">
+                  <Camera className="h-4 w-4 text-muted-foreground" />
+                  Photo Evidence
+                </Label>
+                {canEdit && isEditing && (
+                  <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => {
+                     toast({
+                       title: "Storage Configuration Required",
+                       description: "Photo uploads require the 'production-evidence' bucket to be configured in Supabase.",
+                       variant: "default"
+                     });
+                  }}>
+                    <Upload className="h-3 w-3 mr-1" />
+                    Add Photo
+                  </Button>
+                )}
+              </div>
+
+              {data.photos && data.photos.length > 0 ? (
+                <div className="grid grid-cols-4 gap-2">
+                  {data.photos.map((photo, index) => (
+                    <a href={photo} target="_blank" rel="noopener noreferrer" key={index} className="block aspect-square rounded-md overflow-hidden border bg-muted hover:opacity-90 transition-opacity">
+                      <img src={photo} alt={`Stage evidence ${index + 1}`} className="w-full h-full object-cover" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-muted/50 border border-dashed rounded-lg p-3 text-center">
+                  <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                    <ImageIcon className="h-3 w-3" />
+                    No photos uploaded yet
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Notes Section */}
             {isEditing ? (
-              <div className="space-y-3">
+              <div className="space-y-3 pt-2">
                 <div>
                   <Label>Completion Percentage</Label>
                   <Input
@@ -317,35 +358,49 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
             ) : (
               <>
                 {data.notes && (
-                  <div className="bg-muted p-3 rounded-lg">
+                  <div className="bg-muted p-3 rounded-lg mt-2">
                     <p className="text-sm text-muted-foreground mb-1">Notes</p>
                     <p className="text-sm">{data.notes}</p>
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                {canEdit && data.status !== 'completed' && (
-                  <div className="flex gap-2 pt-2">
-                    <Button 
+                <div className="flex gap-2 pt-2 flex-wrap">
+                   <Button
                       variant="outline" 
                       size="sm"
-                      onClick={() => setIsEditing(true)}
+                      onClick={() => {
+                        window.print();
+                      }}
+                      title="Download Stage Report"
                     >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Update Progress
+                      <FileText className="h-4 w-4 mr-2" />
+                      Report
                     </Button>
-                    {data.status === 'in_progress' && (
+
+                  {canEdit && data.status !== 'completed' && (
+                    <>
                       <Button 
+                        variant="outline"
                         size="sm"
-                        onClick={handleCompleteStage}
-                        disabled={saving}
+                        onClick={() => setIsEditing(true)}
                       >
-                        <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Mark Complete
+                        <Edit className="h-4 w-4 mr-2" />
+                        Update Progress
                       </Button>
-                    )}
-                  </div>
-                )}
+                      {data.status === 'in_progress' && (
+                        <Button
+                          size="sm"
+                          onClick={handleCompleteStage}
+                          disabled={saving}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Mark Complete
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
