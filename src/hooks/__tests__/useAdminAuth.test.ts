@@ -4,9 +4,12 @@ import { useAdminAuth } from '../useAdminAuth';
 import { mockSupabase, resetMocks } from '@/test/mocks/supabase';
 
 // Mock Supabase client
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: mockSupabase,
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const { mockSupabase } = await import('@/test/mocks/supabase');
+  return {
+    supabase: mockSupabase,
+  };
+});
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -94,8 +97,8 @@ describe('useAdminAuth Hook', () => {
     });
 
     it('handles admin check errors gracefully', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
       mockSupabase.auth.getSession.mockResolvedValue({
         data: {
           session: {
@@ -153,8 +156,8 @@ describe('useAdminAuth Hook', () => {
     });
 
     it('handles network errors during admin check', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
       mockSupabase.auth.getSession.mockResolvedValue({
         data: {
           session: {
@@ -281,7 +284,7 @@ describe('useAdminAuth Hook', () => {
       });
 
       mockSupabase.functions.invoke.mockImplementation(
-        () => new Promise(resolve => 
+        () => new Promise(resolve =>
           setTimeout(() => resolve({ data: { isAdmin: true }, error: null }), 100)
         )
       );

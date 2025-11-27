@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import removeConsole from "vite-plugin-remove-console";
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
-import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+// import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -44,13 +44,13 @@ export default defineConfig(({ mode }) => ({
         );
       }
     },
-    // Image optimization
-    ViteImageOptimizer({
-      test: /\.(jpe?g|png|gif|webp|svg)$/i,
-      includePublic: true,
-      cache: true,
-      cacheLocation: '.cache/image-optimizer',
-    }),
+    // Image optimization - Temporarily disabled due to build issues
+    // ViteImageOptimizer({
+    //   test: /\.(jpe?g|png|gif|webp|svg)$/i,
+    //   includePublic: true,
+    //   cache: true,
+    //   cacheLocation: '.cache/image-optimizer',
+    // }),
     // Compression for production builds
     mode === "production" && viteCompression({
       algorithm: 'gzip',
@@ -111,17 +111,17 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('node_modules/scheduler')) {
             return 'react-core';
           }
-          
+
           // Router - Critical for navigation
           if (id.includes('react-router-dom') || id.includes('react-router')) {
             return 'router';
           }
-          
+
           // React Query - Essential state management
           if (id.includes('@tanstack/react-query')) {
             return 'query';
           }
-          
+
           // Supabase - Backend critical, split by usage
           if (id.includes('@supabase/auth')) {
             return 'supabase-auth';
@@ -129,23 +129,23 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('@supabase')) {
             return 'supabase-client';
           }
-          
+
           // Heavy Libraries - Lazy loaded
           // Framer Motion - Animation library (lazy)
           if (id.includes('framer-motion')) {
             return 'animation';
           }
-          
+
           // Charts - Admin only (lazy)
           if (id.includes('recharts')) {
             return 'charts';
           }
-          
+
           // PDF Generation - On-demand (lazy)
           if (id.includes('jspdf')) {
             return 'pdf-lib';
           }
-          
+
           // UI Components - Group by frequency of use
           // Dialog/Modal - Used frequently
           if (id.includes('@radix-ui/react-dialog') || id.includes('@radix-ui/react-alert-dialog')) {
@@ -159,27 +159,27 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('@radix-ui')) {
             return 'ui-base';
           }
-          
+
           // Form libraries - Heavy, used on specific pages
           if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) {
             return 'forms';
           }
-          
+
           // Icons - Separate for tree-shaking
           if (id.includes('lucide-react')) {
             return 'icons';
           }
-          
+
           // Date utilities - Used in specific features
           if (id.includes('date-fns')) {
             return 'date-utils';
           }
-          
+
           // Stripe - Payment specific (lazy)
           if (id.includes('@stripe')) {
             return 'payment';
           }
-          
+
           // All other node_modules - Generic vendor
           if (id.includes('node_modules')) {
             return 'vendor';

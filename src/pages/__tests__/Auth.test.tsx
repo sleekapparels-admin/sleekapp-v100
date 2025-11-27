@@ -5,9 +5,12 @@ import Auth from '../Auth';
 import { mockSupabase, resetMocks } from '@/test/mocks/supabase';
 
 // Mock Supabase client
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: mockSupabase,
-}));
+vi.mock('@/integrations/supabase/client', async () => {
+  const { mockSupabase } = await import('@/test/mocks/supabase');
+  return {
+    supabase: mockSupabase,
+  };
+});
 
 // Mock sonner toast
 vi.mock('sonner', () => ({
@@ -36,7 +39,7 @@ describe('Auth Component', () => {
   describe('Login Flow', () => {
     it('renders login form by default', () => {
       render(<Auth />);
-      
+
       expect(screen.getByText(/Welcome Back/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
@@ -51,7 +54,7 @@ describe('Auth Component', () => {
       });
 
       render(<Auth />);
-      
+
       await user.type(screen.getByLabelText(/Email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
       await user.click(screen.getByRole('button', { name: /Sign In/i }));
@@ -68,14 +71,14 @@ describe('Auth Component', () => {
     it('displays error for invalid credentials', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.auth.signInWithPassword.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: 'Invalid login credentials' },
       });
 
       render(<Auth />);
-      
+
       await user.type(screen.getByLabelText(/Email/i), 'wrong@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'wrongpass');
       await user.click(screen.getByRole('button', { name: /Sign In/i }));
@@ -90,7 +93,7 @@ describe('Auth Component', () => {
       const { toast } = await import('sonner');
 
       render(<Auth />);
-      
+
       await user.click(screen.getByRole('button', { name: /Sign In/i }));
 
       await waitFor(() => {
@@ -101,13 +104,13 @@ describe('Auth Component', () => {
     it('handles network errors gracefully', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.auth.signInWithPassword.mockRejectedValue(
         new Error('Network error')
       );
 
       render(<Auth />);
-      
+
       await user.type(screen.getByLabelText(/Email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
       await user.click(screen.getByRole('button', { name: /Sign In/i }));
@@ -122,7 +125,7 @@ describe('Auth Component', () => {
     beforeEach(async () => {
       const user = userEvent.setup();
       render(<Auth />);
-      
+
       const signupTab = screen.getByRole('tab', { name: /Sign Up/i });
       await user.click(signupTab);
     });
@@ -137,7 +140,7 @@ describe('Auth Component', () => {
 
     it('validates password requirements', async () => {
       const user = userEvent.setup();
-      
+
       const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(passwordInput, 'weak');
 
@@ -157,11 +160,11 @@ describe('Auth Component', () => {
       await user.type(screen.getByLabelText(/Email/i), 'john@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
       await user.type(screen.getByLabelText(/Company Name/i), 'Acme Inc');
-      
+
       // Select role
       await user.click(screen.getByRole('combobox'));
       await user.click(screen.getByText(/Retailer/i));
-      
+
       await user.click(screen.getByRole('button', { name: /Create Account/i }));
 
       await waitFor(() => {
@@ -173,7 +176,7 @@ describe('Auth Component', () => {
     it('handles duplicate email error', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.auth.signUp.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: 'User already registered' },
@@ -184,7 +187,7 @@ describe('Auth Component', () => {
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
       await user.click(screen.getByRole('combobox'));
       await user.click(screen.getByText(/Retailer/i));
-      
+
       await user.click(screen.getByRole('button', { name: /Create Account/i }));
 
       await waitFor(() => {
@@ -199,7 +202,7 @@ describe('Auth Component', () => {
       await user.type(screen.getByLabelText(/Full Name/i), 'John Doe');
       await user.type(screen.getByLabelText(/Email/i), 'invalid-email');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
-      
+
       await user.click(screen.getByRole('button', { name: /Create Account/i }));
 
       await waitFor(() => {
@@ -210,9 +213,9 @@ describe('Auth Component', () => {
     it('enforces maximum field lengths', async () => {
       const user = userEvent.setup();
       const longString = 'a'.repeat(300);
-      
+
       await user.type(screen.getByLabelText(/Email/i), longString);
-      
+
       const emailInput = screen.getByLabelText(/Email/i) as HTMLInputElement;
       expect(emailInput.value.length).toBeLessThanOrEqual(255);
     });
@@ -227,7 +230,7 @@ describe('Auth Component', () => {
       });
 
       render(<Auth />);
-      
+
       const googleButton = screen.getByRole('button', { name: /Continue with Google/i });
       await user.click(googleButton);
 
@@ -244,14 +247,14 @@ describe('Auth Component', () => {
     it('handles OAuth errors', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.auth.signInWithOAuth.mockResolvedValue({
         data: { url: null },
         error: { message: 'OAuth provider error' },
       });
 
       render(<Auth />);
-      
+
       await user.click(screen.getByRole('button', { name: /Continue with Google/i }));
 
       await waitFor(() => {
@@ -264,7 +267,7 @@ describe('Auth Component', () => {
     beforeEach(async () => {
       const user = userEvent.setup();
       render(<Auth />);
-      
+
       const signupTab = screen.getByRole('tab', { name: /Sign Up/i });
       await user.click(signupTab);
     });
@@ -272,7 +275,7 @@ describe('Auth Component', () => {
     it('sends OTP to phone number', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.functions.invoke.mockResolvedValue({
         data: { success: true, expiresAt: new Date().toISOString() },
         error: null,
@@ -280,7 +283,7 @@ describe('Auth Component', () => {
 
       const phoneInput = screen.getByPlaceholderText(/\+1234567890/i);
       await user.type(phoneInput, '+1234567890');
-      
+
       const verifyButton = screen.getByRole('button', { name: /Send Code/i });
       await user.click(verifyButton);
 
@@ -309,7 +312,7 @@ describe('Auth Component', () => {
     it('verifies OTP code', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       // First send OTP
       mockSupabase.functions.invoke.mockResolvedValue({
         data: { success: true, expiresAt: new Date().toISOString() },
@@ -346,7 +349,7 @@ describe('Auth Component', () => {
     it('handles invalid OTP code', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       // Send OTP first
       mockSupabase.functions.invoke.mockResolvedValueOnce({
         data: { success: true, expiresAt: new Date().toISOString() },
@@ -378,14 +381,14 @@ describe('Auth Component', () => {
     it('handles rate limiting errors', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.auth.signInWithPassword.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: 'Too many requests', status: 429 },
       });
 
       render(<Auth />);
-      
+
       await user.type(screen.getByLabelText(/Email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
       await user.click(screen.getByRole('button', { name: /Sign In/i }));
@@ -402,10 +405,10 @@ describe('Auth Component', () => {
       );
 
       render(<Auth />);
-      
+
       await user.type(screen.getByLabelText(/Email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
-      
+
       const submitButton = screen.getByRole('button', { name: /Sign In/i });
       await user.click(submitButton);
       await user.click(submitButton);
@@ -418,16 +421,16 @@ describe('Auth Component', () => {
       const { toast } = await import('sonner');
 
       render(<Auth />);
-      
+
       // Trigger login error
       await user.click(screen.getByRole('button', { name: /Sign In/i }));
-      
+
       // Switch to signup tab
       await user.click(screen.getByRole('tab', { name: /Sign Up/i }));
-      
+
       // Switch back to login tab
       await user.click(screen.getByRole('tab', { name: /Login/i }));
-      
+
       // Form should be clear
       const emailInput = screen.getByLabelText(/Email/i) as HTMLInputElement;
       expect(emailInput.value).toBe('');
@@ -436,14 +439,14 @@ describe('Auth Component', () => {
     it('handles session timeout gracefully', async () => {
       const user = userEvent.setup();
       const { toast } = await import('sonner');
-      
+
       mockSupabase.auth.signInWithPassword.mockResolvedValue({
         data: { user: null, session: null },
         error: { message: 'Session expired' },
       });
 
       render(<Auth />);
-      
+
       await user.type(screen.getByLabelText(/Email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/Password/i), 'Password123');
       await user.click(screen.getByRole('button', { name: /Sign In/i }));

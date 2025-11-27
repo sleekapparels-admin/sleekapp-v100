@@ -29,8 +29,8 @@ export default function AIVisualShowcase() {
   const [activeSection, setActiveSection] = useState<'all' | 'painpoint' | 'moq' | 'timeline' | 'suppliers'>('all');
 
   const handlePainPointSelect = (painPointId: string) => {
-    setSelectedPainPoints(prev => 
-      prev.includes(painPointId) 
+    setSelectedPainPoints(prev =>
+      prev.includes(painPointId)
         ? prev.filter(id => id !== painPointId)
         : [...prev, painPointId]
     );
@@ -38,7 +38,7 @@ export default function AIVisualShowcase() {
 
   return (
     <>
-      <SEO 
+      <SEO
         config={{
           title: "AI & Visual Enhancement Showcase | Sleek Apparels",
           description: "Experience our new pain point-focused visual components and AI assistant designed to address buyer concerns transparently.",
@@ -57,13 +57,13 @@ export default function AIVisualShowcase() {
                 <Sparkles className="h-4 w-4 mr-2 inline" />
                 New AI & Visual Enhancements
               </Badge>
-              
+
               <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-purple-600 to-accent bg-clip-text text-transparent">
                 Pain Point-Solving Through Visual Transparency
               </h1>
-              
+
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Experience our revolutionary approach to addressing buyer concerns with 
+                Experience our revolutionary approach to addressing buyer concerns with
                 visual infographics, transparent supplier profiles, and AI-powered guidance.
               </p>
 
@@ -91,7 +91,7 @@ export default function AIVisualShowcase() {
 
         {/* Components Showcase */}
         <div className="container mx-auto px-4 py-16 space-y-20">
-          
+
           {/* Pain Point Selector Section */}
           {(activeSection === 'all' || activeSection === 'painpoint') && (
             <section id="painpoint-selector" className="space-y-8">
@@ -101,7 +101,7 @@ export default function AIVisualShowcase() {
                 </Badge>
                 <h2 className="text-4xl font-bold">Identify Buyer Concerns Upfront</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Visual card-based interface that helps buyers express their primary concerns, 
+                  Visual card-based interface that helps buyers express their primary concerns,
                   allowing the platform to tailor the experience to address their specific pain points.
                 </p>
                 <div className="flex gap-2 justify-center text-sm">
@@ -139,8 +139,8 @@ export default function AIVisualShowcase() {
                 </Badge>
                 <h2 className="text-4xl font-bold">Visualize Capital Savings</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Interactive bar chart comparison showing the dramatic difference between 
-                  Sleek's 50-piece MOQ and traditional 1000-piece minimums. Addresses the #1 
+                  Interactive bar chart comparison showing the dramatic difference between
+                  Sleek's 50-piece MOQ and traditional 1000-piece minimums. Addresses the #1
                   startup pain point: high capital risk.
                 </p>
                 <div className="flex gap-2 justify-center text-sm">
@@ -167,8 +167,8 @@ export default function AIVisualShowcase() {
                 </Badge>
                 <h2 className="text-4xl font-bold">Demonstrate Speed Advantage</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Gantt-style timeline visualization showing stage-by-stage comparison of 
-                  Sleek's 10-20 day production vs. traditional 45-90 day timelines. 
+                  Gantt-style timeline visualization showing stage-by-stage comparison of
+                  Sleek's 10-20 day production vs. traditional 45-90 day timelines.
                   Includes LoopTrace™ checkpoint indicators.
                 </p>
                 <div className="flex gap-2 justify-center text-sm">
@@ -191,8 +191,8 @@ export default function AIVisualShowcase() {
                 </Badge>
                 <h2 className="text-4xl font-bold">Transparent Supplier Showcase</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Humanizing cards that tell the story of small manufacturer partners, 
-                  showcasing their specializations, certifications, impact metrics, and 
+                  Humanizing cards that tell the story of small manufacturer partners,
+                  showcasing their specializations, certifications, impact metrics, and
                   before/after transformation through Sleek's fair pricing model.
                 </p>
                 <div className="flex gap-2 justify-center text-sm">
@@ -220,8 +220,8 @@ export default function AIVisualShowcase() {
                   Supplier Empowerment Impact
                 </p>
                 <p className="text-sm text-green-800">
-                  By choosing Sleek Apparels, buyers support small manufacturers earning 
-                  <strong> 25-30% higher margins</strong> compared to traditional large brand contracts. 
+                  By choosing Sleek Apparels, buyers support small manufacturers earning
+                  <strong> 25-30% higher margins</strong> compared to traditional large brand contracts.
                   This enables investment in worker welfare, equipment upgrades, and sustainable growth.
                 </p>
               </div>
@@ -243,7 +243,7 @@ export default function AIVisualShowcase() {
                 <div className="bg-white rounded-lg p-6 border-2 border-primary/20">
                   <h3 className="font-semibold text-lg mb-3">Quote Flow Enhancement</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Add PainPointSelector as first step in quote generation flow. 
+                    Add PainPointSelector as first step in quote generation flow.
                     Display MOQComparisonChart based on user input.
                   </p>
                   <code className="text-xs bg-slate-100 p-2 rounded block">
@@ -254,7 +254,7 @@ export default function AIVisualShowcase() {
                 <div className="bg-white rounded-lg p-6 border-2 border-purple-600/20">
                   <h3 className="font-semibold text-lg mb-3">Homepage Integration</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Add MOQComparisonChart and TimelineComparisonChart to showcase 
+                    Add MOQComparisonChart and TimelineComparisonChart to showcase
                     competitive advantages visually.
                   </p>
                   <code className="text-xs bg-slate-100 p-2 rounded block">
@@ -265,7 +265,7 @@ export default function AIVisualShowcase() {
                 <div className="bg-white rounded-lg p-6 border-2 border-green-600/20">
                   <h3 className="font-semibold text-lg mb-3">Supplier Pages</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Create "Meet Our Suppliers" page using SupplierProfileCard 
+                    Create "Meet Our Suppliers" page using SupplierProfileCard
                     components with real partner data.
                   </p>
                   <code className="text-xs bg-slate-100 p-2 rounded block">
@@ -276,7 +276,7 @@ export default function AIVisualShowcase() {
                 <div className="bg-white rounded-lg p-6 border-2 border-blue-600/20">
                   <h3 className="font-semibold text-lg mb-3">AI Assistant Upgrade</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Replace existing SmartAIAssistant with EnhancedAIAssistant 
+                    Replace existing SmartAIAssistant with EnhancedAIAssistant
                     for pain point-first conversation flow.
                   </p>
                   <code className="text-xs bg-slate-100 p-2 rounded block">
