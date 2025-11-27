@@ -204,5 +204,5 @@ export const convertQuoteToOrder = async (quoteId: string) => {
     .single();
 
   if (error) throw error;
-  return data || [];
+  return data;
 };
