@@ -27,54 +27,48 @@ import { supabase } from '@/integrations/supabase/client';
 import { useOrdersByBuyer } from '@/hooks/queries/useOrders';
 import { useQuotes } from '@/hooks/useQuotes';
 import { format, differenceInDays } from 'date-fns';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ModernBuyerDashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'active' | 'pending'>('all');
-  const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>('User');
   const [customerType, setCustomerType] = useState<string>('');
 
-  // Get current user
+  const userId = user?.id || null;
+
+  // Get user profile data
   useEffect(() => {
-    const getUser = async () => {
+    const getUserProfile = async () => {
+      if (!user) return;
+
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
-        
-        if (error || !user) {
-          console.error('Auth error:', error);
-          navigate('/auth');
-          return;
-        }
-        
-        setUserId(user.id);
-        
         // Get customer type from user metadata
         if (user.user_metadata?.customer_type) {
           setCustomerType(user.user_metadata.customer_type);
         }
-        
+
         // Get user profile data
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('full_name')
           .eq('id', user.id)
           .single();
-          
+
         if (profileError) {
           console.error('Profile error:', profileError);
         }
-        
+
         if (profile?.full_name) {
           setUserName(profile.full_name.split(' ')[0]); // First name only
         }
       } catch (err) {
-        console.error('Dashboard auth error:', err);
-        navigate('/auth');
+        console.error('Profile error:', err);
       }
     };
-    getUser();
-  }, [navigate]);
+    getUserProfile();
+  }, [user]);
 
   // Fetch real data
   const { data: orders = [], isLoading: ordersLoading } = useOrdersByBuyer(userId || '');

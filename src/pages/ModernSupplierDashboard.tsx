@@ -26,11 +26,11 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useSupplierByUser } from '@/hooks/queries/useSuppliers';
 import { useOrdersByFactory } from '@/hooks/queries/useOrders';
 import { useSupplierQuotes } from '@/hooks/useQuotes';
 import { AssignedQuotesPanel } from '@/components/supplier/AssignedQuotesPanel';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Mock data
 const performanceScore = {
@@ -97,19 +97,10 @@ const achievements = [
 
 export default function ModernSupplierDashboard() {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState<string | null>(null);
+  const { user } = useAuth();
   const [supplierName, setSupplierName] = useState<string>('Supplier');
 
-  // Get current user
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-      }
-    };
-    getUser();
-  }, []);
+  const userId = user?.id || null;
 
   // Fetch real supplier data
   const { data: supplier, isLoading: supplierLoading } = useSupplierByUser(userId || '');

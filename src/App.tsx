@@ -5,6 +5,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { WishlistProvider } from "@/contexts/WishlistContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute, RoleBasedRoute } from "@/components/routes";
 
 
 import { SmartAIAssistant } from "@/components/SmartAIAssistant";
@@ -116,6 +118,7 @@ const AIVisualShowcase = lazy(() => import("./pages/AIVisualShowcase"));
 // AdminBootstrap page removed (used once, now deleted for security)
 import QuoteHistory from "./pages/QuoteHistory";
 import QuoteDetails from "./pages/QuoteDetails";
+const Unauthorized = lazy(() => import("./pages/Unauthorized"));
 
 // SEO Landing Pages
 const LowMOQManufacturer = lazy(() => import("./pages/seo/LowMOQManufacturer"));
@@ -194,6 +197,7 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contact /> },
       { path: "/auth", element: <Auth /> },
       { path: "/signup", element: <UserTypeSelection /> },
+      { path: "/unauthorized", element: <Unauthorized /> },
       { path: "/get-started", element: <GetStarted /> },
       { path: "/instant-quote", element: <InstantQuote /> },
       { path: "/ai-quote-generator", element: <AIQuoteGenerator /> },
@@ -204,19 +208,38 @@ const router = createBrowserRouter([
       { path: "/looptrace", element: <Navigate to="/looptrace-technology" replace /> },
       { path: "/uniforms", element: <Navigate to="/uniforms-teamwear" replace /> },
       
-      { path: "/dashboard-router", element: <SmartDashboardRouter /> },
-      { path: "/dashboard", element: <ModernBuyerDashboard /> },
-      { path: "/buyer-dashboard-modern", element: <ModernBuyerDashboard /> },
-      { path: "/supplier-dashboard-modern", element: <ModernSupplierDashboard /> },
-      { path: "/admin", element: <ModernAdminDashboard /> },
-      { path: "/admin/analytics", element: <Analytics /> },
-      { path: "/admin/security", element: <SecurityMonitoring /> },
-      { path: "/admin/orders", element: <OrderManagement /> },
-      { path: "/admin/products/approval", element: <ProductApproval /> },
-      { path: "/admin/products/:productId/review", element: <ProductReview /> },
-      { path: "/orders/:orderId/track", element: <BuyerOrderTracking /> },
-      { path: "/orders/:orderId", element: <OrderDetails /> },
-      { path: "/orders", element: <Orders /> },
+      { path: "/dashboard-router", element: <ProtectedRoute><SmartDashboardRouter /></ProtectedRoute> },
+
+      // Buyer Dashboard Routes (Protected - Buyer Role)
+      { path: "/dashboard", element: <RoleBasedRoute allowedUserTypes={['buyer']}><ModernBuyerDashboard /></RoleBasedRoute> },
+      { path: "/buyer-dashboard-modern", element: <RoleBasedRoute allowedUserTypes={['buyer']}><ModernBuyerDashboard /></RoleBasedRoute> },
+      { path: "/orders/:orderId/track", element: <RoleBasedRoute allowedUserTypes={['buyer']}><BuyerOrderTracking /></RoleBasedRoute> },
+      { path: "/orders/:orderId", element: <RoleBasedRoute allowedUserTypes={['buyer']}><OrderDetails /></RoleBasedRoute> },
+      { path: "/orders", element: <RoleBasedRoute allowedUserTypes={['buyer']}><Orders /></RoleBasedRoute> },
+
+      // Supplier Dashboard Routes (Protected - Supplier Role)
+      { path: "/supplier-dashboard-modern", element: <RoleBasedRoute allowedUserTypes={['supplier']}><ModernSupplierDashboard /></RoleBasedRoute> },
+      { path: "/supplier-dashboard", element: <RoleBasedRoute allowedUserTypes={['supplier']}><ModernSupplierDashboard /></RoleBasedRoute> },
+      { path: "/supplier/products", element: <RoleBasedRoute allowedUserTypes={['supplier']}><ProductUpload /></RoleBasedRoute> },
+      { path: "/supplier/orders/:orderId", element: <RoleBasedRoute allowedUserTypes={['supplier']}><SupplierOrderDetail /></RoleBasedRoute> },
+
+      // Admin Dashboard Routes (Protected - Admin Role)
+      { path: "/admin", element: <RoleBasedRoute allowedRoles={['admin']}><ModernAdminDashboard /></RoleBasedRoute> },
+      { path: "/admin/analytics", element: <RoleBasedRoute allowedRoles={['admin']}><Analytics /></RoleBasedRoute> },
+      { path: "/admin/security", element: <RoleBasedRoute allowedRoles={['admin']}><SecurityMonitoring /></RoleBasedRoute> },
+      { path: "/admin/orders", element: <RoleBasedRoute allowedRoles={['admin']}><OrderManagement /></RoleBasedRoute> },
+      { path: "/admin/products/approval", element: <RoleBasedRoute allowedRoles={['admin']}><ProductApproval /></RoleBasedRoute> },
+      { path: "/admin/products/:productId/review", element: <RoleBasedRoute allowedRoles={['admin']}><ProductReview /></RoleBasedRoute> },
+      { path: "/admin/leads", element: <RoleBasedRoute allowedRoles={['admin']}><AdminLeads /></RoleBasedRoute> },
+      { path: "/admin/blog", element: <RoleBasedRoute allowedRoles={['admin']}><AdminBlog /></RoleBasedRoute> },
+      { path: "/admin/blog/new", element: <RoleBasedRoute allowedRoles={['admin']}><AdminBlogEditor /></RoleBasedRoute> },
+      { path: "/admin/blog/edit/:id", element: <RoleBasedRoute allowedRoles={['admin']}><AdminBlogEditor /></RoleBasedRoute> },
+      { path: "/admin/audit-logs", element: <RoleBasedRoute allowedRoles={['admin']}><AdminAuditLogs /></RoleBasedRoute> },
+      { path: "/admin/products", element: <RoleBasedRoute allowedRoles={['admin']}><AdminProducts /></RoleBasedRoute> },
+      { path: "/admin/supplier-orders", element: <RoleBasedRoute allowedRoles={['admin']}><SupplierOrderManagement /></RoleBasedRoute> },
+      { path: "/admin/supplier-orders/:orderId", element: <RoleBasedRoute allowedRoles={['admin']}><AdminSupplierOrderDetail /></RoleBasedRoute> },
+      { path: "/admin/quotes", element: <RoleBasedRoute allowedRoles={['admin']}><AdminQuotes /></RoleBasedRoute> },
+      { path: "/admin/suppliers", element: <RoleBasedRoute allowedRoles={['admin']}><SupplierVerification /></RoleBasedRoute> },
       { path: "/blog", element: <Blog /> },
       { path: "/blog/:slug", element: <BlogPost /> },
       { path: "/faq", element: <FAQPage /> },
@@ -225,35 +248,26 @@ const router = createBrowserRouter([
       { path: "/quote-generator", element: <QuoteGenerator /> },
       { path: "/quote-analytics", element: <QuoteAnalytics /> },
       { path: "/brochure", element: <Brochure /> },
-      { path: "/admin/leads", element: <AdminLeads /> },
-      { path: "/admin/blog", element: <AdminBlog /> },
-      { path: "/admin/blog/new", element: <AdminBlogEditor /> },
-      { path: "/admin/blog/edit/:id", element: <AdminBlogEditor /> },
-      { path: "/admin/audit-logs", element: <AdminAuditLogs /> },
-      { path: "/admin/products", element: <AdminProducts /> },
+
+      // General Authenticated Routes (any logged-in user)
+      { path: "/settings", element: <ProtectedRoute><UserSettings /></ProtectedRoute> },
+      { path: "/profile/:userId?", element: <ProtectedRoute><UserProfile /></ProtectedRoute> },
+      { path: "/notifications", element: <ProtectedRoute><Notifications /></ProtectedRoute> },
+      { path: "/quote-history", element: <ProtectedRoute><QuoteHistory /></ProtectedRoute> },
+      { path: "/quote-details/:quoteId", element: <ProtectedRoute><QuoteDetails /></ProtectedRoute> },
+      { path: "/order-confirmation", element: <ProtectedRoute><OrderConfirmation /></ProtectedRoute> },
+      { path: "/payment/:orderId", element: <ProtectedRoute><PaymentCheckout /></ProtectedRoute> },
+      { path: "/payment/success", element: <ProtectedRoute><PaymentSuccess /></ProtectedRoute> },
+
+      // Public Routes
       { path: "/track-order/:orderId", element: <TrackOrder /> },
       { path: "/become-supplier", element: <BecomeSupplier /> },
       { path: "/suppliers", element: <SupplierDirectory /> },
       { path: "/marketplace", element: <Marketplace /> },
-      { path: "/order-confirmation", element: <OrderConfirmation /> },
       { path: "/join-supplier", element: <JoinSupplier /> },
-      { path: "/supplier-dashboard", element: <ModernSupplierDashboard /> },
-      { path: "/supplier/products", element: <ProductUpload /> },
-      { path: "/supplier/orders/:orderId", element: <SupplierOrderDetail /> },
-      { path: "/admin/supplier-orders", element: <SupplierOrderManagement /> },
-      { path: "/admin/supplier-orders/:orderId", element: <AdminSupplierOrderDetail /> },
-      { path: "/admin/quotes", element: <AdminQuotes /> },
-      { path: "/admin/suppliers", element: <SupplierVerification /> },
-      { path: "/payment/:orderId", element: <PaymentCheckout /> },
-      { path: "/payment/success", element: <PaymentSuccess /> },
-      { path: "/settings", element: <UserSettings /> },
-      { path: "/profile/:userId?", element: <UserProfile /> },
-      { path: "/notifications", element: <Notifications /> },
       { path: "/consultation", element: <Consultation /> },
       { path: "/success-stories", element: <SuccessStories /> },
       { path: "/how-it-works", element: <HowItWorks /> },
-      { path: "/quote-history", element: <QuoteHistory /> },
-      { path: "/quote-details/:quoteId", element: <QuoteDetails /> },
         { path: "/shipping-logistics", element: <ShippingLogistics /> },
         { path: "/materials-guide", element: <MaterialsGuide /> },
         { path: "/sample-policy", element: <SamplePolicy /> },
@@ -302,11 +316,12 @@ function App() {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <WishlistProvider>
-          <Suspense fallback={null}>
-            <Sonner />
-          </Suspense>
-          <noscript>
+        <AuthProvider>
+          <WishlistProvider>
+            <Suspense fallback={null}>
+              <Sonner />
+            </Suspense>
+            <noscript>
             <div style={{
               position: 'fixed',
               top: 0,
@@ -335,7 +350,8 @@ function App() {
             </div>
           </noscript>
           <RouterProvider router={router} />
-        </WishlistProvider>
+          </WishlistProvider>
+        </AuthProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </HelmetProvider>
