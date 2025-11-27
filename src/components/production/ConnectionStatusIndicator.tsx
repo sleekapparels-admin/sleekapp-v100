@@ -15,7 +15,7 @@ export const ConnectionStatusIndicator = ({ className = "" }: ConnectionStatusIn
     // Check initial connection status
     const checkConnection = async () => {
       try {
-        const { error } = await supabase.from('_health').select('*').limit(1);
+        const { error } = await supabase.auth.getSession();
         setIsConnected(!error);
       } catch (e) {
         setIsConnected(false);
