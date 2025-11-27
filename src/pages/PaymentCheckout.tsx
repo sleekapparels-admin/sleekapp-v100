@@ -10,11 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Package } from "lucide-react";
 
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-
-if (!stripePublishableKey) {
-  console.error('CRITICAL: VITE_STRIPE_PUBLISHABLE_KEY is not configured in environment variables');
-}
-
 const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 export default function PaymentCheckout() {
