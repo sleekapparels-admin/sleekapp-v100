@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from 'https://esm.sh/stripe@14.21.0';
 import { createLogger, sanitizeOrderId } from '../_shared/logger.ts';
 
@@ -15,6 +16,36 @@ serve(async (req) => {
   }
 
   try {
+    // SECURITY: Authenticate user first
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create authenticated Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
+
+    // Get authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
     });
@@ -25,7 +56,7 @@ serve(async (req) => {
       throw new Error('Order ID and payment type are required');
     }
 
-    // Get Supabase client
+    // Get Supabase client with service role for order operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
@@ -41,6 +72,29 @@ serve(async (req) => {
 
     if (!order) {
       throw new Error('Order not found');
+    }
+
+    // SECURITY: Verify user is the buyer of this order or an admin
+    const { data: userRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const isAdmin = !!userRole;
+    const isBuyer = order.buyer_id === user.id;
+
+    if (!isAdmin && !isBuyer) {
+      logger.error('Unauthorized payment attempt', null, { 
+        userId: user.id, 
+        orderId: sanitizeOrderId(orderId),
+        orderBuyerId: order.buyer_id
+      });
+      return new Response(
+        JSON.stringify({ error: 'You are not authorized to pay for this order' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Security: Validate price integrity before payment processing
