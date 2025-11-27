@@ -209,6 +209,7 @@ const router = createBrowserRouter([
       { path: "/supplier-dashboard-modern", element: <ModernSupplierDashboard /> },
       { path: "/admin", element: <ModernAdminDashboard /> },
       { path: "/admin/analytics", element: <Analytics /> },
+      { path: "/admin/security", element: <SecurityMonitoring /> },
       { path: "/admin/orders", element: <OrderManagement /> },
       { path: "/admin/products/approval", element: <ProductApproval /> },
       { path: "/admin/products/:productId/review", element: <ProductReview /> },
