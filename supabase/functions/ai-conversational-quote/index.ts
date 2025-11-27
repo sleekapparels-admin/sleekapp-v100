@@ -35,6 +35,9 @@ serve(async (req) => {
     );
 
     const request: QuoteRequest = await req.json();
+    
+    // Get IP address early for rate limiting and logging
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 
     // SECURITY: Verify reCAPTCHA token
     if (!request.captchaToken) {
@@ -57,6 +60,22 @@ serve(async (req) => {
 
     if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
       console.error('CAPTCHA verification failed:', recaptchaResult);
+      
+      // Log CAPTCHA failure
+      await supabase.from('security_events').insert({
+        event_type: 'captcha_failure',
+        severity: 'medium',
+        source: 'ai-conversational-quote',
+        details: {
+          score: recaptchaResult.score,
+          email: request.customerEmail,
+          error_codes: recaptchaResult['error-codes'],
+        },
+        session_id: request.sessionId,
+        ip_address: ip,
+        user_agent: req.headers.get('user-agent') || 'unknown',
+      });
+
       return new Response(
         JSON.stringify({ success: false, error: 'CAPTCHA verification failed. Please try again.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -64,7 +83,6 @@ serve(async (req) => {
     }
 
     // Rate limiting: 5 requests per hour per IP
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
@@ -78,6 +96,18 @@ serve(async (req) => {
 
     if (ipRateLimit && ipRateLimit.request_count >= 5) {
       console.log('IP rate limit exceeded:', ip);
+      
+      // Log rate limit violation
+      await supabase.from('security_events').insert({
+        event_type: 'rate_limit_violation',
+        severity: 'high',
+        source: 'ai-conversational-quote',
+        details: { identifier_type: 'ip', identifier: ip, limit: 5 },
+        session_id: request.sessionId,
+        ip_address: ip,
+        user_agent: req.headers.get('user-agent') || 'unknown',
+      });
+
       return new Response(
         JSON.stringify({ 
           success: false, 

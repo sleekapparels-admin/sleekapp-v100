@@ -83,6 +83,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_cost_tracking: {
+        Row: {
+          created_at: string | null
+          estimated_cost: number | null
+          function_name: string
+          id: string
+          model: string
+          request_tokens: number | null
+          response_tokens: number | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          estimated_cost?: number | null
+          function_name: string
+          id?: string
+          model: string
+          request_tokens?: number | null
+          response_tokens?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          estimated_cost?: number | null
+          function_name?: string
+          id?: string
+          model?: string
+          request_tokens?: number | null
+          response_tokens?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_quote_rate_limits: {
         Row: {
           created_at: string | null
@@ -2785,6 +2821,45 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          session_id: string | null
+          severity: string
+          source: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          session_id?: string | null
+          severity: string
+          source: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          session_id?: string | null
+          severity?: string
+          source?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       shipping_info: {
         Row: {
           actual_delivery: string | null
@@ -3787,6 +3862,29 @@ export type Database = {
       }
     }
     Views: {
+      ai_hourly_costs: {
+        Row: {
+          function_name: string | null
+          hour: string | null
+          model: string | null
+          request_count: number | null
+          total_cost: number | null
+          total_request_tokens: number | null
+          total_response_tokens: number | null
+        }
+        Relationships: []
+      }
+      daily_security_summary: {
+        Row: {
+          day: string | null
+          event_count: number | null
+          event_type: string | null
+          severity: string | null
+          unique_ips: number | null
+          unique_sessions: number | null
+        }
+        Relationships: []
+      }
       product_engagement_metrics: {
         Row: {
           category: string | null

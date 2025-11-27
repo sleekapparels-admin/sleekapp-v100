@@ -42,6 +42,17 @@ serve(async (req) => {
 
     if (rateLimitData && rateLimitData.request_count >= 10) {
       console.log('Rate limit exceeded for IP:', ip);
+      
+      // Log rate limit violation
+      await supabase.from('security_events').insert({
+        event_type: 'rate_limit_violation',
+        severity: 'medium',
+        source: 'ai-market-research',
+        details: { identifier_type: 'ip', identifier: ip, limit: 10 },
+        ip_address: ip,
+        user_agent: req.headers.get('user-agent') || 'unknown',
+      });
+
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -77,6 +88,21 @@ serve(async (req) => {
 
     if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
       console.error('CAPTCHA verification failed:', recaptchaResult);
+      
+      // Log CAPTCHA failure
+      await supabase.from('security_events').insert({
+        event_type: 'captcha_failure',
+        severity: 'medium',
+        source: 'ai-market-research',
+        details: {
+          score: recaptchaResult.score,
+          product_type: productType,
+          error_codes: recaptchaResult['error-codes'],
+        },
+        ip_address: ip,
+        user_agent: req.headers.get('user-agent') || 'unknown',
+      });
+
       return new Response(
         JSON.stringify({ success: false, error: 'CAPTCHA verification failed. Please try again.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
