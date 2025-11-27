@@ -31,6 +31,8 @@ import { ProductionStageCard } from "@/components/production/ProductionStageCard
 import { PredictiveDelayAlert } from "@/components/production/PredictiveDelayAlert";
 import { SupplierCoordinationPanel } from "@/components/production/SupplierCoordinationPanel";
 import { ProductionAnalytics } from "@/components/production/ProductionAnalytics";
+import { ConnectionStatusIndicator } from "@/components/production/ConnectionStatusIndicator";
+import type { Database } from "@/integrations/supabase/types";
 
 // Production stages for RMG manufacturing
 const PRODUCTION_STAGES = [
@@ -58,19 +60,56 @@ const ProductionTracking = () => {
     fetchUserAndOrders();
   }, []);
 
+  // Real-time subscription for production updates with proper filtering
+  useEffect(() => {
+    if (!selectedOrder || !user) return;
+
+    const channel = supabase
+      .channel(`production-updates-${selectedOrder.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'production_stages',
+          filter: `supplier_order_id=eq.${selectedOrder.id}`
+        },
+        (payload) => {
+          console.log('Production stage updated:', payload);
+          // Refresh the selected order data
+          fetchUserAndOrders();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [selectedOrder?.id, user]);
+
   const fetchUserAndOrders = async () => {
     try {
       // Get current user
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        throw new Error('Failed to get user session');
+      }
+      
       setUser(session?.user || null);
 
       if (session?.user) {
         // Get user role
-        const { data: roleData } = await supabase
+        const { data: roleData, error: roleError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
           .maybeSingle();
+        
+        if (roleError) {
+          console.error('Error fetching user role:', roleError);
+        }
         
         setUserRole(roleData?.role || null);
 
@@ -83,14 +122,17 @@ const ProductionTracking = () => {
           await fetchSupplierOrders(session.user.id);
         } else {
           // Buyer: See their own orders
-          await fetchBuyerOrders(session.user.email!);
+          if (!session.user.email) {
+            throw new Error('User email not found');
+          }
+          await fetchBuyerOrders(session.user.email);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching data:', error);
       toast({
-        title: "Error",
-        description: "Failed to load production data",
+        title: "Error Loading Data",
+        description: error.message || "Failed to load production data. Please refresh the page.",
         variant: "destructive"
       });
     } finally {
@@ -108,17 +150,25 @@ const ProductionTracking = () => {
       `)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching all orders:', error);
+      throw new Error('Failed to fetch orders');
+    }
     setOrders(data || []);
     if (data && data.length > 0) setSelectedOrder(data[0]);
   };
 
   const fetchSupplierOrders = async (userId: string) => {
-    const { data: supplierData } = await supabase
+    const { data: supplierData, error: supplierError } = await supabase
       .from('suppliers')
       .select('id')
       .eq('user_id', userId)
       .single();
+
+    if (supplierError) {
+      console.error('Error fetching supplier data:', supplierError);
+      throw new Error('Failed to fetch supplier information');
+    }
 
     if (supplierData) {
       const { data, error } = await supabase
@@ -131,14 +181,16 @@ const ProductionTracking = () => {
         .eq('supplier_id', supplierData.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching supplier orders:', error);
+        throw new Error('Failed to fetch supplier orders');
+      }
       setOrders(data || []);
       if (data && data.length > 0) setSelectedOrder(data[0]);
     }
   };
 
   const fetchBuyerOrders = async (email: string) => {
-    // @ts-ignore - Complex Supabase type causes instantiation depth error
     const response = await supabase
       .from('supplier_orders')
       .select('*')
@@ -147,7 +199,10 @@ const ProductionTracking = () => {
     
     const { data, error } = response;
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching buyer orders:', error);
+      throw new Error('Failed to fetch buyer orders');
+    }
     setOrders(data || []);
     if (data && data.length > 0) setSelectedOrder(data[0]);
   };
@@ -242,6 +297,7 @@ const ProductionTracking = () => {
                 <Badge variant="secondary" className="ml-2">
                   LoopTrace™ Technology
                 </Badge>
+                <ConnectionStatusIndicator className="ml-auto" />
               </div>
               <p className="text-muted-foreground">
                 Real-time visibility into your manufacturing pipeline

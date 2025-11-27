@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useOptimisticStageUpdate } from "@/hooks/useOptimisticUpdate";
 import { 
   CheckCircle2, 
   Clock, 
@@ -52,6 +53,20 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
   const [notes, setNotes] = useState(data?.notes || "");
   const [completionPercentage, setCompletionPercentage] = useState(data?.completion_percentage || 0);
   const [saving, setSaving] = useState(false);
+
+  // Use optimistic updates for better UX
+  const { data: optimisticData, isUpdating, updateStage } = useOptimisticStageUpdate(
+    data?.id || '',
+    data || {}
+  );
+
+  // Update local state when data changes
+  useEffect(() => {
+    if (data) {
+      setNotes(data.notes || "");
+      setCompletionPercentage(data.completion_percentage || 0);
+    }
+  }, [data]);
 
   const canEdit = userRole === 'admin' || userRole === 'staff' || userRole === 'supplier';
 
@@ -113,9 +128,10 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
       // Refresh page
       window.location.reload();
     } catch (error: any) {
+      console.error('Error starting stage:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Error Starting Stage",
+        description: error.message || 'Failed to start production stage. Please try again.',
         variant: "destructive"
       });
     } finally {
@@ -131,7 +147,6 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
       const updateData: any = {
         notes,
         completion_percentage: completionPercentage,
-        updated_at: new Date().toISOString()
       };
 
       // Auto-complete if percentage reaches 100%
@@ -140,24 +155,16 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
         updateData.completed_at = new Date().toISOString();
       }
 
-      const { error } = await supabase
-        .from('production_stages')
-        .update(updateData)
-        .eq('id', data.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Stage Updated",
-        description: "Changes saved successfully",
-      });
+      // Use optimistic update hook
+      await updateStage(updateData);
 
       setIsEditing(false);
-      window.location.reload();
+      // Removed window.location.reload() - relying on real-time subscriptions
     } catch (error: any) {
+      console.error('Error updating stage:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Update Failed",
+        description: error.message || 'Failed to update production stage. Please try again.',
         variant: "destructive"
       });
     } finally {
@@ -189,9 +196,10 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
 
       window.location.reload();
     } catch (error: any) {
+      console.error('Error completing stage:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Completion Failed",
+        description: error.message || 'Failed to complete production stage. Please try again.',
         variant: "destructive"
       });
     } finally {
