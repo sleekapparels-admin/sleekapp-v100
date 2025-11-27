@@ -138,7 +138,7 @@ export const localBusinessSchema = {
   foundingDate: '2014',
   founder: {
     '@type': 'Person',
-    name: 'Khondaker Rajiur Rahman',
+    name: 'Kh Raj Rahman',
   },
   telephone: '+880-186-1011-367',
   email: 'inquiry@sleekapparels.com',

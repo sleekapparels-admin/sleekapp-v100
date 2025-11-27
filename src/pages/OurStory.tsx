@@ -60,7 +60,7 @@ const OurStory = () => {
                 <p className="text-xl text-primary mb-6 text-center">Founder & Managing Director</p>
                 <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap justify-center mb-6">
                   <Award className="h-4 w-4" />
-                  Nankai University, Tianjin • International Trade & RMG Specialist • 5+ Years in Apparel Manufacturing
+                  Apparel Manufacturing Consultant | Knitwear Specialist
                 </p>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p className="text-lg font-semibold text-foreground">

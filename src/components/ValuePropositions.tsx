@@ -90,14 +90,6 @@ export const ValuePropositions = () => {
           })}
         </div>
 
-        {/* Additional Value Statement */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground italic max-w-2xl mx-auto">
-            "We've eliminated traditional barriers that prevent small brands from accessing premium manufacturing. 
-            No sales teams. No hidden fees. Just transparent, technology-enabled production at your fingertips."
-          </p>
-          <p className="mt-2 text-sm font-semibold">— Kh Raj Rahman, Founder</p>
-        </div>
       </div>
     </section>
   );

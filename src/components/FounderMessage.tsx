@@ -21,13 +21,10 @@ export const FounderMessage = () => {
 
           <div className="mb-8">
             <p className="text-body font-bold mb-2 text-foreground">
-              — Khondaker Rajiur Rahman
-            </p>
-            <p className="text-body-sm text-muted-foreground mb-1">
-              Founder & Managing Director
+              — Kh Raj Rahman
             </p>
             <p className="text-body-sm text-muted-foreground">
-              BBA, Nankai University (China) | Xero Certified | IAB Digital Marketing
+              Founder & Managing Director | Apparel Manufacturing Consultant | Knitwear Specialist
             </p>
           </div>
 

@@ -48,7 +48,7 @@ const About = () => {
                 <div className="aspect-square rounded-lg overflow-hidden shadow-2xl">
                   <img 
                     src={founderPhoto}
-                    alt="Khondaker Rajiur Rahman - Founder & Managing Director of Sleek Apparels"
+                    alt="Kh Raj Rahman - Founder & Managing Director of Sleek Apparels"
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
@@ -58,7 +58,7 @@ const About = () => {
                   <p className="text-primary font-semibold mb-3">Founder & Managing Director</p>
                   <p className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap mb-4">
                     <Award className="h-4 w-4" />
-                    BBA, Nankai University (China)
+                    Apparel Manufacturing Consultant | Knitwear Specialist
                   </p>
                   <div className="flex gap-3">
                     <a 
