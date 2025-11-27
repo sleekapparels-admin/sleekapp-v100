@@ -191,7 +191,7 @@ const ProductionTracking = () => {
   };
 
   const fetchBuyerOrders = async (email: string) => {
-    const response = await supabase
+    const response = await (supabase as any)
       .from('supplier_orders')
       .select('*')
       .eq('buyer_email', email)
