@@ -64,10 +64,10 @@ const OurStory = () => {
                 </p>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p className="text-lg font-semibold text-foreground">
-                    "I founded Sleek Apparels to solve a fundamental injustice in Bangladesh's garment industry."
+                    "I founded Sleek Apparels with a vision to address a fundamental injustice in Bangladesh's garment industry."
                   </p>
                   <p>
-                    Countless small RMG suppliers in Bangladesh possess world-class manufacturing capabilities—delivering the same quality as major factory groups—yet remain systematically excluded from global markets due to banking credit barriers, L/C requirements, and minimum order inflexibility.
+                    Countless small RMG suppliers in Bangladesh have tremendous potential, but decades of exploitation have prevented investment in worker training and modern facilities. While they could compete globally with proper support, they remain systematically excluded from international markets due to banking credit barriers, L/C requirements, and minimum order inflexibility—compounded by a lack of skills and infrastructure development.
                   </p>
                   <p>
                     These manufacturers are trapped in a devastating cycle: relegated to low-margin local markets or accepting rock-bottom subcontract pricing from large export houses serving fast-fashion giants like H&M, Inditex, and Marks & Spencer. The margins are so compressed they can barely cover operational costs, let alone invest in equipment upgrades or worker training.
@@ -82,7 +82,7 @@ const OurStory = () => {
                     My background at Nankai University in international trade and supply chain management revealed how technical excellence, proper communication infrastructure, and transparent operations could transform manufacturing partnerships. But these capabilities were only accessible to brands placing massive orders.
                   </p>
                   <p>
-                    Sleek Apparels bridges this gap. We provide small manufacturers with professional management infrastructure, technical communication capabilities, and digital market presence they need to engage international buyers directly. We eliminate exploitative middlemen while addressing legitimate buyer concerns about reliability and transparency.
+                    Sleek Apparels aims to bridge this gap. Our goal is to provide small manufacturers with professional management infrastructure, technical communication capabilities, skills development support, and the digital market presence they need to engage international buyers directly. We work to eliminate exploitative middlemen while addressing legitimate buyer concerns about reliability and transparency.
                   </p>
                   <p>
                     That's why we developed LoopTrace™ and integrated AI-powered tools—providing real-time production visibility and intelligent quality insights that address Bangladesh's reputation challenges while showcasing these manufacturers' true capabilities.
@@ -91,7 +91,7 @@ const OurStory = () => {
                     I personally evaluate every partnership inquiry. Not because we're small, but because alignment matters. We're selective about both the manufacturers we work with and the buyers we serve. This ensures sustainable, fair relationships where quality and ethics aren't compromised for volume.
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    We're not competing with giants serving fast fashion. We're building something fundamentally different: a manufacturing ecosystem where quality, fairness, and innovation replace exploitation, opacity, and volume-at-any-cost.
+                    We're not competing with giants serving fast fashion. Our vision is to build something fundamentally different: a manufacturing ecosystem where quality, fairness, and innovation can replace exploitation, opacity, and volume-at-any-cost mentality.
                   </p>
                 </div>
               </div>

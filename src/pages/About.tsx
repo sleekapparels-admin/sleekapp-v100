@@ -96,7 +96,7 @@ const About = () => {
 
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p className="text-lg">
-                  <strong className="text-foreground">Bangladesh's garment industry has a systemic problem:</strong> Small, highly capable RMG suppliers are systematically locked out of global markets despite possessing world-class production capabilities. These manufacturers can deliver the same quality as major factory groups, yet face insurmountable barriers due to banking credit policies, L/C requirements, and back-to-back limitations.
+                  <strong className="text-foreground">Bangladesh's garment industry has a systemic problem:</strong> Small RMG suppliers have tremendous untapped potential, but decades of exploitation have prevented them from developing the skills and facilities they need to compete globally. These manufacturers could deliver quality comparable to major factory groups, but face insurmountable barriers due to banking credit policies, L/C requirements, and back-to-back limitations—combined with a lack of investment in worker training and modern equipment.
                 </p>
 
                 <p>
@@ -108,15 +108,15 @@ const About = () => {
                 </p>
 
                 <p className="text-lg font-semibold text-foreground">
-                  Sleek Apparels was founded to dismantle this broken system.
+                  Sleek Apparels aims to dismantle this broken system.
                 </p>
 
                 <p>
-                  <strong className="text-foreground">Our mission is twofold:</strong> First, connect quality-focused fashion startups, D2C brands, and smaller buyers directly with these exceptional small manufacturers—eliminating the exploitative middlemen. Second, address the very real challenges that prevent these connections: language barriers, limited digital presence, inadequate management infrastructure, and licensing complexities that make direct export difficult for smaller operations.
+                  <strong className="text-foreground">Our mission is twofold:</strong> First, to connect quality-focused fashion startups, D2C brands, and smaller buyers directly with these small manufacturers—eliminating the exploitative middlemen. Second, to address the very real challenges that prevent these connections: language barriers, limited digital presence, inadequate management infrastructure, and licensing complexities that make direct export difficult for smaller operations.
                 </p>
 
                 <p>
-                  These small manufacturers lack the resources for professional management teams, sophisticated English communication, or robust online presence needed to engage international buyers. That's where Sleek Apparels becomes the bridge—providing the commercial infrastructure, technical communication, and market access these manufacturers deserve.
+                  These small manufacturers lack the resources for professional management teams, sophisticated English communication, or robust online presence needed to engage international buyers. Sleek Apparels aims to become the bridge—providing the commercial infrastructure, technical communication, skills development support, and market access these manufacturers need to thrive.
                 </p>
 
                 <p className="text-lg">

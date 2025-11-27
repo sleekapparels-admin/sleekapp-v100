@@ -8,13 +8,13 @@ export const FounderMessage = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="text-body text-primary font-semibold mb-6">
-            Empowering Fashion Innovation Through Fair Manufacturing
+            Our Vision: Transforming Bangladesh's Garment Industry
           </p>
           
           <blockquote className="text-h4-mobile md:text-h3 font-accent italic text-foreground leading-relaxed mb-8 relative">
             <span className="text-primary text-6xl absolute -top-4 -left-2 opacity-20">"</span>
             <span className="relative z-10">
-              Bangladesh's small RMG suppliers possess world-class production capabilities, yet face systematic exclusion from global markets due to credit barriers and minimum order requirements. Sleek Apparels bridges this gap—connecting quality-focused startups and D2C brands with exceptional manufacturers who deserve fair margins and direct market access, while bringing transparency and innovation to an industry plagued by opacity and exploitation.
+              Bangladesh's small RMG suppliers have untapped potential, but decades of exploitation and rock-bottom pricing have left them unable to invest in worker training or modern facilities. Sleek Apparels aims to break this cycle—connecting quality-focused fashion startups and D2C brands directly with these manufacturers, enabling fair margins that allow investment in skills development, while building the transparency and management infrastructure needed to compete globally.
             </span>
             <span className="text-primary text-6xl absolute -bottom-8 -right-2 opacity-20">"</span>
           </blockquote>
