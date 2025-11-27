@@ -13,12 +13,14 @@ import { Loader2, Sparkles, Clock, DollarSign, Calendar, TrendingDown, Lightbulb
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { generateAIQuote } from "@/lib/api/aiQuote";
 
-// Client-side validation schema - email is REQUIRED
+// Client-side validation schema
 const quoteFormSchema = z.object({
   productType: z.string().min(1, "Product type is required"),
   quantity: z.number().int().min(50, "Sleek Apparels requires a minimum order of 50 units for this product category.").max(100000, "Maximum quantity is 100,000 pieces"),
   complexityLevel: z.enum(['simple', 'medium', 'complex']).optional(),
   fabricType: z.string().max(100, "Fabric type too long").optional(),
+  gsm: z.string().max(20, "GSM value too long").optional(),
+  printType: z.string().max(50, "Print type too long").optional(),
   additionalRequirements: z.string().max(2000, "Requirements too long (max 2000 characters)").optional(),
   customerName: z.string().trim().max(100, "Name too long").optional(),
   customerEmail: z.string().email("Valid email is required").min(1, "Email is required").max(255, "Email too long"),
@@ -71,6 +73,8 @@ export const AIQuoteGenerator = () => {
     quantity: "",
     complexityLevel: "medium",
     fabricType: "",
+    gsm: "",
+    printType: "none",
     additionalRequirements: "",
     customerName: "",
     customerEmail: "",
@@ -119,7 +123,6 @@ export const AIQuoteGenerator = () => {
     e.preventDefault();
     
     setLoading(true);
-    console.log('Generating AI quote...');
 
     try {
       // Client-side validation
@@ -128,12 +131,12 @@ export const AIQuoteGenerator = () => {
         quantity: parseInt(formData.quantity),
         complexityLevel: formData.complexityLevel || 'medium',
         fabricType: formData.fabricType || undefined,
+        gsm: formData.gsm || undefined,
+        printType: formData.printType || undefined,
         additionalRequirements: formData.additionalRequirements || undefined,
         customerName: formData.customerName || undefined,
         customerEmail: formData.customerEmail,
       });
-
-      console.log('Validated data:', validated);
 
       // Convert files to base64 for API
       const fileData = await Promise.all(
@@ -154,22 +157,15 @@ export const AIQuoteGenerator = () => {
 
       // Use the enhanced API
       const result = await generateAIQuote({
-        productType: validated.productType,
-        quantity: validated.quantity,
-        complexityLevel: validated.complexityLevel,
-        fabricType: validated.fabricType,
-        additionalRequirements: validated.additionalRequirements,
-        customerEmail: validated.customerEmail,
-        customerName: validated.customerName,
+        ...validated,
         files: fileData.length > 0 ? fileData : undefined,
       });
 
-      console.log('Quote generated successfully:', result);
       setQuoteResult(result);
       
       toast({
         title: "Quote Generated!",
-        description: `Your instant quote for ${validated.quantity} units is ready with AI-powered insights from Bangladesh manufacturing experts`,
+        description: `Your instant quote for ${validated.quantity} units is ready with AI-powered insights.`,
       });
 
     } catch (error) {
@@ -241,58 +237,91 @@ export const AIQuoteGenerator = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="quantity">Quantity (pieces) *</Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p className="text-sm">
-                          <strong>Minimum Order Quantity (MOQ): 50 pieces</strong><br />
-                          We maintain this policy to ensure optimal production efficiency and competitive pricing for our clients.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="quantity">Quantity *</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p className="text-sm">
+                            <strong>Minimum Order Quantity (MOQ): 50 pieces</strong><br />
+                            Optimum pricing starts at 500+ pieces.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="50"
+                    value={formData.quantity}
+                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    placeholder="e.g., 100"
+                  />
                 </div>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min="50"
-                  value={formData.quantity}
-                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                  placeholder="e.g., 100"
-                />
+
+                <div className="space-y-2">
+                  <Label htmlFor="complexity">Complexity</Label>
+                  <Select
+                    value={formData.complexityLevel}
+                    onValueChange={(value) => setFormData({ ...formData, complexityLevel: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="simple">Simple</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="complex">Complex</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                  <Label htmlFor="fabricType">Fabric (Optional)</Label>
+                  <Input
+                    id="fabricType"
+                    value={formData.fabricType}
+                    onChange={(e) => setFormData({ ...formData, fabricType: e.target.value })}
+                    placeholder="e.g., Cotton"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gsm">GSM (Weight)</Label>
+                  <Input
+                    id="gsm"
+                    value={formData.gsm}
+                    onChange={(e) => setFormData({ ...formData, gsm: e.target.value })}
+                    placeholder="e.g., 180"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="complexity">Complexity Level</Label>
+                <Label htmlFor="printType">Print/Embroidery Type</Label>
                 <Select
-                  value={formData.complexityLevel}
-                  onValueChange={(value) => setFormData({ ...formData, complexityLevel: value })}
+                  value={formData.printType}
+                  onValueChange={(value) => setFormData({ ...formData, printType: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="simple">Simple (solid colors, basic patterns)</SelectItem>
-                    <SelectItem value="medium">Medium (multi-color, moderate detail)</SelectItem>
-                    <SelectItem value="complex">Complex (intricate designs, jacquard)</SelectItem>
+                    <SelectItem value="none">None / Solid Color</SelectItem>
+                    <SelectItem value="screen-print">Screen Print</SelectItem>
+                    <SelectItem value="dtg">Digital Print (DTG)</SelectItem>
+                    <SelectItem value="embroidery">Embroidery</SelectItem>
+                    <SelectItem value="sublimation">Sublimation</SelectItem>
+                    <SelectItem value="puff-print">Puff Print</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="fabricType">Fabric Type (Optional)</Label>
-                <Input
-                  id="fabricType"
-                  value={formData.fabricType}
-                  onChange={(e) => setFormData({ ...formData, fabricType: e.target.value })}
-                  placeholder="e.g., 100% Cotton, Merino Wool"
-                />
               </div>
 
               <div className="space-y-2">
@@ -302,13 +331,13 @@ export const AIQuoteGenerator = () => {
                   value={formData.additionalRequirements}
                   onChange={(e) => setFormData({ ...formData, additionalRequirements: e.target.value })}
                   placeholder="Special finishing, packaging, certifications..."
-                  rows={3}
+                  rows={2}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Upload Tech Pack or Reference Images (Optional)</Label>
-                <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+                <Label>Upload Tech Pack or Reference (Optional)</Label>
+                <div className="border-2 border-dashed border-border rounded-lg p-3 text-center hover:border-primary/50 transition-colors">
                   <input
                     type="file"
                     id="file-upload"
@@ -319,36 +348,31 @@ export const AIQuoteGenerator = () => {
                     disabled={uploadedFiles.length >= 3}
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      Click to upload tech pack, design mockups, or reference images
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Images or PDF • Max 3 files • 20MB each
+                    <Upload className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">
+                      Click to upload (Max 3 files)
                     </p>
                   </label>
                 </div>
                 
                 {uploadedFiles.length > 0 && (
-                  <div className="space-y-2 mt-3">
+                  <div className="space-y-1 mt-2">
                     {uploadedFiles.map((file, index) => (
-                      <div key={index} className="flex items-center gap-2 p-2 bg-secondary/30 rounded">
+                      <div key={index} className="flex items-center gap-2 p-1.5 bg-secondary/30 rounded text-xs">
                         {file.type.startsWith('image/') ? (
-                          <ImageIcon className="h-4 w-4 text-primary" />
+                          <ImageIcon className="h-3 w-3 text-primary" />
                         ) : (
-                          <FileText className="h-4 w-4 text-primary" />
+                          <FileText className="h-3 w-3 text-primary" />
                         )}
-                        <span className="text-sm flex-1 truncate">{file.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {(file.size / 1024 / 1024).toFixed(1)}MB
-                        </span>
+                        <span className="flex-1 truncate">{file.name}</span>
                         <Button
                           type="button"
                           variant="ghost"
-                          size="sm"
+                          size="icon"
+                          className="h-5 w-5"
                           onClick={() => removeFile(index)}
                         >
-                          <X className="h-4 w-4" />
+                          <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
@@ -360,12 +384,12 @@ export const AIQuoteGenerator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Your Name</Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
                     value={formData.customerName}
                     onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                    placeholder="John Doe"
+                    placeholder="Name"
                   />
                 </div>
                 <div className="space-y-2">
@@ -376,7 +400,7 @@ export const AIQuoteGenerator = () => {
                     required
                     value={formData.customerEmail}
                     onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                    placeholder="john@example.com"
+                    placeholder="Email"
                   />
                 </div>
               </div>
@@ -385,12 +409,12 @@ export const AIQuoteGenerator = () => {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Quote...
+                    Generating...
                   </>
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Generate AI Quote
+                    Generate Quote
                   </>
                 )}
               </Button>
@@ -401,7 +425,7 @@ export const AIQuoteGenerator = () => {
         {quoteResult && (
           <div className="space-y-4">
             <Card className="border-primary">
-              <CardHeader>
+              <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-primary" />
                   Your Instant Quote
@@ -425,13 +449,13 @@ export const AIQuoteGenerator = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-secondary/50 rounded-lg">
-                    <div className="text-xs text-muted-foreground">Quantity</div>
-                    <div className="text-lg font-semibold">{quoteResult.quote.quote_data.moqRange.requested} pcs</div>
+                    <div className="text-xs text-muted-foreground">Total Units</div>
+                    <div className="text-lg font-semibold">{quoteResult.quote.quote_data.moqRange.requested}</div>
                   </div>
                   <div className="p-3 bg-secondary/50 rounded-lg">
-                    <div className="text-xs text-muted-foreground">Complexity</div>
-                    <div className="text-lg font-semibold capitalize">
-                      {quoteResult.quote.quote_data.breakdown.complexityFactor}x
+                    <div className="text-xs text-muted-foreground">Print Type</div>
+                    <div className="text-lg font-semibold capitalize text-sm truncate">
+                      {formData.printType.replace('-', ' ')}
                     </div>
                   </div>
                 </div>
@@ -447,7 +471,7 @@ export const AIQuoteGenerator = () => {
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
                       <Calendar className="h-3 w-3 inline mr-1" />
-                      Estimated delivery: {quoteResult.quote.quote_data.timeline.estimatedDeliveryDate}
+                      Delivery by: {quoteResult.quote.quote_data.timeline.estimatedDeliveryDate}
                     </div>
                   </div>
                 </div>
@@ -455,18 +479,18 @@ export const AIQuoteGenerator = () => {
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-2">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Calendar className="h-4 w-4" />
-                  Production Timeline Breakdown
+                  Timeline Breakdown
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {quoteResult.timeline.map((stage, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-secondary/30 rounded">
+                    <div key={idx} className="flex items-center justify-between p-2 bg-secondary/30 rounded text-sm">
                       <div className="flex-1">
-                        <div className="font-medium text-sm">{stage.stage}</div>
+                        <div className="font-medium">{stage.stage}</div>
                         <div className="text-xs text-muted-foreground">
                           {stage.startDate} → {stage.endDate}
                         </div>
@@ -480,10 +504,10 @@ export const AIQuoteGenerator = () => {
 
             {quoteResult.aiInsights && (
               <Card className="border-primary/50">
-                <CardHeader>
+                <CardHeader className="pb-2">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Lightbulb className="h-4 w-4 text-primary" />
-                    AI-Powered Insights
+                    AI Insights
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
