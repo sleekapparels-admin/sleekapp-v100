@@ -16,6 +16,36 @@ serve(async (req) => {
   }
 
   try {
+    // SECURITY: Authenticate user first
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create authenticated Supabase client
+    const supabaseAuth = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
+
+    // Get authenticated user
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -51,6 +81,29 @@ serve(async (req) => {
 
     const order = invoice.orders;
     const buyer = order.profiles;
+
+    // SECURITY: Verify user is the buyer of this order or an admin
+    const { data: userRole } = await supabaseAuth
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const isAdmin = !!userRole;
+    const isBuyer = order.buyer_id === user.id;
+
+    if (!isAdmin && !isBuyer) {
+      console.error('Unauthorized invoice generation attempt:', { 
+        userId: user.id, 
+        orderId: order.id,
+        orderBuyerId: order.buyer_id
+      });
+      return new Response(
+        JSON.stringify({ error: 'You are not authorized to generate this invoice' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Generate invoice HTML using Lovable AI
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

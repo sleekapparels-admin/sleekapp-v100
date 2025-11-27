@@ -9,9 +9,6 @@ verify_jwt = true
 [functions.generate-work-order]
 verify_jwt = true
 
-[functions.seed-test-users]
-verify_jwt = false
-
 [functions.bootstrap-admin]
 verify_jwt = false
 
@@ -22,9 +19,6 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.stripe-webhook]
-verify_jwt = false
-
-[functions.submit-sample-request]
 verify_jwt = false
 
 [functions.track-product-interaction]
@@ -57,9 +51,6 @@ verify_jwt = true
 [functions.predict-quality-risks]
 verify_jwt = true
 
-[functions.send-notification-email]
-verify_jwt = true
-
 [functions.execute-automation-rules]
 verify_jwt = true
 
@@ -72,13 +63,7 @@ verify_jwt = true
 [functions.create-payment-intent]
 verify_jwt = true
 
-[functions.predict-delivery-timeline]
-verify_jwt = true
-
 [functions.log-audit-action]
-verify_jwt = true
-
-[functions.create-database-backup]
 verify_jwt = true
 
 [functions.submit-blog-comment]
