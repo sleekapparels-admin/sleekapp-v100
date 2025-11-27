@@ -157,7 +157,13 @@ export const AIQuoteGenerator = () => {
 
       // Use the enhanced API
       const result = await generateAIQuote({
-        ...validated,
+        productType: validated.productType,
+        quantity: validated.quantity,
+        complexityLevel: validated.complexityLevel,
+        fabricType: validated.fabricType,
+        additionalRequirements: validated.additionalRequirements,
+        customerName: validated.customerName,
+        customerEmail: validated.customerEmail,
         files: fileData.length > 0 ? fileData : undefined,
       });
 

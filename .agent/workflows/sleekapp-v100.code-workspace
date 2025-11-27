@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "sleekapp-v100",
+			"path": "../../sleekapp-v100"
+		}
+	],
+	"settings": {}
+}
