@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle, TrendingUp, Clock, CheckCircle2, Zap } from "lucide-react";
-import { differenceInDays, format, addDays } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { toast } from "sonner";
 
 interface ProductionStage {
