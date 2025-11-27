@@ -5,7 +5,8 @@ import { SEO } from "@/components/SEO";
 import { PainPointSelector } from "@/components/quote/PainPointSelector";
 import { MOQComparisonChart } from "@/components/infographics/MOQComparisonChart";
 import { TimelineComparisonChart } from "@/components/infographics/TimelineComparisonChart";
-import { SupplierProfileCard, SampleSupplierProfiles } from "@/components/supplier/SupplierProfileCard";
+// Supplier Profile Card temporarily disabled for build optimization
+// import { SupplierProfileCard, SampleSupplierProfiles } from "@/components/supplier/SupplierProfileCard";
 import { EnhancedAIAssistant } from "@/components/EnhancedAIAssistant";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -203,15 +204,15 @@ export default function AIVisualShowcase() {
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {SampleSupplierProfiles.map(supplier => (
-                  <SupplierProfileCard
-                    key={supplier.id}
-                    supplier={supplier}
-                    showImpactMetrics={true}
-                    showBeforeAfter={true}
-                    onViewDetails={(id) => console.log('View supplier:', id)}
-                  />
-                ))}
+                <div className="col-span-full p-8 bg-muted/50 rounded-lg text-center">
+                  <p className="text-muted-foreground mb-4">
+                    Supplier Profile Cards component is temporarily disabled due to build optimization.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    This component showcases transparent supplier information including certifications,
+                    worker benefits, and impact metrics.
+                  </p>
+                </div>
               </div>
 
               <div className="text-center p-6 bg-green-50 border border-green-200 rounded-lg">
