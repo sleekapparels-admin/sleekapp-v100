@@ -1,21 +1,15 @@
 import { useEffect } from 'react';
 
-// Extend Window interface for gtag
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      eventName: string,
-      params: Record<string, unknown>
-    ) => void;
-  }
-}
-
 interface WebVitalMetric {
   name: string;
   value: number;
   delta: number;
   id: string;
+}
+
+interface LayoutShift extends PerformanceEntry {
+  value: number;
+  hadRecentInput: boolean;
 }
 
 /**
@@ -79,22 +73,33 @@ export const useCoreWebVitals = () => {
           const lcpObserver = new PerformanceObserver((list) => {
             const entries = list.getEntries();
             const lastEntry = entries[entries.length - 1];
-            reportLCP({ value: lastEntry.startTime });
+            reportLCP({ 
+              name: 'LCP',
+              value: lastEntry.startTime,
+              delta: 0,
+              id: 'fallback-lcp'
+            });
           });
           lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
 
           // Observe CLS
           let clsValue = 0;
           const clsObserver = new PerformanceObserver((list) => {
-            for (const entry of list.getEntries() as any) {
-              if (!entry.hadRecentInput) {
-                clsValue += entry.value;
+            for (const entry of list.getEntries()) {
+              const layoutShift = entry as LayoutShift;
+              if (!layoutShift.hadRecentInput) {
+                clsValue += layoutShift.value;
               }
             }
-            reportCLS({ value: clsValue });
+            reportCLS({ 
+              name: 'CLS',
+              value: clsValue,
+              delta: 0,
+              id: 'fallback-cls'
+            });
           });
           clsObserver.observe({ type: 'layout-shift', buffered: true });
-        } catch (e) {
+        } catch (_error) {
           console.warn('Performance Observer not fully supported');
         }
       }

@@ -9,6 +9,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Package, Calendar, MapPin, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 
+interface OrderUpdate {
+  id: string;
+  stage: string;
+  message?: string | null;
+  completion_percentage: number | null;
+  photos?: string[] | null;
+  created_at: string | null;
+  created_by: string;
+}
+
 const TrackOrder = () => {
   const { orderId } = useParams();
   const [searchParams] = useSearchParams();
@@ -113,7 +123,9 @@ const TrackOrder = () => {
     );
   }
 
-  const progressPercentage = order.stage_progress?.[order.current_stage] || 0;
+  const progressPercentage = (order.stage_progress && order.current_stage) 
+    ? (order.stage_progress[order.current_stage] || 0)
+    : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,7 +144,7 @@ const TrackOrder = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Order Status</CardTitle>
-                <Badge className={getStatusColor(order.status)}>
+                <Badge className={getStatusColor(order.status || 'pending')}>
                   {order.status?.replace("_", " ").toUpperCase()}
                 </Badge>
               </div>
@@ -158,7 +170,7 @@ const TrackOrder = () => {
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <div className="text-sm text-muted-foreground">Order Date</div>
-                    <div className="font-medium">{format(new Date(order.created_at), "MMM d, yyyy")}</div>
+                    <div className="font-medium">{order.created_at ? format(new Date(order.created_at), "MMM d, yyyy") : 'N/A'}</div>
                   </div>
                 </div>
               </div>
@@ -190,7 +202,7 @@ const TrackOrder = () => {
                 </div>
                 <Progress value={progressPercentage} className="h-3" />
                 <div className="text-sm text-muted-foreground">
-                  Current Stage: {getProductionStageLabel(order.current_stage)}
+                  Current Stage: {order.current_stage ? getProductionStageLabel(order.current_stage) : 'Not Started'}
                 </div>
               </div>
 
@@ -220,22 +232,26 @@ const TrackOrder = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {order.order_updates
-                    .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                    .map((update: any) => (
+                  {(order.order_updates as any[])
+                    .sort((a: OrderUpdate, b: OrderUpdate) => {
+                      const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+                      const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+                      return bTime - aTime;
+                    })
+                    .map((update: OrderUpdate) => (
                       <div key={update.id} className="flex gap-4 p-4 bg-secondary/50 rounded-lg">
                         <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                         <div className="flex-1 space-y-2">
                           <div className="flex items-center justify-between">
                             <div className="font-semibold">{getProductionStageLabel(update.stage)}</div>
                             <div className="text-sm text-muted-foreground">
-                              {format(new Date(update.created_at), "MMM d, h:mm a")}
+                              {update.created_at ? format(new Date(update.created_at), "MMM d, h:mm a") : 'N/A'}
                             </div>
                           </div>
                           {update.message && (
                             <p className="text-sm text-muted-foreground">{update.message}</p>
                           )}
-                          {update.completion_percentage > 0 && (
+                          {(update.completion_percentage !== null && update.completion_percentage > 0) && (
                             <div className="flex items-center gap-2">
                               <Progress value={update.completion_percentage} className="h-2" />
                               <span className="text-xs text-muted-foreground">{update.completion_percentage}%</span>
