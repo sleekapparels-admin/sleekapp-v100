@@ -232,7 +232,7 @@ const TrackOrder = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {(order.order_updates as any[])
+                  {(order.order_updates as OrderUpdate[])
                     .sort((a: OrderUpdate, b: OrderUpdate) => {
                       const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
                       const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;

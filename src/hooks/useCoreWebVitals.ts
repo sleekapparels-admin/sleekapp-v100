@@ -99,7 +99,7 @@ export const useCoreWebVitals = () => {
             });
           });
           clsObserver.observe({ type: 'layout-shift', buffered: true });
-        } catch (_error) {
+        } catch {
           console.warn('Performance Observer not fully supported');
         }
       }

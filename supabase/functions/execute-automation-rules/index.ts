@@ -1,10 +1,26 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.207.0/http/server.ts";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+interface AutomationAction {
+  type: string;
+  params: {
+    table?: string;
+    new_status?: string;
+    id?: string;
+    [key: string]: unknown;
+  };
+}
+
+interface ActionResult {
+  action: string;
+  success: boolean;
+  error?: unknown;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -98,13 +114,14 @@ serve(async (req) => {
             reason: 'Conditions not met'
           });
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error(`Error executing rule ${rule.rule_name}:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         results.push({
           rule_id: rule.id,
           rule_name: rule.rule_name,
           executed: false,
-          error: error.message
+          error: errorMessage
         });
       }
     }
@@ -113,24 +130,25 @@ serve(async (req) => {
       JSON.stringify({ success: true, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in execute-automation-rules:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
 
-async function evaluateConditions(client: any, conditions: any): Promise<boolean> {
+async function evaluateConditions(_client: SupabaseClient, _conditions: unknown): Promise<boolean> {
   // Simplified condition evaluation
   // In production, implement full condition logic
-  console.log("Evaluating conditions:", conditions);
+  console.log("Evaluating conditions:", _conditions);
   return true; // Placeholder
 }
 
-async function executeActions(client: any, actions: any): Promise<any[]> {
-  const results = [];
+async function executeActions(client: SupabaseClient, actions: AutomationAction[]): Promise<ActionResult[]> {
+  const results: ActionResult[] = [];
 
   for (const action of actions) {
     try {
@@ -160,9 +178,10 @@ async function executeActions(client: any, actions: any): Promise<any[]> {
         default:
           console.log("Unknown action type:", action.type);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Action error:", error);
-      results.push({ action: action.type, success: false, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      results.push({ action: action.type, success: false, error: errorMessage });
     }
   }
 

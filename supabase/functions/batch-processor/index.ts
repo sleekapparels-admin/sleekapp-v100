@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { serve } from "https://deno.land/std@0.207.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -34,6 +34,23 @@ interface BatchResult {
   fillPercentage: number;
   message?: string;
   ordersCancelled?: number;
+}
+
+interface ProductionBatch {
+  id: string;
+  product_category: string;
+  product_variant_base: string;
+  target_quantity: number;
+  current_quantity: number;
+  current_style_count: number;
+  max_styles: number;
+  supplier_id: string;
+  unit_price_base: number;
+  complexity_multiplier: number;
+  estimated_start_date: string;
+  batch_status?: string;
+  window_closes_at?: string;
+  actual_start_date?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -210,12 +227,12 @@ async function handleOrderProcessing(req: Request, orderRequest: OrderProcessing
 
   if (batchError) throw batchError;
 
-  let selectedBatch: any = null;
+  let selectedBatch: ProductionBatch | null = null;
   let isNewBatch = false;
 
   // Check style compatibility with existing batches
   if (existingBatches && existingBatches.length > 0) {
-    for (const batch of existingBatches) {
+    for (const batch of existingBatches as ProductionBatch[]) {
       const { data: contributions } = await supabase
         .from('batch_contributions')
         .select('style_details')
