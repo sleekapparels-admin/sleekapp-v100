@@ -7,9 +7,13 @@ import { getPageSEO } from "@/lib/seo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Calendar, ArrowRight, Eye, Share2 } from "lucide-react";
+import { Calendar, ArrowRight, Eye, Share2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LazyImage } from "@/components/LazyImage";
+import { BlogErrorBoundary } from "@/components/blog/BlogErrorBoundary";
+import { NoBlogPosts } from "@/components/blog/NoBlogPosts";
+import { toast } from "sonner";
+import { runBlogDiagnostics } from "@/lib/blogDebugger";
 
 interface BlogPost {
   id: string;
@@ -17,38 +21,107 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   category: string;
-  published_at: string;
+  published_at: string | null;
   featured_image_url: string;
-  views_count: number;
-  shares_count: number;
+  views_count: number | null;
+  shares_count: number | null;
 }
 
 const Blog = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [connectionVerified, setConnectionVerified] = useState(false);
 
   useEffect(() => {
-    fetchBlogPosts();
+    verifyConnectionAndFetchPosts();
   }, []);
+
+  const verifyConnectionAndFetchPosts = async () => {
+    try {
+      // Step 1: Verify Supabase connection
+      console.log('🔗 Verifying Supabase connection...');
+      const { data: healthCheck, error: healthError } = await supabase
+        .from('blog_posts')
+        .select('count', { count: 'exact', head: true });
+
+      if (healthError) {
+        console.error('❌ Connection verification failed:', healthError);
+        setError(`Database connection error: ${healthError.message}`);
+        toast.error('Failed to connect to database');
+        setLoading(false);
+        return;
+      }
+
+      console.log('✅ Connection verified');
+      setConnectionVerified(true);
+
+      // Step 2: Fetch blog posts
+      await fetchBlogPosts();
+    } catch (err: any) {
+      console.error('❌ Critical error:', err);
+      setError(`Unexpected error: ${err.message}`);
+      toast.error('An unexpected error occurred');
+      setLoading(false);
+    }
+  };
 
   const fetchBlogPosts = async () => {
     try {
-      const { data, error } = await supabase
+      console.log('📚 Fetching blog posts...');
+      
+      const { data, error, status, statusText } = await supabase
         .from("blog_posts")
         .select("id, title, slug, excerpt, category, published_at, featured_image_url, views_count, shares_count")
         .eq("published", true)
         .order("published_at", { ascending: false });
 
-      if (error) throw error;
-      setBlogPosts(data || []);
-    } catch (error) {
-      console.error("Error fetching blog posts:", error);
+      // Log response details
+      console.log('📊 Query Response:', {
+        status,
+        statusText,
+        dataCount: data?.length || 0,
+        hasError: !!error,
+      });
+
+      if (error) {
+        console.error('❌ Query error:', error);
+        setError(`Failed to fetch blog posts: ${error.message}`);
+        toast.error(`Error: ${error.message}`);
+        throw error;
+      }
+
+      // Check if data is valid
+      if (!Array.isArray(data)) {
+        console.warn('⚠️ Unexpected data format:', typeof data);
+        setError('Received invalid data format from database');
+        toast.error('Invalid data format received');
+        setBlogPosts([]);
+      } else {
+        console.log('✅ Successfully fetched', data.length, 'blog posts');
+        setBlogPosts(data);
+        
+        if (data.length === 0) {
+          console.log('ℹ️ No published blog posts found');
+        }
+      }
+    } catch (error: any) {
+      console.error("❌ Error fetching blog posts:", error);
+      setError(error.message || 'Unknown error occurred');
+      
+      // Run diagnostics in development
+      if (import.meta.env.DEV) {
+        console.log('🩺 Running diagnostics...');
+        runBlogDiagnostics().then(debugInfo => {
+          console.log('📋 Diagnostics complete. Check console for details.');
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
   return (
-    <>
+    <BlogErrorBoundary>
       <SEO config={getPageSEO('blog')} />
       
       <div className="min-h-screen bg-background">
@@ -70,60 +143,42 @@ const Blog = () => {
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                <p className="text-sm text-muted-foreground">Loading blog posts...</p>
+              </div>
+            ) : error ? (
+              <div className="max-w-2xl mx-auto py-20">
+                <Card className="border-destructive/50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-2 bg-destructive/10 rounded-full">
+                        <AlertCircle className="h-6 w-6 text-destructive" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg mb-2">Failed to Load Blog Posts</h3>
+                        <p className="text-sm text-muted-foreground mb-4">{error}</p>
+                        <div className="flex gap-3">
+                          <Button onClick={verifyConnectionAndFetchPosts} size="sm">
+                            Try Again
+                          </Button>
+                          {import.meta.env.DEV && (
+                            <Button 
+                              onClick={() => runBlogDiagnostics()} 
+                              variant="outline" 
+                              size="sm"
+                            >
+                              Run Diagnostics
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             ) : blogPosts.length === 0 ? (
-              <div className="max-w-2xl mx-auto text-center py-20">
-                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-8 md:p-12 border border-purple-100">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full mb-6">
-                    <Calendar className="h-8 w-8 text-white" />
-                  </div>
-                  <h2 className="text-3xl font-bold mb-4">Blog Coming Soon!</h2>
-                  <p className="text-xl text-muted-foreground mb-8">
-                    We're preparing insightful articles on apparel manufacturing, sustainable fashion, 
-                    startup guides, and industry trends. Subscribe to get notified when we launch.
-                  </p>
-                  <div className="max-w-md mx-auto">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <input
-                        type="email"
-                        placeholder="Enter your email"
-                        className="flex-1 px-4 py-3 rounded-lg border border-input bg-background"
-                      />
-                      <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                        Notify Me
-                      </Button>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-4">
-                      Join 500+ apparel entrepreneurs getting our updates. Unsubscribe anytime.
-                    </p>
-                  </div>
-                  <div className="mt-8 pt-8 border-t border-purple-200">
-                    <p className="text-sm text-muted-foreground mb-4">While you wait, check out:</p>
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      <Button variant="outline" asChild>
-                        <Link to="/for-startups">
-                          Startup Guide
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <Link to="/tech-pack-services">
-                          Tech Pack Resources
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <Link to="/samples">
-                          Sample Program
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <NoBlogPosts />
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {blogPosts.map((post) => (
@@ -142,7 +197,7 @@ const Blog = () => {
                         </span>
                         <span className="flex items-center text-xs text-muted-foreground">
                           <Calendar className="w-3 h-3 mr-1" />
-                          {new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Not published'}
                         </span>
                       </div>
                       <CardTitle className="text-xl leading-tight line-clamp-2">{post.title}</CardTitle>
@@ -152,11 +207,11 @@ const Blog = () => {
                       <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
                         <span className="flex items-center">
                           <Eye className="w-3 h-3 mr-1" />
-                          {post.views_count}
+                          {post.views_count || 0}
                         </span>
                         <span className="flex items-center">
                           <Share2 className="w-3 h-3 mr-1" />
-                          {post.shares_count}
+                          {post.shares_count || 0}
                         </span>
                       </div>
                       <Button variant="ghost" className="p-0 h-auto" asChild>
@@ -176,7 +231,7 @@ const Blog = () => {
         <Footer />
         <FloatingContactWidget />
       </div>
-    </>
+    </BlogErrorBoundary>
   );
 };
 
