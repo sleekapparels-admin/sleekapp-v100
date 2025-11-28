@@ -141,7 +141,7 @@ export const SmartAIAssistant = () => {
       };
       
       setMessages(prev => [...prev, errorMessage]);
-      setQuickReplies(errorMessage.quickReplies);
+      setQuickReplies(errorMessage.quickReplies ?? []);
       
       toast({
         title: "Connection Issue",

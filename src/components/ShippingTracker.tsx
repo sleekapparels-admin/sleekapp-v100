@@ -56,10 +56,14 @@ export const ShippingTracker = ({ orderId, canEdit }: ShippingTrackerProps) => {
       if (error && error.code !== 'PGRST116') throw error;
       
       if (data) {
-        setShipping(data);
+        setShipping({
+          ...data,
+          tracking_number: data.tracking_number ?? '',
+          carrier: data.carrier ?? ''
+        });
         setFormData({
-          tracking_number: data.tracking_number || '',
-          carrier: data.carrier || '',
+          tracking_number: data.tracking_number ?? '',
+          carrier: data.carrier ?? '',
           status: data.status || 'preparing',
           estimated_delivery: data.estimated_delivery || '',
           current_location: data.current_location || '',

@@ -160,8 +160,12 @@ async function executeActions(client: SupabaseClient, actions: AutomationAction[
           break;
 
         case 'update_status': {
+          if (!action.params.table) {
+            results.push({ action: 'update_status', success: false, error: 'Missing table parameter' });
+            break;
+          }
           const { error } = await client
-            .from(action.params.table)
+            .from(action.params.table as string)
             .update({ status: action.params.new_status })
             .eq('id', action.params.id);
           

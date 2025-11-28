@@ -36,7 +36,13 @@ export const AutomationRulesManager = () => {
         .order('priority', { ascending: false });
 
       if (error) throw error;
-      setRules(data || []);
+      if (data) {
+        setRules(data.map(r => ({
+          ...r,
+          active: r.active ?? false,
+          priority: r.priority ?? 0
+        })));
+      }
     } catch (error: any) {
       toast.error(`Failed to load rules: ${error.message}`);
     } finally {

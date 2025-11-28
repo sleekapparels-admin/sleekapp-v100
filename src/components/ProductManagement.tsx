@@ -57,7 +57,12 @@ export const ProductManagement = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      if (data) {
+        setProducts(data.map(p => ({
+          ...p,
+          featured: p.featured ?? false
+        })));
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
       toast.error("Failed to load products");

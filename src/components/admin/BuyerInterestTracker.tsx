@@ -93,10 +93,10 @@ export function BuyerInterestTracker() {
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           )[0];
           const lastOrder = buyerOrders.sort((a, b) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
           )[0];
 
-          const lastActivityDate = lastOrder?.created_at || lastQuote?.created_at || buyer.created_at;
+          const lastActivityDate = lastOrder?.created_at || lastQuote?.created_at || buyer.created_at || new Date().toISOString();
           const daysSinceContact = Math.floor(
             (new Date().getTime() - new Date(lastActivityDate).getTime()) / (1000 * 60 * 60 * 24)
           );

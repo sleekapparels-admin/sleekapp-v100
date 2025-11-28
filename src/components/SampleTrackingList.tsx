@@ -46,7 +46,15 @@ export const SampleTrackingList = ({ userId, role }: SampleTrackingListProps) =>
         .order('requested_at', { ascending: false });
 
       if (error) throw error;
-      setSamples(data || []);
+      if (data) {
+        setSamples(data.map(s => ({
+          ...s,
+          status: s.status ?? 'pending',
+          requested_at: s.requested_at ?? new Date().toISOString(),
+          requested_by: s.requested_by ?? '',
+          notes: s.notes ?? ''
+        })));
+      }
     } catch (error: any) {
       console.error('Error fetching samples:', error);
       toast.error("Failed to load sample requests");

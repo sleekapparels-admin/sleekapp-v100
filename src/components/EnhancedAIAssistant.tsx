@@ -290,7 +290,7 @@ export const EnhancedAIAssistant = () => {
       };
       
       setMessages(prev => [...prev, errorMessage]);
-      setQuickReplies(errorMessage.quickReplies);
+      setQuickReplies(errorMessage.quickReplies ?? []);
     } finally {
       setIsTyping(false);
     }
@@ -517,11 +517,11 @@ export const EnhancedAIAssistant = () => {
                             {message.visualContent.type === 'photo-carousel' && message.visualContent.sources && (
                               <div className="space-y-2">
                                 <div className="flex gap-2 overflow-x-auto">
-                                  {message.visualContent.sources.map((src, idx) => (
+                                  {message.visualContent?.sources?.map((src, idx) => (
                                     <img 
                                       key={idx}
                                       src={src} 
-                                      alt={`${message.visualContent.alt} ${idx + 1}`}
+                                      alt={message.visualContent?.alt ? `${message.visualContent.alt} ${idx + 1}` : `Image ${idx + 1}`}
                                       className="h-32 rounded flex-shrink-0"
                                     />
                                   ))}

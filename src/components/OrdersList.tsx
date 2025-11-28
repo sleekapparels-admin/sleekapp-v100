@@ -26,7 +26,8 @@ export const OrdersList = ({ role, userId }: OrdersListProps) => {
   
   // Select the active query based on role
   const activeQuery = isBuyerRole ? buyerQuery : isFactoryRole ? factoryQuery : adminQuery;
-  const { data: orders = [], isLoading: loading } = activeQuery;
+  const { data: ordersData, isLoading: loading } = activeQuery;
+  const orders = ordersData ?? [];
 
   if (loading) {
     return <p className="text-muted-foreground">Loading orders...</p>;

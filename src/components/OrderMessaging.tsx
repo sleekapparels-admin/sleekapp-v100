@@ -56,7 +56,12 @@ export const OrderMessaging = ({ orderId, currentUserRole }: OrderMessagingProps
       return;
     }
 
-    setMessages(data || []);
+    if (data) {
+      setMessages(data.map(m => ({
+        ...m,
+        created_at: m.created_at ?? new Date().toISOString()
+      })));
+    }
   };
 
   const subscribeToMessages = () => {

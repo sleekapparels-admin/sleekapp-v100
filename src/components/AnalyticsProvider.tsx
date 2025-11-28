@@ -42,7 +42,7 @@ export const AnalyticsProvider = memo(({
 
       window.dataLayer = window.dataLayer || [];
       window.gtag = function gtag() {
-        window.dataLayer.push(arguments);
+        window.dataLayer?.push(arguments);
       };
       window.gtag('js', new Date());
       window.gtag('config', gaId);
@@ -146,8 +146,8 @@ export const AnalyticsProvider = memo(({
         }
       })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-      window.fbq('init', facebookPixelId);
-      window.fbq('track', 'PageView');
+      window.fbq?.('init', facebookPixelId);
+      window.fbq?.('track', 'PageView');
     };
 
     // Load on interaction
