@@ -155,7 +155,7 @@ export const SupplierCoordinationPanel = ({ orderId, supplierId }: SupplierCoord
               </div>
               
               <div className="space-y-2">
-                {supplier.contact_email && (
+                {supplier.contact_email !== null && (
                   <div className="flex items-center gap-2 text-sm">
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     <a href={`mailto:${supplier.contact_email}`} className="text-primary hover:underline">
@@ -164,7 +164,7 @@ export const SupplierCoordinationPanel = ({ orderId, supplierId }: SupplierCoord
                   </div>
                 )}
                 
-                {supplier.contact_phone && (
+                {supplier.contact_phone !== null && (
                   <div className="flex items-center gap-2 text-sm">
                     <Phone className="h-4 w-4 text-muted-foreground" />
                     <a href={`tel:${supplier.contact_phone}`} className="text-primary hover:underline">
@@ -173,7 +173,7 @@ export const SupplierCoordinationPanel = ({ orderId, supplierId }: SupplierCoord
                   </div>
                 )}
                 
-                {supplier.address && (
+                {supplier.address !== null && (
                   <div className="flex items-start gap-2 text-sm">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <span className="text-muted-foreground">{supplier.address}</span>

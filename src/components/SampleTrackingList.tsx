@@ -15,10 +15,10 @@ interface SampleRequest {
   specifications: any;
   requested_at: string;
   requested_by: string;
-  approved_at?: string;
-  rejected_at?: string;
+  approved_at: string | null;
+  rejected_at: string | null;
   notes: string;
-  created_at: string;
+  created_at: string | null;
   orders?: {
     order_number: string;
     product_name: string;
