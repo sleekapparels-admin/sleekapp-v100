@@ -15,11 +15,11 @@ interface ShippingInfo {
   tracking_number: string;
   carrier: string;
   status: string;
-  shipped_date?: string;
-  estimated_delivery?: string;
-  actual_delivery?: string;
-  current_location?: string;
-  notes?: string;
+  shipped_date: string | null;
+  estimated_delivery: string | null;
+  actual_delivery: string | null;
+  current_location: string | null;
+  notes: string | null;
 }
 
 interface ShippingTrackerProps {
@@ -65,9 +65,9 @@ export const ShippingTracker = ({ orderId, canEdit }: ShippingTrackerProps) => {
           tracking_number: data.tracking_number ?? '',
           carrier: data.carrier ?? '',
           status: data.status || 'preparing',
-          estimated_delivery: data.estimated_delivery || '',
-          current_location: data.current_location || '',
-          notes: data.notes || '',
+          estimated_delivery: data.estimated_delivery ?? '',
+          current_location: data.current_location ?? '',
+          notes: data.notes ?? '',
         });
       }
     } catch (error: any) {
@@ -245,12 +245,12 @@ export const ShippingTracker = ({ orderId, canEdit }: ShippingTrackerProps) => {
                   setEditing(false);
                   if (shipping) {
                     setFormData({
-                      tracking_number: shipping.tracking_number || '',
-                      carrier: shipping.carrier || '',
-                      status: shipping.status || 'preparing',
-                      estimated_delivery: shipping.estimated_delivery || '',
-                      current_location: shipping.current_location || '',
-                      notes: shipping.notes || '',
+                      tracking_number: shipping.tracking_number ?? '',
+                      carrier: shipping.carrier ?? '',
+                      status: shipping.status ?? 'preparing',
+                      estimated_delivery: shipping.estimated_delivery ?? '',
+                      current_location: shipping.current_location ?? '',
+                      notes: shipping.notes ?? '',
                     });
                   }
                 }}
@@ -286,7 +286,7 @@ export const ShippingTracker = ({ orderId, canEdit }: ShippingTrackerProps) => {
                 </div>
               </div>
 
-              {shipping.current_location && (
+              {shipping.current_location !== null && (
                 <div className="flex items-start gap-2">
                   <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
@@ -296,7 +296,7 @@ export const ShippingTracker = ({ orderId, canEdit }: ShippingTrackerProps) => {
                 </div>
               )}
 
-              {shipping.estimated_delivery && (
+              {shipping.estimated_delivery !== null && (
                 <div className="flex items-start gap-2">
                   <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
@@ -308,7 +308,7 @@ export const ShippingTracker = ({ orderId, canEdit }: ShippingTrackerProps) => {
                 </div>
               )}
 
-              {shipping.notes && (
+              {shipping.notes !== null && (
                 <div className="pt-2 border-t">
                   <p className="text-sm font-medium mb-1">Notes</p>
                   <p className="text-sm text-muted-foreground">{shipping.notes}</p>
