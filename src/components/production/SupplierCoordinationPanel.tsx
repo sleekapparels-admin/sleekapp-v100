@@ -24,7 +24,7 @@ interface Message {
 interface Supplier {
   id: string;
   company_name: string;
-  contact_email: string;
+  contact_email: string | null;
   contact_phone: string | null;
   address: string | null;
 }
