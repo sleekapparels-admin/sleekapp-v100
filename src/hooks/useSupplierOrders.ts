@@ -164,10 +164,15 @@ export const useSupplierOrders = (supplierId: string) => {
     },
   });
 
+  const fetchOrders = () => {
+    queryClient.invalidateQueries({ queryKey: ['supplier_orders', supplierId] });
+  };
+
   return {
     orders,
     loading,
     error,
+    fetchOrders,
     acceptOrder: (orderId: string, notes?: string) => acceptOrderMutation.mutateAsync({ orderId, notes }),
     rejectOrder: (orderId: string, reason: string) => rejectOrderMutation.mutateAsync({ orderId, reason }),
     submitCounterOffer: (orderId: string, counterPrice: number, notes: string) => submitCounterOfferMutation.mutateAsync({ orderId, counterPrice, notes }),

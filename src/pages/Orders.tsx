@@ -85,7 +85,10 @@ export default function Orders() {
       const { data, error } = await query.order("created_at", { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      setOrders((data || []).map(order => ({
+        ...order,
+        status: order.status || 'pending',
+      })));
     } catch (error: any) {
       console.error("Error fetching orders:", error);
       toast({
