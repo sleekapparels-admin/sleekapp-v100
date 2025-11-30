@@ -48,7 +48,7 @@ export default function OrderDetails() {
   useEffect(() => {
     fetchUserRole();
     if (orderId) {
-      fetchOrderDetails();
+      fetchOrderDetails(orderId || '');
       fetchUpdatesAndQc();
     }
   }, [orderId, refreshTrigger]);
@@ -100,8 +100,8 @@ export default function OrderDetails() {
 
       setOrder({
         ...data,
-        notes: data.notes || undefined,
-        target_date: data.target_date || undefined,
+        notes: data.notes ?? undefined,
+        target_date: data.target_date ?? undefined,
         stage_progress: (data.stage_progress as Record<ProductionStage, number>) || {},
         buyer: buyerProfile || { full_name: "Unknown", company_name: "Unknown" },
         factory: factoryProfile,

@@ -73,7 +73,6 @@ export const useOrderManagement = () => {
       const { error: supplierOrderError } = await supabase
         .from('supplier_orders')
         .insert({
-          supplier_id: supplierId,
           buyer_order_id: orderId,
           product_type: order.product_type,
           quantity: order.quantity,

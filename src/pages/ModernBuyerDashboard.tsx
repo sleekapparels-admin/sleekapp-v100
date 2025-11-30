@@ -172,14 +172,8 @@ export default function ModernBuyerDashboard() {
     });
 
   // Smart recommendations based on real data
-  const recommendations = [];
+  const recommendations: Recommendation[] = [];
   
-  // Check for reorder opportunities
-  const recentCompletedOrders = (orders || [])
-    .filter(o => o.status === 'completed')
-    .sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime())
-    .slice(0, 3);
-
   type Recommendation = {
     id: string;
     type: string;
@@ -190,6 +184,12 @@ export default function ModernBuyerDashboard() {
     color: 'primary' | 'accent';
     onClick: () => void;
   };
+  
+  // Check for reorder opportunities
+  const recentCompletedOrders = (orders || [])
+    .filter(o => o.status === 'completed')
+    .sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime())
+    .slice(0, 3);
 
   if (recentCompletedOrders.length > 0) {
     const lastOrder = recentCompletedOrders[0];
