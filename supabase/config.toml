@@ -66,10 +66,7 @@ verify_jwt = true
 [functions.submit-blog-comment]
 verify_jwt = false
 
-[functions.ai-market-research]
-verify_jwt = false
-
-[functions.ai-conversational-quote]
+[functions.generate-ai-quote]
 verify_jwt = false
 
 [functions.log-security-event]

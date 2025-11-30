@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, TrendingUp } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { MarketResearchInsights } from "./MarketResearchInsights";
 import { InteractiveQuoteDisplay } from "./InteractiveQuoteDisplay";
 
 interface QuoteData {
@@ -31,20 +30,8 @@ interface QuoteData {
   suggestions: string;
 }
 
-interface MarketResearch {
-  averageUnitCost: number;
-  materialCostPerUnit: number;
-  leadTimeDays: number;
-  markupPercentage: number;
-  comparableProducts: Array<{ name: string; price: number; source: string }>;
-  sources: string[];
-  confidenceScore: number;
-}
-
 export const ConversationalQuoteBuilder = () => {
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [researchLoading, setResearchLoading] = useState(false);
   const { toast } = useToast();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
@@ -60,11 +47,10 @@ export const ConversationalQuoteBuilder = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   // Results state
-  const [marketResearch, setMarketResearch] = useState<MarketResearch | null>(null);
   const [quote, setQuote] = useState<QuoteData | null>(null);
-  const [marketResearchId, setMarketResearchId] = useState<string | null>(null);
 
-  const handleMarketResearch = async () => {
+  const handleGenerateQuote = async () => {
+    // Validation
     if (!productType || !quantity) {
       toast({
         title: "Missing Information",
@@ -74,48 +60,16 @@ export const ConversationalQuoteBuilder = () => {
       return;
     }
 
-    setResearchLoading(true);
-    try {
-      const captchaToken = await recaptchaRef.current?.executeAsync();
-      recaptchaRef.current?.reset();
-
-      const { data, error } = await supabase.functions.invoke('ai-market-research', {
-        body: {
-          productType,
-          quantity: parseInt(quantity),
-          fabricType: fabricType || undefined,
-          complexity: complexity || undefined,
-          additionalRequirements: additionalRequirements || undefined,
-          captchaToken,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data.success) {
-        setMarketResearch(data.research);
-        setMarketResearchId(data.cache_id);
-        setStep(2);
-        toast({
-          title: data.cached ? "📊 Research Retrieved" : "🔍 Research Complete",
-          description: data.cached 
-            ? "Using recent market data" 
-            : `Found data with ${data.confidence_score}% confidence`,
-        });
-      }
-    } catch (error) {
-      console.error('Market research error:', error);
+    const qty = parseInt(quantity);
+    if (qty < 50) {
       toast({
-        title: "Research Failed",
-        description: "Unable to gather market data. Please try again.",
+        title: "Minimum Order Quantity",
+        description: "Sleek Apparels requires a minimum order of 50 units",
         variant: "destructive",
       });
-    } finally {
-      setResearchLoading(false);
+      return;
     }
-  };
 
-  const handleGenerateQuote = async () => {
     if (!customerEmail) {
       toast({
         title: "Email Required",
@@ -133,10 +87,10 @@ export const ConversationalQuoteBuilder = () => {
       const sessionId = localStorage.getItem('quote_session_id') || crypto.randomUUID();
       localStorage.setItem('quote_session_id', sessionId);
 
-      const { data, error } = await supabase.functions.invoke('ai-conversational-quote', {
+      const { data, error } = await supabase.functions.invoke('generate-ai-quote', {
         body: {
           productType,
-          quantity: parseInt(quantity),
+          quantity: qty,
           fabricType: fabricType || undefined,
           complexity: complexity || undefined,
           additionalRequirements: additionalRequirements || undefined,
@@ -145,7 +99,6 @@ export const ConversationalQuoteBuilder = () => {
           country: country || undefined,
           phoneNumber: phoneNumber || undefined,
           sessionId,
-          marketResearchId,
           captchaToken,
         },
       });
@@ -154,17 +107,16 @@ export const ConversationalQuoteBuilder = () => {
 
       if (data.success) {
         setQuote(data.quote);
-        setStep(3);
         toast({
           title: "✨ Quote Generated",
-          description: `$${data.quote.unitPrice.toFixed(2)}/unit with ${data.quote.confidenceScore}% confidence`,
+          description: `$${data.quote.unitPrice.toFixed(2)}/unit • ${data.quote.confidenceScore}% confidence`,
         });
       }
     } catch (error) {
       console.error('Quote generation error:', error);
       toast({
         title: "Quote Generation Failed",
-        description: "Unable to generate quote. Please try again.",
+        description: error instanceof Error ? error.message : "Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -172,36 +124,64 @@ export const ConversationalQuoteBuilder = () => {
     }
   };
 
+  const handleStartNew = () => {
+    setQuote(null);
+    setProductType("");
+    setQuantity("");
+    setFabricType("");
+    setComplexity("medium");
+    setAdditionalRequirements("");
+    setCustomerEmail("");
+    setCustomerName("");
+    setCountry("");
+    setPhoneNumber("");
+  };
+
+  if (quote) {
+    return (
+      <InteractiveQuoteDisplay
+        quote={quote}
+        productType={productType}
+        quantity={parseInt(quantity)}
+        onStartNew={handleStartNew}
+      />
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Step 1: Product Details */}
-      {step === 1 && (
-        <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
-              Tell Us About Your Product
-            </CardTitle>
-            <CardDescription>
-              We'll research current market prices to give you the best quote
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+    <div className="max-w-4xl mx-auto">
+      <Card className="border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
+            Get Your Instant AI Quote
+          </CardTitle>
+          <CardDescription>
+            Tell us about your product and we'll generate a detailed, market-researched quote instantly
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Product Details */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-sm">Product Details</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="productType">Product Type *</Label>
                 <Input
                   id="productType"
-                  placeholder="e.g., T-shirts, Hoodies, Uniforms"
+                  placeholder="e.g., T-shirts, Hoodies, Polo Shirts"
                   value={productType}
                   onChange={(e) => setProductType(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="quantity">Quantity *</Label>
+                <Label htmlFor="quantity">
+                  Quantity * <span className="text-xs text-muted-foreground">(Min: 50 units)</span>
+                </Label>
                 <Input
                   id="quantity"
                   type="number"
+                  min="50"
                   placeholder="e.g., 500"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
@@ -211,167 +191,110 @@ export const ConversationalQuoteBuilder = () => {
                 <Label htmlFor="fabricType">Fabric Type</Label>
                 <Input
                   id="fabricType"
-                  placeholder="e.g., Cotton, Polyester"
+                  placeholder="e.g., 100% Cotton, Polyester Blend"
                   value={fabricType}
                   onChange={(e) => setFabricType(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="complexity">Complexity</Label>
+                <Label htmlFor="complexity">Design Complexity</Label>
                 <select
                   id="complexity"
                   className="w-full h-10 px-3 rounded-md border border-input bg-background"
                   value={complexity}
                   onChange={(e) => setComplexity(e.target.value)}
                 >
-                  <option value="simple">Simple</option>
-                  <option value="medium">Medium</option>
-                  <option value="complex">Complex</option>
+                  <option value="simple">Simple (1 color, basic design)</option>
+                  <option value="medium">Medium (2-3 colors)</option>
+                  <option value="complex">Complex (Multi-color, intricate)</option>
                 </select>
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="additionalRequirements">Additional Requirements</Label>
+              <Label htmlFor="additionalRequirements">Special Requirements</Label>
               <Input
                 id="additionalRequirements"
-                placeholder="e.g., Custom labels, specific packaging"
+                placeholder="e.g., Custom embroidery, eco-friendly packaging"
                 value={additionalRequirements}
                 onChange={(e) => setAdditionalRequirements(e.target.value)}
               />
             </div>
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              size="invisible"
-              sitekey="6LcP_RMsAAAAAAyzUVk22XySYyE5zhKuWMotskop"
-            />
-            <Button
-              onClick={handleMarketResearch}
-              disabled={researchLoading || !productType || !quantity}
-              className="w-full gap-2"
-            >
-              {researchLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Researching Market Prices...
-                </>
-              ) : (
-                <>
-                  <TrendingUp className="w-4 h-4" />
-                  Research Market & Continue
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+          </div>
 
-      {/* Step 2: Market Research Results + Contact Info */}
-      {step === 2 && marketResearch && (
-        <>
-          <MarketResearchInsights research={marketResearch} />
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Contact Information</CardTitle>
-              <CardDescription>
-                We'll send your detailed quote to this email
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="customerEmail">Email Address *</Label>
-                  <Input
-                    id="customerEmail"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="customerName">Full Name</Label>
-                  <Input
-                    id="customerName"
-                    placeholder="John Doe"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
-                  <Input
-                    id="country"
-                    placeholder="United States"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Phone Number</Label>
-                  <Input
-                    id="phoneNumber"
-                    placeholder="+1 234 567 8900"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                </div>
+          {/* Contact Information */}
+          <div className="space-y-4 pt-4 border-t">
+            <h3 className="font-semibold text-sm">Your Contact Information</h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="customerEmail">Email Address *</Label>
+                <Input
+                  id="customerEmail"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                />
               </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                  disabled={loading}
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={handleGenerateQuote}
-                  disabled={loading || !customerEmail}
-                  className="flex-1 gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Generating Your Quote...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4" />
-                      Generate Final Quote
-                    </>
-                  )}
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="customerName">Full Name</Label>
+                <Input
+                  id="customerName"
+                  placeholder="John Doe"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
               </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <Input
+                  id="country"
+                  placeholder="United States"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input
+                  id="phoneNumber"
+                  placeholder="+1 234 567 8900"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
 
-      {/* Step 3: Final Quote */}
-      {step === 3 && quote && marketResearch && (
-        <InteractiveQuoteDisplay
-          quote={quote}
-          research={marketResearch}
-          productType={productType}
-          quantity={parseInt(quantity)}
-          onStartNew={() => {
-            setStep(1);
-            setQuote(null);
-            setMarketResearch(null);
-            setMarketResearchId(null);
-            setProductType("");
-            setQuantity("");
-            setFabricType("");
-            setComplexity("medium");
-            setAdditionalRequirements("");
-            setCustomerEmail("");
-            setCustomerName("");
-            setCountry("");
-            setPhoneNumber("");
-          }}
-        />
-      )}
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            size="invisible"
+            sitekey="6LcP_RMsAAAAAAyzUVk22XySYyE5zhKuWMotskop"
+          />
+
+          <Button
+            onClick={handleGenerateQuote}
+            disabled={loading || !productType || !quantity || !customerEmail}
+            className="w-full gap-2"
+            size="lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Generating Your AI Quote...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                Generate Instant Quote
+              </>
+            )}
+          </Button>
+
+          <p className="text-xs text-muted-foreground text-center">
+            Your quote will be generated using real-time market data and Bangladesh manufacturing expertise
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 };
