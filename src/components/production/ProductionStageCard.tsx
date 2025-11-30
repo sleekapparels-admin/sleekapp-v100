@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useOptimisticStageUpdate } from "@/hooks/useOptimisticUpdate";
-import { 
-  CheckCircle2, 
-  Clock, 
-  AlertTriangle, 
-  Camera, 
-  MessageSquare, 
+import {
+  useStartProductionStage,
+  useUpdateProductionStage,
+  useCompleteProductionStage
+} from "@/hooks/useProductionStages";
+import {
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  Camera,
   Edit,
   Save,
   X,
@@ -23,6 +24,7 @@ import {
   FileText
 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 interface Stage {
   number: number;
@@ -50,17 +52,14 @@ interface ProductionStageCardProps {
 }
 
 export const ProductionStageCard = ({ stage, data, orderId, userRole }: ProductionStageCardProps) => {
-  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [notes, setNotes] = useState(data?.notes || "");
   const [completionPercentage, setCompletionPercentage] = useState(data?.completion_percentage || 0);
-  const [saving, setSaving] = useState(false);
 
-  // Use optimistic updates for better UX
-  const { data: optimisticData, isUpdating, updateStage } = useOptimisticStageUpdate(
-    data?.id || '',
-    data || {}
-  );
+  // Use React Query mutations
+  const startStageMutation = useStartProductionStage();
+  const updateStageMutation = useUpdateProductionStage();
+  const completeStageMutation = useCompleteProductionStage();
 
   // Update local state when data changes
   useEffect(() => {
@@ -74,7 +73,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
 
   const getStatusIcon = () => {
     if (!data) return <Clock className="h-5 w-5 text-gray-400" />;
-    
+
     switch (data.status?.toLowerCase()) {
       case 'completed':
         return <CheckCircle2 className="h-5 w-5 text-green-500" />;
@@ -89,14 +88,14 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
 
   const getStatusBadge = () => {
     if (!data) return <Badge variant="secondary">Not Started</Badge>;
-    
-    const variants: Record<string, any> = {
+
+    const variants: Record<string, "default" | "destructive" | "secondary"> = {
       completed: 'default',
       in_progress: 'default',
       delayed: 'destructive',
       pending: 'secondary'
     };
-    
+
     return (
       <Badge variant={variants[data.status?.toLowerCase()] || 'secondary'}>
         {data.status?.replace('_', ' ')}
@@ -104,109 +103,38 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
     );
   };
 
-  const handleStartStage = async () => {
+  const handleStartStage = () => {
     if (!canEdit) return;
-
-    setSaving(true);
-    try {
-      const { error } = await supabase
-        .from('production_stages')
-        .insert({
-          supplier_order_id: orderId,
-          stage_number: stage.number,
-          stage_name: stage.name,
-          status: 'in_progress',
-          started_at: new Date().toISOString(),
-          completion_percentage: 0
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Stage Started",
-        description: `${stage.name} has been marked as in progress`,
-      });
-
-      // Refresh page
-      window.location.reload();
-    } catch (error: any) {
-      console.error('Error starting stage:', error);
-      toast({
-        title: "Error Starting Stage",
-        description: error.message || 'Failed to start production stage. Please try again.',
-        variant: "destructive"
-      });
-    } finally {
-      setSaving(false);
-    }
+    startStageMutation.mutate({
+      supplierOrderId: orderId,
+      stageNumber: stage.number,
+      stageName: stage.name
+    });
   };
 
-  const handleUpdateStage = async () => {
+  const handleUpdateStage = () => {
     if (!data || !canEdit) return;
 
-    setSaving(true);
-    try {
-      const updateData: any = {
+    updateStageMutation.mutate({
+      stageId: data.id,
+      updates: {
         notes,
         completion_percentage: completionPercentage,
-      };
-
-      // Auto-complete if percentage reaches 100%
-      if (completionPercentage === 100 && data.status !== 'completed') {
-        updateData.status = 'completed';
-        updateData.completed_at = new Date().toISOString();
       }
-
-      // Use optimistic update hook
-      await updateStage(updateData);
-
-      setIsEditing(false);
-      // Removed window.location.reload() - relying on real-time subscriptions
-    } catch (error: any) {
-      console.error('Error updating stage:', error);
-      toast({
-        title: "Update Failed",
-        description: error.message || 'Failed to update production stage. Please try again.',
-        variant: "destructive"
-      });
-    } finally {
-      setSaving(false);
-    }
+    }, {
+      onSuccess: () => {
+        setIsEditing(false);
+      }
+    });
   };
 
-  const handleCompleteStage = async () => {
+  const handleCompleteStage = () => {
     if (!data || !canEdit) return;
 
-    setSaving(true);
-    try {
-      const { error } = await supabase
-        .from('production_stages')
-        .update({
-          status: 'completed',
-          completed_at: new Date().toISOString(),
-          completion_percentage: 100,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', data.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Stage Completed",
-        description: `${stage.name} has been marked as completed`,
-      });
-
-      window.location.reload();
-    } catch (error: any) {
-      console.error('Error completing stage:', error);
-      toast({
-        title: "Completion Failed",
-        description: error.message || 'Failed to complete production stage. Please try again.',
-        variant: "destructive"
-      });
-    } finally {
-      setSaving(false);
-    }
+    completeStageMutation.mutate({
+      stageId: data.id,
+      stageName: stage.name
+    });
   };
 
   const StageIcon = stage.icon;
@@ -220,7 +148,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
               <StageIcon className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">
+              <Card Title className="text-lg">
                 {stage.number}. {stage.name}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
@@ -240,7 +168,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
           <div className="text-center py-6">
             <p className="text-muted-foreground mb-4">This stage hasn't started yet</p>
             {canEdit && (
-              <Button onClick={handleStartStage} disabled={saving}>
+              <Button onClick={handleStartStage} disabled={startStageMutation.isPending}>
                 Start This Stage
               </Button>
             )}
@@ -255,7 +183,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
                   <span className="font-medium">{data.completion_percentage || 0}%</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-primary h-2 rounded-full transition-all"
                     style={{ width: `${data.completion_percentage || 0}%` }}
                   />
@@ -292,11 +220,9 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
                 </Label>
                 {canEdit && isEditing && (
                   <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => {
-                     toast({
-                       title: "Storage Configuration Required",
-                       description: "Photo uploads require the 'production-evidence' bucket to be configured in Supabase.",
-                       variant: "default"
-                     });
+                    toast.info('Storage Configuration Required', {
+                      description: "Photo uploads require the 'production-evidence' bucket to be configured in Supabase.",
+                    });
                   }}>
                     <Upload className="h-3 w-3 mr-1" />
                     Add Photo
@@ -345,7 +271,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={handleUpdateStage} disabled={saving}>
+                  <Button onClick={handleUpdateStage} disabled={updateStageMutation.isPending}>
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -366,21 +292,21 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-2 flex-wrap">
-                   <Button
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => {
-                        window.print();
-                      }}
-                      title="Download Stage Report"
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      Report
-                    </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      window.print();
+                    }}
+                    title="Download Stage Report"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Report
+                  </Button>
 
                   {canEdit && data.status !== 'completed' && (
                     <>
-                      <Button 
+                      <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setIsEditing(true)}
@@ -392,7 +318,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
                         <Button
                           size="sm"
                           onClick={handleCompleteStage}
-                          disabled={saving}
+                          disabled={completeStageMutation.isPending}
                         >
                           <CheckCircle2 className="h-4 w-4 mr-2" />
                           Mark Complete
