@@ -1,733 +1,275 @@
 # Routing & Navigation
 
 <cite>
-**Referenced Files in This Document**
-- [src/App.tsx](file://src/App.tsx)
-- [src/main.tsx](file://src/main.tsx)
-- [src/components/Navbar.tsx](file://src/components/Navbar.tsx)
-- [src/components/Breadcrumb.tsx](file://src/components/Breadcrumb.tsx)
-- [src/components/Breadcrumbs.tsx](file://src/components/Breadcrumbs.tsx)
-- [src/components/SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx)
-- [src/lib/routePrefetch.ts](file://src/lib/routePrefetch.ts)
+**Referenced Files in This Document**   
+- [App.tsx](file://src/App.tsx)
+- [main.tsx](file://src/main.tsx)
+- [ProtectedRoute.tsx](file://src/components/routes/ProtectedRoute.tsx)
+- [RoleBasedRoute.tsx](file://src/components/routes/RoleBasedRoute.tsx)
+- [Navbar.tsx](file://src/components/Navbar.tsx)
+- [Footer.tsx](file://src/components/Footer.tsx)
+- [Breadcrumb.tsx](file://src/components/Breadcrumb.tsx)
+- [ProductDetail.tsx](file://src/pages/ProductDetail.tsx)
+- [QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx)
+- [SupplierOrderDetail.tsx](file://src/pages/SupplierOrderDetail.tsx)
 - [vite.config.ts](file://vite.config.ts)
-- [src/pages/OrderDetails.tsx](file://src/pages/OrderDetails.tsx)
-- [src/pages/QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx)
-- [src/pages/ModernBuyerDashboard.tsx](file://src/pages/ModernBuyerDashboard.tsx)
-- [src/components/SEO.tsx](file://src/components/SEO.tsx)
-- [src/lib/structuredData.ts](file://src/lib/structuredData.ts)
 </cite>
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [File-Based Routing Architecture](#file-based-routing-architecture)
-3. [React Router Configuration](#react-router-configuration)
-4. [Protected Routes & Role-Based Access Control](#protected-routes--role-based-access-control)
-5. [Navigation System Components](#navigation-system-components)
-6. [Intelligent Route Prefetching](#intelligent-route-prefetching)
-7. [Vite Configuration for Code Splitting](#vite-configuration-for-code-splitting)
-8. [Parameter Handling & Navigation Guards](#parameter-handling--navigation-guards)
-9. [Accessibility Considerations](#accessibility-considerations)
-10. [SEO Implications](#seo-implications)
-11. [Performance Optimization](#performance-optimization)
-12. [Troubleshooting Guide](#troubleshooting-guide)
+2. [Route Configuration](#route-configuration)
+3. [Authentication & Role-Based Access Control](#authentication--role-based-access-control)
+4. [Navigation Structure](#navigation-structure)
+5. [Dynamic Routing Patterns](#dynamic-routing-patterns)
+6. [Route-Level Code Splitting](#route-level-code-splitting)
+7. [Programmatic Navigation & Query Parameters](#programmatic-navigation--query-parameters)
+8. [SEO & Client-Side Routing](#seo--client-side-routing)
+9. [Conclusion](#conclusion)
 
 ## Introduction
 
-The sleekapp-v100 routing and navigation system implements a sophisticated file-based routing architecture built on React Router DOM with intelligent performance optimizations. The system provides seamless navigation experiences through multiple specialized components including a responsive navbar, breadcrumb navigation, and role-based dashboard routing. Built with modern web standards, the system emphasizes performance, accessibility, and SEO optimization while maintaining clean separation of concerns.
+The routing and navigation system in the SleekApparels application is built on react-router-dom, providing a robust client-side routing solution that enables seamless navigation between pages while maintaining optimal performance and SEO compliance. The system supports role-based access control, dynamic routing for product and order details, and implements route-level code splitting for improved load times. This documentation provides a comprehensive overview of the routing architecture, navigation components, and associated patterns used throughout the application.
 
-## File-Based Routing Architecture
+**Section sources**
+- [App.tsx](file://src/App.tsx#L1-L362)
 
-The application follows a conventional file-based routing structure where pages are organized in the `src/pages/` directory. Each file corresponds to a route path, enabling automatic route registration and code splitting.
+## Route Configuration
+
+The application's routing is configured in App.tsx using react-router-dom's createBrowserRouter function. The router is defined with a hierarchical structure that includes both public and protected routes. Critical pages such as the homepage, contact page, and health check are imported directly for immediate loading, while secondary pages are lazy-loaded to optimize initial bundle size.
+
+The route configuration includes specific paths for different user roles, with buyer, supplier, and admin dashboards each having dedicated routes. The system also implements route aliases for SEO and legacy URL support, redirecting paths like "/sign-in" to "/auth" to prevent 404 errors. The wildcard route at the end ensures that any unmatched paths are directed to the NotFound component.
 
 ```mermaid
-graph TB
-subgraph "File-Based Routing Structure"
-PagesDir[src/pages/]
-subgraph "Main Pages"
-Index[Index.tsx]
-About[About.tsx]
-Contact[Contact.tsx]
-Services[Services.tsx]
-end
-subgraph "Product Pages"
-ProductCatalog[ProductCatalog.tsx]
-ProductDetail[ProductDetail.tsx]
-ProductUpload[ProductUpload.tsx]
-end
-subgraph "User Dashboard"
-BuyerDashboard[ModernBuyerDashboard.tsx]
-SupplierDashboard[ModernSupplierDashboard.tsx]
-AdminDashboard[ModernAdminDashboard.tsx]
-end
-subgraph "Admin Pages"
-AdminProducts[admin/AdminProducts.tsx]
-AdminQuotes[admin/AdminQuotes.tsx]
-OrderManagement[admin/OrderManagement.tsx]
-end
-subgraph "SEO Pages"
-LowMOQ[seo/LowMOQManufacturer.tsx]
-PrivateLabel[seo/PrivateLabelManufacturer.tsx]
-CustomTShirt[seo/CustomTShirtManufacturer.tsx]
-end
-end
-PagesDir --> Index
-PagesDir --> About
-PagesDir --> Contact
-PagesDir --> Services
-PagesDir --> ProductCatalog
-PagesDir --> ProductDetail
-PagesDir --> ProductUpload
-PagesDir --> BuyerDashboard
-PagesDir --> SupplierDashboard
-PagesDir --> AdminDashboard
-PagesDir --> AdminProducts
-PagesDir --> AdminQuotes
-PagesDir --> OrderManagement
-PagesDir --> LowMOQ
-PagesDir --> PrivateLabel
-PagesDir --> CustomTShirt
+graph TD
+A[Router] --> B[Root Layout]
+B --> C[Home /]
+B --> D[Products /products]
+B --> E[Product Detail /products/:id]
+B --> F[Services /services]
+B --> G[Buyer Dashboard /dashboard]
+B --> H[Supplier Dashboard /supplier-dashboard]
+B --> I[Admin Dashboard /admin]
+B --> J[Quote Details /quote-details/:quoteId]
+B --> K[Order Details /orders/:orderId]
+B --> L[Wildcard *]
+L --> M[NotFound]
 ```
 
 **Diagram sources**
-- [src/App.tsx](file://src/App.tsx#L18-L116)
-- [src/pages/Index.tsx](file://src/pages/Index.tsx)
-- [src/pages/About.tsx](file://src/pages/About.tsx)
+- [App.tsx](file://src/App.tsx#L180-L313)
 
 **Section sources**
-- [src/App.tsx](file://src/App.tsx#L18-L116)
+- [App.tsx](file://src/App.tsx#L180-L313)
 
-## React Router Configuration
+## Authentication & Role-Based Access Control
 
-The application uses React Router v6 with `createBrowserRouter` for enhanced performance and modern routing features. The router is configured with both critical and lazy-loaded routes to optimize initial bundle size and loading performance.
+The application implements a comprehensive authentication and authorization system using two custom route components: ProtectedRoute and RoleBasedRoute. These components are imported from src/components/routes and are used throughout the route configuration to control access to protected resources.
 
-### Router Setup and Configuration
+ProtectedRoute serves as the base authentication guard, wrapping routes that require any authenticated user. It checks the user's authentication status and redirects to the login page if not authenticated. RoleBasedRoute extends this functionality by implementing role-based access control, allowing different routes to be restricted to specific user types such as 'buyer', 'supplier', or 'admin'. This is evident in the route configuration where buyer dashboard routes specify allowedUserTypes={['buyer']} while admin routes specify allowedRoles={['admin']}.
 
-The main router configuration demonstrates intelligent route loading strategies:
-
-```mermaid
-flowchart TD
-RouterInit[Router Initialization] --> CriticalRoutes[Critical Routes<br/>Immediate Load]
-RouterInit --> LazyRoutes[Lazy Routes<br/>Dynamic Import]
-CriticalRoutes --> Index["/ - Index Page"]
-CriticalRoutes --> Health["/health - Health Check"]
-CriticalRoutes --> NotFound["/* - 404 Not Found"]
-LazyRoutes --> ProductPages["Product Catalog & Details"]
-LazyRoutes --> UserDashboards["User Dashboards"]
-LazyRoutes --> AdminPages["Admin Panels"]
-LazyRoutes --> SpecializedPages["SEO & Landing Pages"]
-ProductPages --> ProductCatalog["/products"]
-ProductPages --> ProductDetail["/products/:id"]
-UserDashboards --> BuyerDashboard["/dashboard"]
-UserDashboards --> SupplierDashboard["/supplier-dashboard"]
-UserDashboards --> AdminDashboard["/admin"]
-AdminPages --> AdminProducts["/admin/products"]
-AdminPages --> AdminQuotes["/admin/quotes"]
-AdminPages --> OrderManagement["/admin/orders"]
-SpecializedPages --> SEOPages["SEO Landing Pages"]
-SpecializedPages --> MarketPlace["/marketplace"]
-SpecializedPages --> Blog["/blog"]
-```
-
-**Diagram sources**
-- [src/App.tsx](file://src/App.tsx#L176-L296)
-
-### Route Registration Pattern
-
-The application implements a hybrid approach combining immediate loading for critical routes with lazy loading for secondary pages:
-
-| Route Category | Loading Strategy | Example Routes | Performance Impact |
-|----------------|------------------|----------------|-------------------|
-| **Critical** | Immediate Load | `/`, `/health`, `/contact` | Minimal impact on initial bundle |
-| **High Priority** | Lazy Load | `/products`, `/services`, `/about` | Medium impact, cached after first load |
-| **User Specific** | Lazy Load | `/dashboard`, `/admin`, `/supplier-dashboard` | High impact, loaded per user role |
-| **SEO Focused** | Lazy Load | `/low-moq-clothing-manufacturer` | Variable impact, depends on traffic |
-
-**Section sources**
-- [src/App.tsx](file://src/App.tsx#L176-L296)
-
-## Protected Routes & Role-Based Access Control
-
-The system implements comprehensive role-based access control through the SmartDashboardRouter component, which handles authentication verification and role-based redirection.
-
-### Authentication Flow Architecture
-
-```mermaid
-sequenceDiagram
-participant User as User
-participant Router as SmartDashboardRouter
-participant Supabase as Supabase Auth
-participant Database as User Roles DB
-participant Dashboard as Target Dashboard
-User->>Router : Navigate to /dashboard-router
-Router->>Supabase : getSession()
-Supabase-->>Router : Session Data
-alt No Session
-Router->>User : Redirect to /auth
-else Has Session
-Router->>Database : Fetch user role
-Database-->>Router : Role Data
-alt Admin Role
-Router->>Dashboard : Redirect to /admin
-else Supplier Role
-Router->>Dashboard : Redirect to /supplier-dashboard
-else Buyer Role
-Router->>Dashboard : Redirect to /dashboard
-end
-end
-```
-
-**Diagram sources**
-- [src/components/SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx#L15-L113)
-
-### Role-Based Redirection Logic
-
-The SmartDashboardRouter implements sophisticated role-based redirection with fallback mechanisms:
-
-| User Role | Target Route | Access Level | Features Available |
-|-----------|--------------|--------------|-------------------|
-| **Admin** | `/admin` | Full administrative access | Complete system management, user administration, financial oversight |
-| **Supplier** | `/supplier-dashboard` | Supplier-specific features | Order management, production tracking, inventory control |
-| **Buyer** | `/dashboard` | Buyer functionality | Order tracking, quote management, purchase history |
-| **Unauthenticated** | `/auth` | Login required | Authentication and signup flows |
-
-### Authentication Verification Process
-
-The authentication system includes multiple layers of verification:
-
-1. **Session Validation**: Verifies active Supabase session
-2. **Role Resolution**: Fetches user role from database with retry logic
-3. **Fallback Protection**: Implements timeout and error handling
-4. **Security Checks**: Validates user permissions for specific actions
-
-**Section sources**
-- [src/components/SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx#L15-L113)
-
-## Navigation System Components
-
-The navigation system consists of multiple specialized components working together to provide seamless user experiences across different devices and use cases.
-
-### Navbar Component Architecture
-
-The Navbar component serves as the primary navigation interface with responsive design and contextual menus:
+The system also includes a SmartDashboardRouter component that likely handles dynamic dashboard routing based on the user's role, providing a unified entry point that redirects to the appropriate dashboard interface.
 
 ```mermaid
 classDiagram
-class Navbar {
-+useState isOpen
-+useState user
-+useState userRole
-+useLocation location
-+useNavigate navigate
-+render() JSX.Element
-+handleAuthStateChange()
-+renderPlatformMenu()
-+renderResourcesMenu()
-+renderAccountMenu()
+class ProtectedRoute {
++children : ReactNode
++render() : JSX.Element
 }
-class NavigationMenu {
-+NavigationMenuList
-+NavigationMenuItem
-+NavigationMenuTrigger
-+NavigationMenuContent
+class RoleBasedRoute {
++allowedUserTypes : string[]
++allowedRoles : string[]
++children : ReactNode
++render() : JSX.Element
 }
-class AccountMenu {
-+renderGuestMenu()
-+renderAuthenticatedMenu()
-+handleLogout()
-}
-class PlatformMenu {
-+Array platformItems
-+renderItem()
-+handleNavigation()
-}
-class ResourcesMenu {
-+Array resourceItems
-+filterByAudience()
-+renderItem()
-}
-Navbar --> NavigationMenu
-Navbar --> AccountMenu
-Navbar --> PlatformMenu
-Navbar --> ResourcesMenu
-NavigationMenu --> PlatformMenu
-NavigationMenu --> ResourcesMenu
+ProtectedRoute <|-- RoleBasedRoute : "extends"
 ```
 
 **Diagram sources**
-- [src/components/Navbar.tsx](file://src/components/Navbar.tsx#L129-L487)
-
-### Responsive Navigation Behavior
-
-The navigation system adapts to different screen sizes with intelligent breakpoint handling:
-
-| Screen Size | Navigation Mode | Features | Performance Impact |
-|-------------|----------------|----------|-------------------|
-| **Desktop (>1024px)** | Full Navigation Bar | All dropdown menus, CTA buttons, account management | Moderate - cached dropdown content |
-| **Tablet (768-1024px)** | Condensed Navigation | Simplified menus, essential CTAs | Low - reduced DOM complexity |
-| **Mobile (<768px)** | Collapsible Menu | Slide-out navigation, simplified layout | Minimal - optimized for touch |
-
-### Breadcrumb Navigation System
-
-The application implements both automatic and manual breadcrumb systems for improved user orientation:
-
-#### Automatic Breadcrumb Generation
-
-The Breadcrumb component automatically generates navigation trails based on URL segments:
-
-```mermaid
-flowchart LR
-Home[Home] --> Products[Products]
-Products --> Category[Activewear]
-Category --> Product[Product Detail]
-subgraph "URL Path"
-URL["/products/activewear/12345"]
-end
-subgraph "Breadcrumb Output"
-Breadcrumb["Home → Products → Activewear → Product Detail"]
-end
-URL --> Breadcrumb
-```
-
-**Diagram sources**
-- [src/components/Breadcrumb.tsx](file://src/components/Breadcrumb.tsx#L29-L48)
-
-#### Manual Breadcrumb Implementation
-
-The Breadcrumbs component allows for custom breadcrumb trails with structured data support:
-
-| Component | Purpose | Features | SEO Benefits |
-|-----------|---------|----------|--------------|
-| **Breadcrumb** | Automatic generation | URL parsing, route mapping | Automatic schema generation |
-| **Breadcrumbs** | Custom trails | Structured data, custom items | Enhanced schema.org support |
-| **SEO Integration** | Search engine optimization | JSON-LD schema, meta tags | Improved SERP visibility |
+- [App.tsx](file://src/App.tsx#L9)
+- [ProtectedRoute.tsx](file://src/components/routes/ProtectedRoute.tsx)
+- [RoleBasedRoute.tsx](file://src/components/routes/RoleBasedRoute.tsx)
 
 **Section sources**
-- [src/components/Breadcrumb.tsx](file://src/components/Breadcrumb.tsx#L29-L98)
-- [src/components/Breadcrumbs.tsx](file://src/components/Breadcrumbs.tsx#L9-L54)
+- [App.tsx](file://src/App.tsx#L211-L243)
+- [ProtectedRoute.tsx](file://src/components/routes/ProtectedRoute.tsx)
+- [RoleBasedRoute.tsx](file://src/components/routes/RoleBasedRoute.tsx)
 
-## Intelligent Route Prefetching
+## Navigation Structure
 
-The route prefetching system implements a multi-layered approach to improve perceived performance and reduce navigation latency.
+The application features a comprehensive navigation structure consisting of Navbar, Footer, and Breadcrumb components that provide consistent user navigation across all pages. The Navbar component implements a responsive design with desktop and mobile views, featuring dropdown menus for platform features and resources. It also includes role-specific navigation, displaying dashboard links for authenticated users and sign-up options for guests.
 
-### Prefetching Strategy Architecture
+The Footer component provides site-wide navigation with links organized into categories such as Services, Resources, and Contact information. It includes social media links and legal pages, ensuring users can easily access important information from any page.
+
+The Breadcrumb component enhances navigation by showing the user's current location within the site hierarchy. It generates structured data for SEO purposes and provides clickable links to parent pages, allowing users to navigate upward in the site structure. The component uses a routeNameMap to convert URL segments into human-readable names, improving the user experience.
 
 ```mermaid
 flowchart TD
-PrefetchInit[Prefetch Initialization] --> CriticalPrefetch[Critical Routes<br/>2-second delay]
-PrefetchInit --> SecondaryPrefetch[Secondary Routes<br/>5-second delay]
-PrefetchInit --> HoverPrefetch[Intelligent Hover<br/>200ms delay]
-CriticalPrefetch --> Services["/services"]
-CriticalPrefetch --> Contact["/contact"]
-SecondaryPrefetch --> About["/about"]
-SecondaryPrefetch --> Portfolio["/portfolio"]
-SecondaryPrefetch --> Products["/products"]
-HoverPrefetch --> UserInteraction[User Hover Event]
-UserInteraction --> CheckLink{Valid Link?}
-CheckLink --> |Yes| PrefetchRoute[Prefetch Route]
-CheckLink --> |No| CancelHover[Cancel Hover Timer]
-PrefetchRoute --> CreateLink[Create Link Element]
-CreateLink --> SetImportance[Set Importance Attribute]
-SetImportance --> AppendHead[Append to Document Head]
+A[User Interaction] --> B{Is Mobile?}
+B --> |Yes| C[Mobile Navigation Menu]
+B --> |No| D[Desktop Navigation Bar]
+C --> E[Platform Menu]
+C --> F[Resources Menu]
+C --> G[Account Actions]
+D --> H[Platform Dropdown]
+D --> I[Resources Dropdown]
+D --> J[Account Menu]
+E --> K[Navigation Links]
+F --> L[Navigation Links]
+G --> M[Sign In/Create Account]
+H --> N[Navigation Links]
+I --> O[Navigation Links]
+J --> P[Dashboard/Sign Out]
+K --> Q[Page Content]
+L --> Q
+M --> Q
+N --> Q
+O --> Q
+P --> Q
 ```
 
 **Diagram sources**
-- [src/lib/routePrefetch.ts](file://src/lib/routePrefetch.ts#L57-L124)
-
-### Prefetching Configuration
-
-The system uses configurable prefetching priorities:
-
-| Priority Level | Delay | Routes | Use Case |
-|----------------|-------|--------|----------|
-| **High Priority** | 2 seconds | `/services`, `/contact` | High-traffic pages, conversion paths |
-| **Low Priority** | 5 seconds | `/about`, `/portfolio`, `/products` | Content discovery, exploration |
-| **Intelligent** | 200ms hover | User-selected links | Personalized navigation |
-
-### Implementation Details
-
-The prefetching system includes several optimization features:
-
-1. **Duplicate Prevention**: Checks for existing prefetch links
-2. **Importance Attributes**: Sets `importance="high"` for critical routes
-3. **Cleanup Mechanisms**: Removes prefetch links on navigation
-4. **Browser Compatibility**: Uses native `link[rel="prefetch"]` elements
+- [Navbar.tsx](file://src/components/Navbar.tsx)
+- [Footer.tsx](file://src/components/Footer.tsx)
+- [Breadcrumb.tsx](file://src/components/Breadcrumb.tsx)
 
 **Section sources**
-- [src/lib/routePrefetch.ts](file://src/lib/routePrefetch.ts#L57-L124)
+- [Navbar.tsx](file://src/components/Navbar.tsx)
+- [Footer.tsx](file://src/components/Footer.tsx)
+- [Breadcrumb.tsx](file://src/components/Breadcrumb.tsx)
 
-## Vite Configuration for Code Splitting
+## Dynamic Routing Patterns
 
-The Vite configuration implements sophisticated code splitting strategies to optimize bundle sizes and loading performance.
+The application implements dynamic routing patterns for pages that display specific data based on URL parameters. These patterns are used in pages like ProductDetail, QuoteDetails, and SupplierOrderDetail, where the route includes a parameter that identifies the specific resource to display.
 
-### Chunking Strategy
+In ProductDetail.tsx, the useParams hook is used to extract the product ID from the URL, which is then used to fetch the corresponding product data. The route pattern "/products/:id" allows the application to display different products based on the ID in the URL. Similarly, QuoteDetails.tsx uses the ":quoteId" parameter to load specific quote information, while SupplierOrderDetail.tsx uses ":orderId" to display order details.
 
-```mermaid
-graph TB
-subgraph "Vite Build Configuration"
-CoreChunks[Manual Chunks]
-VendorChunks[Vendor Chunks]
-LazyChunks[Lazy Loaded Chunks]
-end
-subgraph "Core React"
-ReactCore[react-core<br/>react + scheduler]
-ReactDOM[react-dom]
-end
-subgraph "Router & State"
-RouterChunk[router<br/>react-router-dom]
-QueryChunk[query<br/>@tanstack/react-query]
-end
-subgraph "Backend Integration"
-SupabaseAuth[supabase-auth]
-SupabaseClient[supabase-client]
-end
-subgraph "UI Components"
-UIMenus[ui-menus<br/>dropdown/select/popover]
-UIDialogs[ui-dialogs<br/>dialog/alert-dialog]
-UIBase[ui-base<br/>radix-ui components]
-end
-subgraph "Heavy Libraries"
-AnimationChunk[animation<br/>framer-motion]
-ChartsChunk[charts<br/>recharts]
-FormsChunk[forms<br/>react-hook-form]
-end
-CoreChunks --> ReactCore
-CoreChunks --> ReactDOM
-CoreChunks --> RouterChunk
-CoreChunks --> QueryChunk
-VendorChunks --> SupabaseAuth
-VendorChunks --> SupabaseClient
-VendorChunks --> UIMenus
-VendorChunks --> UIDialogs
-VendorChunks --> UIBase
-LazyChunks --> AnimationChunk
-LazyChunks --> ChartsChunk
-LazyChunks --> FormsChunk
-```
-
-**Diagram sources**
-- [vite.config.ts](file://vite.config.ts#L103-L186)
-
-### Code Splitting Configuration
-
-The Vite configuration implements strategic chunking based on usage patterns:
-
-| Chunk Category | Purpose | Included Modules | Size Impact |
-|----------------|---------|------------------|-------------|
-| **Core React** | Essential runtime | react, react-dom, scheduler | Fixed size, cached across sessions |
-| **Router** | Navigation infrastructure | react-router-dom, react-router | Critical for all navigation |
-| **State Management** | Data synchronization | @tanstack/react-query | Essential for all data operations |
-| **UI Components** | Common interface elements | radix-ui, form libraries | Modular loading based on usage |
-| **Backend Integration** | Authentication & APIs | @supabase, firebase | Per-user feature loading |
-| **Heavy Libraries** | Feature-specific | framer-motion, recharts | On-demand loading |
-
-### Performance Optimizations
-
-The build configuration includes several performance enhancements:
-
-1. **Tree Shaking**: Eliminates unused code from bundles
-2. **Asset Optimization**: Compresses images and assets
-3. **CSS Optimization**: Minifies and optimizes stylesheets
-4. **Source Maps**: Hidden source maps for production debugging
-5. **Bundle Analysis**: Visualizes bundle composition
-
-**Section sources**
-- [vite.config.ts](file://vite.config.ts#L103-L186)
-
-## Parameter Handling & Navigation Guards
-
-The application implements robust parameter handling and navigation guards to ensure data integrity and user experience consistency.
-
-### Parameter Extraction and Validation
+These dynamic routes are protected by authentication checks that verify the user has permission to access the requested resource. For example, the SupplierOrderDetail component verifies that the order belongs to the authenticated supplier before displaying the details, preventing unauthorized access to sensitive information.
 
 ```mermaid
 sequenceDiagram
-participant Route as Route Component
-participant Params as useParams Hook
-participant Validator as Parameter Validator
-participant API as Data API
-participant UI as User Interface
-Route->>Params : Extract route parameters
-Params-->>Route : Return parameter object
-Route->>Validator : Validate parameters
-Validator-->>Route : Validation result
-alt Valid Parameters
-Route->>API : Fetch data with parameters
-API-->>Route : Return data
-Route->>UI : Render component with data
-else Invalid Parameters
-Route->>UI : Show error or redirect
-end
+participant Browser
+participant Router
+participant Component
+participant API
+Browser->>Router : Navigate to /products/123
+Router->>Component : Extract id=123
+Component->>API : Fetch product data for id=123
+API-->>Component : Return product data
+Component->>Component : Render product details
+Component-->>Browser : Display product page
 ```
 
 **Diagram sources**
-- [src/pages/OrderDetails.tsx](file://src/pages/OrderDetails.tsx#L38-L44)
-- [src/pages/QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx#L14-L17)
-
-### Parameter Handling Patterns
-
-The application demonstrates several parameter handling patterns:
-
-#### Route Parameter Extraction
-```typescript
-// Order details with parameter validation
-const { orderId } = useParams<{ orderId: string }>();
-const { quoteId } = useParams();
-
-// Parameter validation and type safety
-if (!quoteId) {
-  toast({ title: "Invalid quote", description: "No quote ID provided" });
-  navigate("/quote-history");
-}
-```
-
-#### Dynamic Route Generation
-The system supports dynamic route generation based on user context and permissions, enabling personalized navigation experiences.
-
-### Navigation Guard Implementation
-
-Navigation guards are implemented through multiple layers:
-
-| Guard Type | Implementation | Purpose | Performance Impact |
-|------------|----------------|---------|-------------------|
-| **Authentication Guards** | SmartDashboardRouter | Role-based access control | Medium - database queries |
-| **Parameter Guards** | Component-level validation | Data integrity checks | Low - client-side validation |
-| **Permission Guards** | Role-based filtering | Feature access control | Minimal - in-memory checks |
-| **Fallback Guards** | Error boundaries | Graceful degradation | Minimal - error handling |
+- [ProductDetail.tsx](file://src/pages/ProductDetail.tsx)
+- [QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx)
+- [SupplierOrderDetail.tsx](file://src/pages/SupplierOrderDetail.tsx)
 
 **Section sources**
-- [src/pages/OrderDetails.tsx](file://src/pages/OrderDetails.tsx#L38-L44)
-- [src/pages/QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx#L14-L17)
-- [src/pages/ModernBuyerDashboard.tsx](file://src/pages/ModernBuyerDashboard.tsx#L38-L76)
+- [ProductDetail.tsx](file://src/pages/ProductDetail.tsx)
+- [QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx)
+- [SupplierOrderDetail.tsx](file://src/pages/SupplierOrderDetail.tsx)
 
-## Accessibility Considerations
+## Route-Level Code Splitting
 
-The routing and navigation system incorporates comprehensive accessibility features to ensure inclusive user experiences.
+The application implements route-level code splitting through Vite's lazy loading capabilities, configured in vite.config.ts. This optimization technique significantly improves initial load times by splitting the application bundle into smaller chunks that are loaded on-demand when the user navigates to specific routes.
 
-### Keyboard Navigation Support
+In vite.config.ts, the rollupOptions configuration defines manualChunks that group related dependencies together. Critical libraries like React, React Router, and React Query are separated into their own chunks to ensure they can be cached independently. The configuration also includes specific chunks for heavy libraries like Framer Motion and Recharts, which are only loaded when needed.
 
-The navigation components implement full keyboard navigation support:
+The App.tsx file implements lazy loading for secondary pages using dynamic imports with the lazy function. Pages like ProductCatalog, ProductDetail, and various dashboard components are imported lazily, with Suspense used to handle the loading state. This approach ensures that users only download the code necessary for the current page, reducing bandwidth usage and improving performance.
+
+```mermaid
+graph TD
+A[Initial Bundle] --> B[react-core]
+A --> C[react-dom]
+A --> D[router]
+A --> E[query]
+A --> F[ui-base]
+A --> G[Main App Shell]
+G --> H[User Navigates]
+H --> I{Route Type}
+I --> |Core Page| J[Load from Initial Bundle]
+I --> |Lazy Page| K[Load Additional Chunk]
+K --> L[ProductCatalog]
+K --> M[AdminAnalytics]
+K --> N[Blog]
+```
+
+**Diagram sources**
+- [vite.config.ts](file://vite.config.ts)
+- [App.tsx](file://src/App.tsx)
+
+**Section sources**
+- [vite.config.ts](file://vite.config.ts)
+- [App.tsx](file://src/App.tsx)
+
+## Programmatic Navigation & Query Parameters
+
+The application uses react-router-dom's navigation hooks for programmatic navigation and query parameter handling. The useNavigate hook is used in components like QuoteDetails.tsx and SupplierOrderDetail.tsx to programmatically redirect users based on application state or user actions.
+
+For example, in QuoteDetails.tsx, the navigate function is used to redirect users back to the quote history page when an invalid quote ID is provided. Similarly, SupplierOrderDetail.tsx uses navigate to redirect unauthenticated users to the login page or to return to the supplier dashboard after viewing an order.
+
+The application also handles query parameters through URL patterns and component logic. While not explicitly shown in the provided code, the routing system supports query parameters for filtering and state management, particularly in pages like ProductCatalog where category filtering would likely be implemented through query parameters.
+
+```mermaid
+sequenceDiagram
+participant Component
+participant useNavigate
+participant Router
+participant Browser
+Component->>useNavigate : Initialize navigate()
+Component->>Component : User performs action
+Component->>useNavigate : navigate("/quote-history")
+useNavigate->>Router : Process navigation
+Router->>Browser : Update URL
+Browser->>Router : Request new route
+Router->>Component : Render new page
+```
+
+**Diagram sources**
+- [QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx)
+- [SupplierOrderDetail.tsx](file://src/pages/SupplierOrderDetail.tsx)
+
+**Section sources**
+- [QuoteDetails.tsx](file://src/pages/QuoteDetails.tsx)
+- [SupplierOrderDetail.tsx](file://src/pages/SupplierOrderDetail.tsx)
+
+## SEO & Client-Side Routing
+
+The application addresses SEO implications of client-side routing through comprehensive meta tag management and structured data implementation. The SEO component, used in pages like ProductDetail.tsx, dynamically generates title, description, and Open Graph tags based on the current page content, ensuring search engines can properly index each page.
+
+The Breadcrumb component implements JSON-LD structured data to provide search engines with information about the site hierarchy, improving search result presentation and potentially enhancing click-through rates. ProductDetail.tsx also generates Product schema markup, providing search engines with detailed information about products including price, availability, and reviews.
+
+The application includes a noscript fallback in App.tsx that displays a message to users with JavaScript disabled, informing them that JavaScript is required for the site to function properly. This ensures a basic level of accessibility while maintaining the benefits of a modern client-side application.
+
+Additionally, the Vite configuration includes optimizations for SEO, such as transforming CSS links to preload for non-render-blocking loading, which improves page load performance—a key ranking factor for search engines.
 
 ```mermaid
 flowchart TD
-KeyboardNav[Keyboard Navigation] --> TabNavigation[Tab Navigation]
-KeyboardNav --> ArrowKeys[Arrow Key Navigation]
-KeyboardNav --> EnterActivation[Enter Activation]
-KeyboardNav --> EscapeClose[Escape Close]
-TabNavigation --> FocusManagement[Focus Management]
-TabNavigation --> TabIndex[Proper Tab Index]
-ArrowKeys --> MenuNavigation[Menu Item Navigation]
-ArrowKeys --> DirectionAware[Direction-Aware Movement]
-EnterActivation --> ClickEquivalent[Click Equivalent]
-EnterActivation --> FormSubmission[Form Submission]
-EscapeClose --> ModalDismissal[Modal Dismissal]
-EscapeClose --> MenuClose[Menu Close]
-```
-
-### ARIA Implementation
-
-The system includes comprehensive ARIA attributes for screen reader compatibility:
-
-| Component | ARIA Features | Implementation |
-|-----------|---------------|----------------|
-| **Navbar** | `aria-label`, `aria-expanded`, `aria-haspopup` | Navigation landmark, menu states |
-| **Breadcrumbs** | `aria-label`, `aria-current` | Navigation landmark, current page indication |
-| **Dropdown Menus** | `role="menu"`, `aria-controls`, `aria-labelledby` | Menu structure, accessibility tree |
-| **Navigation Links** | `aria-current="page"` | Current page identification |
-
-### Screen Reader Optimization
-
-The navigation system includes screen reader optimizations:
-
-1. **Landmark Elements**: Proper HTML5 landmarks for navigation
-2. **Skip Links**: Direct access to main content areas
-3. **State Announcements**: Dynamic state changes announced to screen readers
-4. **Focus Indicators**: Clear visual focus indicators for keyboard users
-
-### Color Contrast and Visual Accessibility
-
-The system maintains WCAG AA compliance for color contrast ratios and visual accessibility:
-
-| Element Type | Contrast Ratio | Implementation |
-|--------------|----------------|----------------|
-| **Text Links** | 4.5:1 minimum | High contrast color pairs |
-| **Focus Indicators** | 3:1 minimum | Visible outline and background changes |
-| **Interactive Elements** | 3:1 minimum | Hover and focus states |
-| **Navigation Bars** | 3:1 minimum | Background and text contrast |
-
-**Section sources**
-- [src/components/Navbar.tsx](file://src/components/Navbar.tsx#L171-L487)
-- [src/components/Breadcrumb.tsx](file://src/components/Breadcrumb.tsx#L60-L98)
-
-## SEO Implications
-
-The routing system implements comprehensive SEO optimization strategies to improve search engine visibility and user experience.
-
-### Structured Data Implementation
-
-The application generates structured data for search engines and rich snippets:
-
-```mermaid
-graph TB
-subgraph "Structured Data Types"
-Organization[Organization Schema]
-Breadcrumb[Breadcrumb Schema]
-Product[Product Schema]
-Article[Article Schema]
-FAQ[FAQ Schema]
-end
-subgraph "SEO Benefits"
-RichSnippets[Rich Snippets]
-ImprovedCTR[Improved CTR]
-BetterRanking[Better Ranking]
-EnhancedVisibility[Enhanced Visibility]
-end
-Organization --> RichSnippets
-Breadcrumb --> ImprovedCTR
-Product --> BetterRanking
-Article --> EnhancedVisibility
-FAQ --> RichSnippets
+A[Page Request] --> B{Is Crawler?}
+B --> |Yes| C[Render Static Content]
+C --> D[Generate Meta Tags]
+D --> E[Add Structured Data]
+E --> F[Return to Crawler]
+B --> |No| G[Load Client-Side App]
+G --> H[React Router]
+H --> I[Render Page]
+I --> J[Update Meta Tags]
+J --> K[Add Structured Data]
+K --> L[Display to User]
 ```
 
 **Diagram sources**
-- [src/components/SEO.tsx](file://src/components/SEO.tsx#L108-L255)
-- [src/lib/structuredData.ts](file://src/lib/structuredData.ts#L10-L231)
-
-### SEO Configuration Patterns
-
-The SEO system implements several optimization patterns:
-
-| SEO Feature | Implementation | Benefit |
-|-------------|----------------|---------|
-| **Dynamic Meta Tags** | Helmet integration | Page-specific metadata |
-| **Canonical URLs** | Automatic generation | Duplicate content prevention |
-| **Open Graph Tags** | Social media optimization | Rich social sharing |
-| **Schema.org Markup** | Structured data generation | Enhanced search results |
-| **Mobile Optimization** | Responsive design | Mobile-first indexing |
-
-### Client-Side Routing SEO Strategies
-
-The system addresses client-side routing SEO challenges:
-
-1. **Server-Side Rendering**: Critical pages rendered server-side
-2. **Pre-rendering**: Static generation for SEO-focused pages
-3. **Structured Data**: JSON-LD markup for search engines
-4. **Canonical URLs**: Proper URL normalization
-5. **Meta Tag Management**: Dynamic meta tag generation
-
-### Performance Impact on SEO
-
-The routing optimizations positively impact SEO performance:
-
-| Optimization | SEO Impact | Technical Benefit |
-|--------------|------------|-------------------|
-| **Route Prefetching** | Faster page loads | Improved Core Web Vitals |
-| **Code Splitting** | Reduced bundle sizes | Better page speed scores |
-| **Lazy Loading** | Focused content delivery | Enhanced user engagement |
-| **Structured Data** | Rich snippets | Higher click-through rates |
+- [ProductDetail.tsx](file://src/pages/ProductDetail.tsx)
+- [Breadcrumb.tsx](file://src/components/Breadcrumb.tsx)
+- [App.tsx](file://src/App.tsx)
+- [vite.config.ts](file://vite.config.ts)
 
 **Section sources**
-- [src/components/SEO.tsx](file://src/components/SEO.tsx#L39-L106)
-- [src/lib/structuredData.ts](file://src/lib/structuredData.ts#L10-L231)
+- [ProductDetail.tsx](file://src/pages/ProductDetail.tsx)
+- [Breadcrumb.tsx](file://src/components/Breadcrumb.tsx)
+- [App.tsx](file://src/App.tsx)
+- [vite.config.ts](file://vite.config.ts)
 
-## Performance Optimization
+## Conclusion
 
-The routing system implements multiple performance optimization strategies to ensure fast navigation and optimal user experience.
-
-### Loading Performance Metrics
-
-The system tracks and optimizes various performance metrics:
-
-```mermaid
-graph LR
-subgraph "Performance Metrics"
-FP[First Paint]
-FCP[First Contentful Paint]
-LCP[Largest Contentful Paint]
-TTI[Time to Interactive]
-CLS[Cumulative Layout Shift]
-end
-subgraph "Optimization Strategies"
-CodeSplitting[Code Splitting]
-RoutePrefetch[Route Prefetching]
-LazyLoading[Lazy Loading]
-Caching[Smart Caching]
-end
-CodeSplitting --> FP
-CodeSplitting --> FCP
-RoutePrefetch --> LCP
-LazyLoading --> TTI
-Caching --> CLS
-```
-
-### Bundle Size Optimization
-
-The Vite configuration implements aggressive bundle optimization:
-
-| Optimization Technique | Impact | Implementation |
-|------------------------|--------|----------------|
-| **Tree Shaking** | 30-40% reduction | ES module elimination |
-| **Code Splitting** | 50-70% reduction | Route-level chunking |
-| **Asset Optimization** | 60-80% reduction | Image and asset compression |
-| **Source Map Minification** | 90% reduction | Hidden source maps |
-
-### Navigation Performance
-
-The navigation system optimizes for fast transitions:
-
-1. **Instant Navigation**: Critical routes load instantly
-2. **Intelligent Prefetching**: Predictive route loading
-3. **Cached Components**: Component-level caching strategies
-4. **Optimized Transitions**: Smooth, performant animations
-
-### Memory Management
-
-The system implements efficient memory management:
-
-- **Component Cleanup**: Proper cleanup of navigation listeners
-- **Event Listener Management**: Automatic removal of event handlers
-- **State Optimization**: Minimal state updates during navigation
-- **Resource Cleanup**: Efficient cleanup of network requests
-
-**Section sources**
-- [vite.config.ts](file://vite.config.ts#L103-L186)
-- [src/lib/routePrefetch.ts](file://src/lib/routePrefetch.ts#L57-L124)
-
-## Troubleshooting Guide
-
-Common issues and solutions for the routing and navigation system.
-
-### Authentication Issues
-
-**Problem**: Users redirected to incorrect dashboards
-**Solution**: Verify user role resolution and database connectivity
-
-**Problem**: Authentication timeouts
-**Solution**: Implement proper session refresh and error handling
-
-### Navigation Performance Issues
-
-**Problem**: Slow route transitions
-**Solution**: Check route prefetching configuration and network conditions
-
-**Problem**: Memory leaks during navigation
-**Solution**: Verify proper cleanup of event listeners and subscriptions
-
-### SEO and Accessibility Issues
-
-**Problem**: Missing structured data
-**Solution**: Verify SEO component implementation and schema generation
-
-**Problem**: Poor accessibility scores
-**Solution**: Review ARIA implementation and keyboard navigation support
-
-### Development Issues
-
-**Problem**: Hot reload not working for routes
-**Solution**: Restart development server and verify file watching configuration
-
-**Problem**: Build failures with route imports
-**Solution**: Check Vite configuration and import resolution settings
-
-**Section sources**
-- [src/components/SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx#L15-L113)
-- [src/lib/routePrefetch.ts](file://src/lib/routePrefetch.ts#L57-L124)
+The routing and navigation system in the SleekApparels application demonstrates a well-architected approach to client-side routing with react-router-dom. The implementation effectively balances user experience, performance optimization, and SEO requirements through a combination of protected routes, role-based access control, dynamic routing patterns, and route-level code splitting. The consistent navigation components—Navbar, Footer, and Breadcrumb—provide intuitive user navigation while the comprehensive SEO strategy ensures the application remains discoverable despite its client-side nature. This routing system serves as a robust foundation for the application's complex multi-role functionality, supporting the needs of buyers, suppliers, and administrators within a unified interface.

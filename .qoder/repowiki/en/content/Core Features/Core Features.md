@@ -1,645 +1,283 @@
 # Core Features
 
 <cite>
-**Referenced Files in This Document**
+**Referenced Files in This Document**   
 - [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx)
 - [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx)
-- [SmartSupplierAssignment.tsx](file://src/components/admin/SmartSupplierAssignment.tsx)
-- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx)
-- [LoopTraceTimeline.tsx](file://src/components/modern/LoopTraceTimeline.tsx)
-- [useSmartSupplierAssignment.ts](file://src/hooks/useSmartSupplierAssignment.ts)
+- [RoleBasedRoute.tsx](file://src/components/routes/RoleBasedRoute.tsx)
+- [OrderManagement.tsx](file://src/pages/admin/OrderManagement.tsx)
+- [CMSManagementPanel.tsx](file://src/components/admin/CMSManagementPanel.tsx)
 - [aiQuote.ts](file://src/lib/api/aiQuote.ts)
-- [SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx)
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx)
-- [ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts)
-- [ai-supplier-assignment/index.ts](file://supabase/functions/ai-supplier-assignment/index.ts)
+- [AdminStageMonitor.tsx](file://src/components/admin/AdminStageMonitor.tsx)
+- [QuoteApprovalPanel.tsx](file://src/components/admin/QuoteApprovalPanel.tsx)
+- [SupplierAnalyticsCard.tsx](file://src/components/admin/SupplierAnalyticsCard.tsx)
+- [ProtectedRoute.tsx](file://src/components/routes/ProtectedRoute.tsx)
 </cite>
 
 ## Table of Contents
-1. [Introduction](#introduction)
-2. [LoopTrace™ Production Tracking](#looptrace-production-tracking)
-3. [AI Quote Generation](#ai-quote-generation)
-4. [SmartSupplierAssignment](#smart-supplier-assignment)
-5. [Role-Based Dashboards](#role-based-dashboards)
-6. [Feature Architecture](#feature-architecture)
-7. [Integration Patterns](#integration-patterns)
-8. [Common Use Cases](#common-use-cases)
-9. [Troubleshooting Guide](#troubleshooting-guide)
-10. [Best Practices](#best-practices)
-
-## Introduction
-
-SleekApparels v100 introduces four transformative core features that revolutionize apparel manufacturing and supply chain management. These features leverage cutting-edge AI technology, real-time data processing, and intelligent automation to deliver unprecedented transparency, efficiency, and decision-making capabilities across the entire apparel production lifecycle.
-
-The core features include:
-- **LoopTrace™ Production Tracking**: Real-time manufacturing monitoring with AI-powered insights
-- **AI Quote Generation**: Intelligent pricing with instant, data-driven quotes
-- **SmartSupplierAssignment**: Automated supplier matching with confidence scoring
-- **Role-Based Dashboards**: Tailored user experiences for buyers, suppliers, and administrators
-
-Each feature is built on a robust foundation of modern web technologies, real-time data synchronization, and scalable backend services that ensure reliability and performance at enterprise scale.
+1. [LoopTrace™ Production Tracking](#looptrace-production-tracking)
+2. [AI Quote Generator](#ai-quote-generator)
+3. [Role-Based Access Control](#role-based-access-control)
+4. [Order Management](#order-management)
+5. [Content Management](#content-management)
+6. [Integration Points](#integration-points)
+7. [Common Issues and Best Practices](#common-issues-and-best-practices)
 
 ## LoopTrace™ Production Tracking
 
-LoopTrace™ represents the cornerstone of SleekApparels' manufacturing visibility solution, providing comprehensive real-time tracking of production stages with intelligent insights and predictive analytics.
+The LoopTrace™ Production Tracking system provides real-time visibility into the manufacturing process, allowing buyers to monitor their orders at every stage of production. This feature is implemented through the `LoopTraceOrderTracking` component, which displays a comprehensive timeline of production stages with real-time updates.
 
-### Core Architecture
+The system works by fetching order data from the Supabase database and establishing a real-time subscription to the `production_stages` table. When a user selects an order, the component retrieves the associated production stages and displays them in a timeline format with visual indicators for each stage's status. The implementation uses Supabase's real-time capabilities to push updates to the client whenever a production stage is updated, providing instant notifications through the Sonner toast system.
 
-The LoopTrace™ system operates through a sophisticated multi-layered architecture that ensures seamless data flow and real-time updates:
+Key functionality includes:
+- Real-time updates via Supabase's real-time subscriptions
+- Visual timeline with progress indicators for each production stage
+- Photo documentation at each stage with clickable thumbnails
+- Automatic progress calculation based on completion percentages
+- Estimated delivery date tracking
 
-```mermaid
-graph TB
-subgraph "Frontend Layer"
-A[LoopTraceOrderTracking] --> B[ProductionStageTimeline]
-A --> C[LoopTraceTimeline]
-B --> D[ProductionStageCard]
-C --> E[ProductionStageUpdate]
-end
-subgraph "Backend Services"
-F[Supabase Realtime] --> G[Production Stages API]
-G --> H[AI Quote Generator]
-G --> I[Supplier Assignment]
-end
-subgraph "Data Layer"
-J[(Production Stages)] --> K[(Supplier Orders)]
-K --> L[(Orders)]
-L --> M[(Suppliers)]
-end
-A --> F
-F --> J
-H --> N[Lovable AI API]
-I --> O[External Supplier API]
-```
-
-**Diagram sources**
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L1-L360)
-- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L1-L147)
-- [LoopTraceTimeline.tsx](file://src/components/modern/LoopTraceTimeline.tsx#L1-L350)
-
-### Real-Time Monitoring System
-
-The production tracking system employs WebSocket-based real-time subscriptions to provide instant updates as production progresses:
-
-```mermaid
-sequenceDiagram
-participant Client as "Buyer/Supplier"
-participant Supabase as "Supabase Realtime"
-participant Backend as "AI Functions"
-participant DB as "Production DB"
-Client->>Supabase : Subscribe to production_stages
-Supabase->>DB : Listen for changes
-DB->>Backend : Trigger production update
-Backend->>Supabase : Broadcast change
-Supabase->>Client : Real-time notification
-Client->>Client : Update UI with new status
-Note over Client,DB : Continuous real-time monitoring
-```
-
-**Diagram sources**
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L58-L119)
-
-### Production Stage Management
-
-The system manages eight critical production stages, each with specific status indicators and progress tracking:
-
-| Stage | Number | Description | Status Indicators |
-|-------|--------|-------------|-------------------|
-| Order Confirmation | 1 | Initial order acceptance | Green checkmark, completed |
-| Fabric Sourcing | 2 | Material procurement | Blue clock, in-progress |
-| Accessories Procurement | 3 | Trim and accessory sourcing | Purple clock, in-progress |
-| Cutting & Pattern Making | 4 | Garment construction preparation | Orange activity, in-progress |
-| Sewing & Assembly | 5 | Main manufacturing process | Green activity, in-progress |
-| Quality Control | 6 | Inspection and testing | Teal checkmark, completed |
-| Finishing & Packaging | 7 | Final processing and preparation | Indigo package, pending |
-| Shipment & Delivery | 8 | Logistics and distribution | Red truck, pending |
-
-**Section sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L37-L47)
-- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L6-L16)
-
-### Advanced Features
-
-#### Predictive Analytics
-The system incorporates AI-powered predictive analytics to forecast production timelines and identify potential delays before they occur.
-
-#### Photo Documentation
-Production stages support photo uploads for visual verification and quality assurance documentation.
-
-#### Delay Detection
-Automated delay detection identifies bottlenecks and provides early warning notifications to stakeholders.
-
-**Section sources**
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L304-L350)
-- [LoopTraceTimeline.tsx](file://src/components/modern/LoopTraceTimeline.tsx#L299-L321)
-
-## AI Quote Generation
-
-The AI Quote Generator transforms traditional pricing processes by providing instant, intelligent quotes backed by comprehensive manufacturing insights and market intelligence.
-
-### Intelligent Pricing Engine
-
-The quote generation system combines multiple data sources to deliver accurate, competitive pricing:
+The system also provides AI-powered insights and predictive analytics to identify potential delays before they occur, helping buyers plan accordingly. Production managers can upload photos and notes at each stage, providing visual proof of work completed.
 
 ```mermaid
 flowchart TD
-A[User Input] --> B[Validation Layer]
-B --> C[Local Pricing Estimate]
-C --> D[AI Context Analysis]
-D --> E[External Manufacturing Data]
-E --> F[AI Quote Generation]
-F --> G[Pricing Breakdown]
-F --> H[Timeline Calculation]
-F --> I[AI Insights]
-C --> J[Volume Discounts]
-C --> K[MOQ Calculations]
-D --> L[Historical Patterns]
-E --> M[Bangladesh Standards]
-G --> N[Final Quote Output]
-H --> N
-I --> N
+A[Buyer Selects Order] --> B[Fetch Order Data from Supabase]
+B --> C[Establish Real-time Subscription]
+C --> D[Display Production Timeline]
+D --> E[Monitor Stage Updates]
+E --> F[Show Real-time Notifications]
+F --> G[Update Progress Automatically]
 ```
 
 **Diagram sources**
-- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L1-L499)
-- [aiQuote.ts](file://src/lib/api/aiQuote.ts#L46-L82)
-
-### Quote Generation Process
-
-The AI quote generation follows a sophisticated multi-stage process:
-
-1. **Input Validation**: Comprehensive form validation ensuring data quality
-2. **Context Analysis**: Local pricing calculations for AI context
-3. **AI Processing**: Advanced AI analysis using external APIs
-4. **Output Generation**: Structured quote presentation with insights
-
-### Key Features
-
-#### Dynamic Pricing Factors
-- **Volume Discounts**: Automatic calculation based on order quantity
-- **Complexity Multipliers**: Adjustments for design complexity
-- **Fabric Impact**: Cost variations based on material selection
-- **MOQ Compliance**: Minimum order quantity considerations
-
-#### Timeline Intelligence
-- **Sampling Periods**: Design approval and sample creation estimates
-- **Production Phases**: Detailed manufacturing timeline breakdown
-- **Buffer Days**: Contingency planning for unexpected delays
-- **Delivery Predictions**: Estimated completion dates with confidence levels
-
-#### AI-Powered Insights
-- **Market Comparisons**: Competitive positioning analysis
-- **Optimization Suggestions**: Cost-saving recommendations
-- **Quality Assurance**: Risk assessment and mitigation strategies
+- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L41-L365)
+- [AdminStageMonitor.tsx](file://src/components/admin/AdminStageMonitor.tsx#L12-L127)
 
 **Section sources**
-- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L28-L62)
-- [aiQuote.ts](file://src/lib/api/aiQuote.ts#L87-L122)
+- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L41-L365)
+- [AdminStageMonitor.tsx](file://src/components/admin/AdminStageMonitor.tsx#L12-L127)
 
-## SmartSupplierAssignment
+## AI Quote Generator
 
-SmartSupplierAssignment revolutionizes supplier selection by leveraging AI to analyze requirements against supplier capabilities, providing data-driven recommendations with confidence scoring.
+The AI Quote Generator is a sophisticated feature that provides instant pricing and production timeline estimates based on user requirements. Implemented in the `AIQuoteGenerator` component, this feature combines client-side validation with server-side AI processing to deliver accurate quotes in seconds.
 
-### Supplier Matching Algorithm
+The workflow begins with a comprehensive form that captures product specifications including type, quantity, complexity level, fabric type, GSM, and print/embroidery requirements. The form includes client-side validation using Zod schema validation to ensure data quality before submission. When the user submits their requirements, the system converts any uploaded files (tech packs, reference images, or PDFs) to base64 format and sends them along with the form data to the AI quote generation service.
 
-The system employs a sophisticated matching algorithm that evaluates multiple criteria:
+The backend processing occurs in the `ai-quote-generator` Supabase function, which uses AI to analyze the requirements and generate a quote based on Bangladesh manufacturing standards. The system includes retry logic and timeout handling to ensure reliability, with a 30-second client-side timeout and automatic retry mechanism. The AI considers factors such as complexity, volume discounts, and MOQ premiums when calculating pricing.
 
-```mermaid
-graph LR
-A[Order Requirements] --> B[Supplier Analysis]
-B --> C[Capability Matching]
-C --> D[Performance Scoring]
-D --> E[Confidence Calculation]
-E --> F[Ranking System]
-F --> G[Recommendation Output]
-subgraph "Input Factors"
-H[Product Type]
-I[Quantity Requirements]
-J[Quality Standards]
-K[Lead Time Needs]
-end
-subgraph "Supplier Attributes"
-L[Specializations]
-M[Monthly Capacity]
-N[Performance Score]
-O[Lead Time History]
-end
-H --> C
-I --> C
-J --> C
-K --> C
-L --> D
-M --> D
-N --> D
-O --> D
-```
+Key features include:
+- Client-side validation with detailed error messages
+- File upload support for tech packs and reference materials
+- Progress indication during quote generation
+- Detailed breakdown of pricing components
+- AI-powered insights and recommendations
+- Timeline estimation with stage-by-stage breakdown
 
-**Diagram sources**
-- [SmartSupplierAssignment.tsx](file://src/components/admin/SmartSupplierAssignment.tsx#L1-L127)
-- [useSmartSupplierAssignment.ts](file://src/hooks/useSmartSupplierAssignment.ts#L1-L55)
-
-### Confidence Scoring System
-
-The recommendation engine provides confidence scores ranging from low to high, helping users make informed decisions:
-
-| Confidence Level | Score Range | Indicator Color | Decision Guidance |
-|------------------|-------------|-----------------|-------------------|
-| High Confidence | 80-100 | Green | Recommended choice |
-| Medium Confidence | 60-79 | Blue | Consider with caution |
-| Low Confidence | 0-59 | Gray | Review carefully |
-
-### Implementation Details
-
-The SmartSupplierAssignment system integrates with external AI services to provide expert recommendations:
+The generated quote displays the total price, unit price, estimated delivery timeline, and AI-generated suggestions for optimization. Users can see how volume discounts are applied and understand the factors affecting their pricing.
 
 ```mermaid
 sequenceDiagram
-participant UI as "Admin Interface"
-participant Hook as "useSmartSupplierAssignment"
-participant Supabase as "Supabase Functions"
-participant Lovable as "Lovable AI API"
-participant DB as "Supplier Database"
-UI->>Hook : Request recommendations
-Hook->>Supabase : Invoke ai-supplier-assignment
-Supabase->>DB : Fetch verified suppliers
-DB-->>Supabase : Supplier data
-Supabase->>Lovable : Send AI analysis request
-Lovable-->>Supabase : AI recommendations
-Supabase-->>Hook : Formatted results
-Hook-->>UI : Display recommendations
-Note over UI,Lovable : Real-time supplier matching
+participant User as "Buyer"
+participant Frontend as "Frontend Application"
+participant Supabase as "Supabase"
+participant AI as "AI Quote Generator"
+User->>Frontend : Fill Quote Form
+Frontend->>Frontend : Validate Input (Zod)
+User->>Frontend : Upload Files
+Frontend->>Frontend : Convert Files to Base64
+Frontend->>Supabase : Submit Quote Request
+Supabase->>AI : Process Request
+AI-->>Supabase : Return Quote Data
+Supabase-->>Frontend : Send Quote Response
+Frontend->>User : Display Quote with AI Insights
 ```
 
 **Diagram sources**
-- [useSmartSupplierAssignment.ts](file://src/hooks/useSmartSupplierAssignment.ts#L18-L48)
-- [ai-supplier-assignment/index.ts](file://supabase/functions/ai-supplier-assignment/index.ts#L1-L134)
+- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L66-L575)
+- [aiQuote.ts](file://src/lib/api/aiQuote.ts#L49-L146)
 
 **Section sources**
-- [SmartSupplierAssignment.tsx](file://src/components/admin/SmartSupplierAssignment.tsx#L39-L43)
-- [useSmartSupplierAssignment.ts](file://src/hooks/useSmartSupplierAssignment.ts#L5-L12)
+- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L66-L575)
+- [aiQuote.ts](file://src/lib/api/aiQuote.ts#L49-L146)
 
-## Role-Based Dashboards
+## Role-Based Access Control
 
-The Role-Based Dashboard system provides personalized user experiences tailored to specific roles within the SleekApparels ecosystem, ensuring each user receives relevant information and functionality.
+The Role-Based Access Control (RBAC) system ensures that users can only access features and data appropriate to their role within the platform. This security model is implemented through the `RoleBasedRoute` and `ProtectedRoute` components, which work in conjunction with the `AuthContext` to manage user permissions.
 
-### Dashboard Routing Architecture
+The system defines three primary roles: admin, supplier, and buyer, with additional user types that provide more granular control. The `AuthContext` manages the user's authentication state and role information, which is then used by the routing components to determine access. The `ProtectedRoute` component ensures that only authenticated users can access protected pages, while the `RoleBasedRoute` component provides more granular control by checking specific roles or user types.
 
-The system automatically routes users to appropriate dashboards based on their role and authentication status:
+Key implementation details:
+- Real-time authentication state management via Supabase auth
+- Role and user type determination in the AuthContext
+- Route-level protection with loading states and fallbacks
+- Admin-only access to sensitive operations like order management and content editing
+- Supplier-specific views for production management
+- Buyer-specific views for order tracking and quote management
+
+The system uses Supabase's Row Level Security (RLS) policies in conjunction with application-level role checking to provide defense in depth. Database policies ensure that even if a request bypasses the frontend checks, the database will still enforce access restrictions.
+
+```mermaid
+classDiagram
+class AuthContext {
++user : User
++session : Session
++role : UserRole
++userType : UserType
++isAdmin : boolean
++isSupplier : boolean
++isBuyer : boolean
++loading : boolean
++signOut() : void
+}
+class ProtectedRoute {
++children : ReactNode
++redirectTo : string
++loading : boolean
+}
+class RoleBasedRoute {
++children : ReactNode
++allowedRoles : UserRole[]
++allowedUserTypes : UserType[]
++redirectTo : string
++fallback : ReactNode
+}
+AuthContext --> ProtectedRoute : "provides auth state"
+AuthContext --> RoleBasedRoute : "provides role information"
+ProtectedRoute --> RoleBasedRoute : "can be nested"
+```
+
+**Diagram sources**
+- [RoleBasedRoute.tsx](file://src/components/routes/RoleBasedRoute.tsx#L17-L59)
+- [ProtectedRoute.tsx](file://src/components/routes/ProtectedRoute.tsx#L14-L35)
+- [AuthContext.tsx](file://src/contexts/AuthContext.tsx#L131-L165)
+
+**Section sources**
+- [RoleBasedRoute.tsx](file://src/components/routes/RoleBasedRoute.tsx#L17-L59)
+- [ProtectedRoute.tsx](file://src/components/routes/ProtectedRoute.tsx#L14-L35)
+
+## Order Management
+
+The Order Management system provides administrators with comprehensive tools to oversee the entire order lifecycle, from initial quote to final delivery. Implemented in the `OrderManagement` page, this feature offers a centralized dashboard for monitoring, filtering, and taking action on orders.
+
+The system displays orders in a tabbed interface organized by status (pending, awaiting assignment, in progress, and completed), with each tab showing only orders in that workflow state. Administrators can search orders by order number or product type and filter by status. The interface includes key metrics such as total orders, pending reviews, orders needing supplier assignment, and total margin.
+
+Key functionality includes:
+- Comprehensive order listing with filtering and search
+- Status-based organization with visual indicators
+- Detailed order metrics and financial tracking
+- One-click access to order details via modal dialogs
+- Supplier assignment capabilities
+- Margin calculation and tracking
+
+The system integrates with the quote approval workflow, ensuring that only approved quotes are converted to orders. When an order requires supplier assignment, administrators can use the Smart Supplier Assignment system to automatically match orders with appropriate suppliers based on capacity, expertise, and location.
 
 ```mermaid
 flowchart TD
-A[User Authentication] --> B{Session Valid?}
-B --> |No| C[Redirect to Login]
-B --> |Yes| D[Fetch User Role]
-D --> E{Role Found?}
-E --> |No| F[Default to Buyer Role]
-E --> |Yes| G[Determine Dashboard]
-G --> H{Role Type}
-H --> |Admin| I[ModernAdminDashboard]
-H --> |Supplier| J[ModernSupplierDashboard]
-H --> |Buyer| K[ModernBuyerDashboard]
-F --> K
-I --> L[Admin Operations]
-J --> M[Supplier Management]
-K --> N[Order Tracking]
+A[Admin Accesses Order Management] --> B[Fetch All Orders from Supabase]
+B --> C[Organize by Status Tabs]
+C --> D[Display Key Metrics]
+D --> E[Enable Search and Filter]
+E --> F[Show Orders in Table]
+F --> G[Handle Order Selection]
+G --> H[Open Order Detail Modal]
+H --> I[Enable Supplier Assignment]
 ```
 
 **Diagram sources**
-- [SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx#L1-L139)
-
-### Role Definitions
-
-The system recognizes multiple user roles, each with distinct permissions and dashboard access:
-
-| Role | Description | Dashboard Access | Key Responsibilities |
-|------|-------------|------------------|---------------------|
-| Admin | System administrators | ModernAdminDashboard | Order management, supplier verification, system analytics |
-| Supplier | Manufacturing partners | ModernSupplierDashboard | Order fulfillment, production updates, quality control |
-| Buyer | Retailers, wholesalers, brands | ModernBuyerDashboard | Order placement, tracking, communication |
-| Educational | Academic institutions | ModernBuyerDashboard | Research, prototyping, educational orders |
-| Corporate | Corporate uniform buyers | ModernBuyerDashboard | Bulk purchasing, compliance management |
-| Sports Team | Teamwear buyers | ModernBuyerDashboard | Custom team uniforms, bulk orders |
-
-### Dashboard Personalization
-
-Each dashboard provides role-specific features and information:
-
-#### Buyer Dashboard Features
-- Order tracking and history
-- Quote management
-- Supplier communication
-- Production timeline visualization
-
-#### Supplier Dashboard Features
-- Order assignment and management
-- Production stage updates
-- Quality control submissions
-- Performance analytics
-
-#### Admin Dashboard Features
-- System monitoring
-- User management
-- Supplier verification
-- Analytics and reporting
+- [OrderManagement.tsx](file://src/pages/admin/OrderManagement.tsx#L43-L306)
+- [OrderDetailModal.tsx](file://src/components/admin/OrderDetailModal.tsx#L217-L228)
+- [useOrderManagement.ts](file://src/hooks/useOrderManagement.ts#L52-L86)
 
 **Section sources**
-- [SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx#L88-L103)
+- [OrderManagement.tsx](file://src/pages/admin/OrderManagement.tsx#L43-L306)
+- [QuoteApprovalPanel.tsx](file://src/components/admin/QuoteApprovalPanel.tsx#L24-L298)
 
-## Feature Architecture
+## Content Management
 
-The core features are built on a robust, scalable architecture that ensures reliability, performance, and maintainability.
+The Content Management System (CMS) allows administrators to manage website content across various sections and content types. Implemented through the `CMSManagementPanel` and `EnhancedCMSPanel` components, this feature provides a user-friendly interface for editing, activating, and organizing content.
 
-### Technology Stack
+The system organizes content by section (such as hero, features, testimonials) and content type (such as text, images, CTAs), with each piece of content having a display order and active/inactive status. Administrators can edit content directly in a JSON editor within the interface, with changes saved immediately to the database. The implementation uses Supabase to store content in the `cms_content` table, with real-time updates ensuring consistency across instances.
 
-The system leverages modern web technologies and cloud services:
+Key features include:
+- Tabbed interface organized by content section
+- JSON-based content editing with syntax highlighting
+- Content activation/deactivation without deletion
+- Display order management
+- Real-time saving with success notifications
+- Integration with AI-powered content generation tools
 
-```mermaid
-graph TB
-subgraph "Frontend Technologies"
-A[React 18] --> B[Vite Build Tool]
-C[Tailwind CSS] --> D[Mantine UI Components]
-E[Framer Motion] --> F[React Query]
-end
-subgraph "Backend Services"
-G[Supabase] --> H[PostgreSQL]
-G --> I[Edge Functions]
-G --> J[Realtime Subscriptions]
-end
-subgraph "AI Integration"
-K[Lovable AI API] --> L[Gemini 2.5 Flash]
-M[External APIs] --> N[Supplier Systems]
-O[External Data] --> P[Manufacturing Standards]
-end
-subgraph "Deployment"
-Q[Vercel] --> R[Edge Runtime]
-S[Netlify] --> T[Static Assets]
-end
-A --> G
-K --> G
-M --> G
-O --> G
-G --> Q
-```
-
-### Data Flow Architecture
-
-The system implements a sophisticated data flow pattern that ensures consistency and real-time updates:
+The Enhanced CMS Panel extends the basic functionality by integrating blog editing and product description generation capabilities, creating a comprehensive content management suite. This allows administrators to manage all website content from a single interface, improving workflow efficiency.
 
 ```mermaid
-sequenceDiagram
-participant User as "User Interface"
-participant Router as "SmartDashboardRouter"
-participant Auth as "Supabase Auth"
-participant API as "Edge Functions"
-participant DB as "Supabase DB"
-participant AI as "AI Services"
-User->>Router : Navigate to dashboard
-Router->>Auth : Check authentication
-Auth-->>Router : User session
-Router->>DB : Fetch user role
-DB-->>Router : Role information
-Router->>User : Redirect to appropriate dashboard
-User->>API : Request feature data
-API->>DB : Query production data
-API->>AI : Analyze supplier data
-AI-->>API : AI recommendations
-DB-->>API : Production stages
-API-->>User : Feature data
-Note over User,AI : Real-time data synchronization
+flowchart TD
+A[Admin Opens CMS Panel] --> B[Fetch Content from Supabase]
+B --> C[Group by Section and Type]
+C --> D[Display in Tabbed Interface]
+D --> E[Enable Content Editing]
+E --> F[Update Content in Database]
+F --> G[Show Success Notification]
+G --> H[Refresh Content Display]
 ```
 
 **Diagram sources**
-- [SmartDashboardRouter.tsx](file://src/components/SmartDashboardRouter.tsx#L33-L110)
-
-## Integration Patterns
-
-The core features integrate seamlessly through standardized patterns that ensure consistency and maintainability.
-
-### API Integration Patterns
-
-#### Edge Function Integration
-All AI-powered features utilize Supabase Edge Functions for serverless processing:
-
-```typescript
-// Example integration pattern
-const { data, error } = await supabase.functions.invoke('function-name', {
-  body: { /* request parameters */ }
-});
-```
-
-#### Real-Time Data Synchronization
-WebSocket-based real-time subscriptions ensure immediate updates:
-
-```typescript
-const channel = supabase
-  .channel('production-updates')
-  .on('postgres_changes', { /* filter conditions */ }, (payload) => {
-    // Handle real-time updates
-  })
-```
-
-### Data Persistence Patterns
-
-The system maintains data consistency through careful schema design and transaction management:
-
-| Entity | Purpose | Key Relationships |
-|--------|---------|-------------------|
-| Orders | Purchase lifecycle | Many-to-One with Supplier Orders |
-| Supplier Orders | Manufacturing assignments | One-to-One with Orders |
-| Production Stages | Manufacturing progress | One-to-Many with Supplier Orders |
-| Suppliers | Partner management | Many-to-One with Supplier Orders |
-| User Roles | Access control | One-to-One with Users |
+- [CMSManagementPanel.tsx](file://src/components/admin/CMSManagementPanel.tsx#L21-L204)
+- [EnhancedCMSPanel.tsx](file://src/components/admin/EnhancedCMSPanel.tsx#L8-L46)
 
 **Section sources**
-- [ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L131-L200)
-- [ai-supplier-assignment/index.ts](file://supabase/functions/ai-supplier-assignment/index.ts#L9-L134)
+- [CMSManagementPanel.tsx](file://src/components/admin/CMSManagementPanel.tsx#L21-L204)
+- [EnhancedCMSPanel.tsx](file://src/components/admin/EnhancedCMSPanel.tsx#L8-L46)
 
-## Common Use Cases
+## Integration Points
 
-### Generating an AI Quote
+The core features of the Sleek Apparels platform are designed to work together seamlessly, with several key integration points that create a cohesive user experience:
 
-**Scenario**: A buyer wants instant pricing for a custom t-shirt order
+1. **Quote-to-Order Workflow**: The AI Quote Generator integrates with the Order Management system, where approved quotes are converted to orders. The Quote Approval Panel serves as the bridge between these systems, allowing administrators to add markup and finalize quotes before they become orders.
 
-**Steps**:
-1. Navigate to AI Quote Generator
-2. Enter product type (T-Shirts)
-3. Specify quantity (100 pieces)
-4. Select complexity level (Medium)
-5. Upload design reference images
-6. Provide additional requirements
-7. Submit request
-8. Receive instant quote with breakdown and timeline
+2. **Production Tracking Integration**: Once an order is assigned to a supplier, the LoopTrace™ Production Tracking system activates automatically. The production stages are initialized through the `initialize-production-stages` Supabase function, creating the timeline that buyers will monitor.
 
-**Expected Outcome**:
-- Total price: $1,200
-- Unit price: $12.00
-- Estimated delivery: 45 days
-- Volume discount: 10%
-- AI insights: "Consider cotton blend for cost efficiency"
+3. **Role-Based Access to Features**: The Role-Based Access Control system governs access to all features. Buyers can access the AI Quote Generator and LoopTrace™ tracking, suppliers have access to production management tools, and administrators can use all systems including Order Management and CMS.
 
-### Tracking Production Progress
+4. **Supplier Assignment**: The Order Management system integrates with the Smart Supplier Assignment feature, which analyzes order requirements and matches them with appropriate suppliers based on capacity, expertise, and location data.
 
-**Scenario**: A buyer monitors the status of their bulk order
+5. **Content and Marketing Integration**: The CMS Management system integrates with marketing features, allowing administrators to update website content that promotes the AI Quote Generator and LoopTrace™ tracking capabilities.
 
-**Steps**:
-1. Access LoopTrace™ Order Tracking
-2. Select active order from list
-3. View production timeline
-4. Monitor stage completion
-5. Review quality control updates
-6. Access production photos
-7. Receive real-time notifications
+These integration points create a seamless workflow from initial quote request through production and delivery, with appropriate access controls ensuring data security and role-appropriate functionality.
 
-**Expected Outcome**:
-- Current stage: Sewing & Assembly (75% complete)
-- Next stage: Quality Control
-- Estimated completion: 3 days remaining
-- Photos available for current stage
+## Common Issues and Best Practices
 
-### Supplier Assignment Process
+### Common Issues
 
-**Scenario**: An admin assigns a new order to optimal supplier
+1. **AI Quote Generation Timeouts**: The AI quote generation process has a 30-second timeout. Complex requests with multiple file uploads may exceed this limit. Users should simplify requirements or break complex orders into smaller components.
 
-**Steps**:
-1. Navigate to SmartSupplierAssignment
-2. Input order details (product type, quantity, requirements)
-3. Generate AI recommendations
-4. Review supplier rankings with confidence scores
-5. Select recommended supplier
-6. Assign to order
-7. Receive confirmation notification
+2. **Real-time Subscription Disconnections**: In rare cases, the real-time subscription for production tracking may disconnect. The system automatically attempts to reconnect, but users may need to refresh the page if updates stop appearing.
 
-**Expected Outcome**:
-- Top recommendation: Supplier A (95% confidence)
-- Alternative: Supplier B (70% confidence)
-- Reasoning: "Specializes in cotton fabrics, 98% on-time performance"
+3. **Role Permission Confusion**: New users may be confused about their access level. Clear documentation and intuitive UI design help mitigate this issue.
 
-**Section sources**
-- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L118-L196)
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L191-L211)
-- [SmartSupplierAssignment.tsx](file://src/components/admin/SmartSupplierAssignment.tsx#L27-L37)
+4. **Content Editing Errors**: Direct JSON editing in the CMS can lead to syntax errors. The system includes basic validation, but administrators should be cautious when editing complex content structures.
 
-## Troubleshooting Guide
+### Best Practices
 
-### Common Issues and Solutions
+1. **For AI Quote Generator**:
+   - Provide detailed but focused requirements
+   - Use the file upload feature for complex designs
+   - Review AI insights for optimization opportunities
+   - Start with simpler products when testing the system
 
-#### LoopTrace™ Production Tracking Issues
+2. **For LoopTrace™ Tracking**:
+   - Check the tracking dashboard regularly
+   - Respond promptly to automated alerts
+   - Use the photo documentation to verify quality
+   - Communicate with suppliers through the integrated messaging system
 
-**Problem**: Real-time updates not appearing
-**Solution**: 
-1. Verify internet connectivity
-2. Check browser WebSocket support
-3. Clear browser cache and reload
-4. Verify user authentication status
+3. **For Order Management**:
+   - Review pending quotes daily
+   - Assign suppliers promptly to avoid delays
+   - Use the filtering and search features to manage large order volumes
+   - Monitor margin metrics to ensure profitability
 
-**Problem**: Stages not updating
-**Solution**:
-1. Check production stage database records
-2. Verify realtime subscription setup
-3. Review backend function logs
-4. Confirm data permissions
+4. **For Content Management**:
+   - Test content changes on staging before production
+   - Use descriptive section and content type names
+   - Maintain consistent display order logic
+   - Coordinate content updates with marketing campaigns
 
-#### AI Quote Generation Problems
-
-**Problem**: Quote generation fails consistently
-**Solution**:
-1. Verify input validation requirements
-2. Check AI service availability
-3. Review rate limiting configuration
-4. Validate user authentication
-
-**Problem**: Inaccurate pricing estimates
-**Solution**:
-1. Verify product type selection
-2. Check quantity range limitations
-3. Review fabric type specifications
-4. Confirm complexity level selection
-
-#### SmartSupplierAssignment Errors
-
-**Problem**: No supplier recommendations returned
-**Solution**:
-1. Verify supplier database entries
-2. Check AI service configuration
-3. Review supplier verification status
-4. Confirm capability matching logic
-
-**Problem**: Incorrect confidence scores
-**Solution**:
-1. Review supplier performance data
-2. Check capability matching algorithms
-3. Verify lead time calculations
-4. Audit specializations matching
-
-### Performance Optimization
-
-#### Frontend Performance
-- Implement lazy loading for heavy components
-- Use React.memo for expensive renders
-- Optimize image loading and caching
-- Minimize bundle size through tree shaking
-
-#### Backend Performance
-- Implement proper indexing on frequently queried columns
-- Use connection pooling for database access
-- Cache AI responses when appropriate
-- Monitor function execution times
-
-#### Real-Time Performance
-- Optimize WebSocket message sizes
-- Implement efficient filtering mechanisms
-- Use selective subscriptions
-- Monitor connection health
-
-**Section sources**
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L180-L188)
-- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L175-L196)
-
-## Best Practices
-
-### Development Guidelines
-
-#### Code Organization
-- Maintain clear separation of concerns
-- Use consistent naming conventions
-- Implement proper error boundaries
-- Document complex algorithms
-
-#### Security Considerations
-- Validate all user inputs
-- Implement proper authentication checks
-- Use prepared statements for database queries
-- Secure API keys and sensitive data
-
-#### Performance Optimization
-- Implement proper loading states
-- Use debouncing for search functionality
-- Optimize rendering performance
-- Monitor memory usage
-
-#### Testing Strategies
-- Write comprehensive unit tests
-- Implement integration testing
-- Test real-time functionality
-- Validate AI service integrations
-
-### Operational Excellence
-
-#### Monitoring and Logging
-- Implement comprehensive logging
-- Monitor API response times
-- Track user engagement metrics
-- Set up alerting for critical failures
-
-#### Maintenance Procedures
-- Regular database maintenance
-- Update AI model configurations
-- Monitor service dependencies
-- Perform routine security audits
-
-#### User Experience
-- Provide clear error messages
-- Implement graceful degradation
-- Offer helpful tooltips and guidance
-- Ensure responsive design across devices
-
-The core features of SleekApparels v100 represent a paradigm shift in apparel manufacturing management, combining cutting-edge AI technology with intuitive user interfaces to deliver unparalleled transparency and efficiency. Through continuous innovation and user-centric design, these features empower businesses to thrive in today's fast-paced global marketplace.
+By following these best practices, users can maximize the effectiveness of the Sleek Apparels platform's core features and ensure smooth operations throughout the manufacturing process.

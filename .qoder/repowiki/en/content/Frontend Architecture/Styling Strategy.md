@@ -3,45 +3,52 @@
 <cite>
 **Referenced Files in This Document**   
 - [tailwind.config.ts](file://tailwind.config.ts)
-- [src/lib/designTokens.ts](file://src/lib/designTokens.ts)
-- [src/index.css](file://src/index.css)
-- [src/App.css](file://src/App.css)
+- [designTokens.ts](file://src/lib/designTokens.ts)
+- [index.css](file://src/index.css)
+- [App.css](file://src/App.css)
+- [button.tsx](file://src/components/ui/button.tsx)
+- [card.tsx](file://src/components/ui/card.tsx)
+- [microInteractions.ts](file://src/lib/microInteractions.ts)
+- [optimizedAnimations.ts](file://src/lib/optimizedAnimations.ts)
+- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx)
+- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx)
+- [vite.config.ts](file://vite.config.ts)
 - [components.json](file://components.json)
-- [src/components/ui/button.tsx](file://src/components/ui/button.tsx)
-- [src/components/ui/card.tsx](file://src/components/ui/card.tsx)
-- [src/components/ui/input.tsx](file://src/components/ui/input.tsx)
-- [src/components/ui/form.tsx](file://src/components/ui/form.tsx)
-- [src/components/ui/dialog.tsx](file://src/components/ui/dialog.tsx)
-- [postcss.config.js](file://postcss.config.js)
 </cite>
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Design System Overview](#design-system-overview)
-3. [Tailwind CSS Configuration](#tailwind-css-configuration)
-4. [CSS Architecture](#css-architecture)
-5. [Component Library Implementation](#component-library-implementation)
-6. [Design Tokens System](#design-tokens-system)
-7. [Import Aliases Configuration](#import-aliases-configuration)
-8. [Responsive Design Implementation](#responsive-design-implementation)
-9. [Dark Mode Support](#dark-mode-support)
-10. [Guidelines for New Components](#guidelines-for-new-components)
-11. [Extending Tailwind Utilities](#extending-tailwind-utilities)
-12. [Maintaining Visual Consistency](#maintaining-visual-consistency)
+2. [Utility-First Approach with Tailwind CSS](#utility-first-approach-with-tailwind-css)
+3. [Design Tokens and Theme Configuration](#design-tokens-and-theme-configuration)
+4. [shadcn/ui Component Integration](#shadcnui-component-integration)
+5. [Global Styles and CSS Modules](#global-styles-and-css-modules)
+6. [Micro-Interactions and Animation Strategy](#micro-interactions-and-animation-strategy)
+7. [Responsive Design and Dark Mode](#responsive-design-and-dark-mode)
+8. [Complex Component Styling Examples](#complex-component-styling-examples)
+9. [Performance Optimization Techniques](#performance-optimization-techniques)
+10. [Accessibility Considerations](#accessibility-considerations)
 
 ## Introduction
-The sleekapp-v100 styling system implements a modern, scalable design architecture using the shadcn/ui component library with Tailwind CSS as the underlying utility framework. This documentation provides a comprehensive overview of the styling strategy, detailing how design tokens, component primitives, and CSS architecture work together to ensure visual consistency across the application. The system is designed to support responsive layouts, dark mode, and efficient component reuse while maintaining a clean, professional aesthetic aligned with the brand identity.
-
-## Design System Overview
-The styling system in sleekapp-v100 follows a component-driven architecture that combines the shadcn/ui design system with Tailwind CSS utilities. This approach provides a consistent, accessible, and maintainable UI across the application. The design system is built on several key principles: reusability through component primitives, consistency via design tokens, and scalability through a well-structured CSS architecture. The system supports both light and dark modes with carefully calibrated color palettes that maintain brand identity while ensuring accessibility.
+The SleekApp styling architecture combines a utility-first approach with Tailwind CSS, a comprehensive design token system, and strategic component-level styling to create a cohesive, performant, and accessible user interface. The system is designed to balance developer efficiency with design consistency while maintaining high performance standards through optimized animations and critical CSS loading.
 
 **Section sources**
 - [tailwind.config.ts](file://tailwind.config.ts)
-- [src/lib/designTokens.ts](file://src/lib/designTokens.ts)
-- [src/index.css](file://src/index.css)
+- [designTokens.ts](file://src/lib/designTokens.ts)
+- [index.css](file://src/index.css)
 
-## Tailwind CSS Configuration
-The Tailwind CSS configuration in tailwind.config.ts extends the default theme with custom values for fonts, colors, spacing, and animations. The configuration uses CSS variables for colors, enabling dynamic theme switching between light and dark modes. Font families are defined for different text roles, with Open Sans and Lato for body text and Inter and Poppins for headings. Custom font sizes include responsive variants for mobile and desktop views. The theme extends spacing with semantic values like 'section' and 'component' to promote consistent layout patterns. Border radii are customized with specific values for buttons, cards, and images. The configuration also defines keyframes and animations for UI interactions, including accordion transitions, fade effects, and shimmer animations.
+## Utility-First Approach with Tailwind CSS
+The application implements a utility-first CSS strategy using Tailwind CSS, configured through `tailwind.config.ts`. This approach enables rapid UI development by composing styles from atomic utility classes directly in JSX, reducing the need for custom CSS files.
+
+The configuration extends Tailwind's default theme with custom values for typography, spacing, colors, and animations. Key features include:
+
+- **Custom Font Families**: Defined Open Sans and Lato for body text, Inter and Poppins for headings, and Crimson Text for accent typography
+- **Responsive Typography**: Custom font sizes with mobile-specific variants (e.g., `h1-mobile`, `h2-mobile`)
+- **Semantic Spacing**: Named spacing values like `section` (80px) and `component` (24px) for consistent layout
+- **HSL Color System**: Colors defined using HSL variables for easy theme switching and dark mode support
+- **Custom Border Radius**: Multiple border radius values including `button` (8px) and `card` (12px)
+- **Elevation System**: Custom box shadows for cards and buttons with hover states
+
+The configuration also includes custom keyframe animations for common UI patterns like accordion transitions, fade effects, and loading states, which are then referenced in the `animation` section for easy application.
 
 ```mermaid
 classDiagram
@@ -49,238 +56,459 @@ class TailwindConfig {
 +darkMode : string[]
 +content : string[]
 +prefix : string
-+theme : object
-+plugins : Function[]
++theme : Theme
++plugins : Plugin[]
 }
 class Theme {
-+container : object
-+extend : object
++container : Container
++extend : ThemeExtension
 }
-class Extend {
-+fontFamily : object
-+fontSize : object
-+spacing : object
-+colors : object
-+borderRadius : object
-+boxShadow : object
-+keyframes : object
-+animation : object
+class ThemeExtension {
++fontFamily : FontFamily
++fontSize : FontSize
++spacing : Spacing
++colors : ColorSystem
++borderRadius : BorderRadius
++boxShadow : ShadowSystem
++keyframes : KeyframeAnimations
++animation : AnimationPresets
 }
-TailwindConfig --> Theme : "has"
-Theme --> Extend : "extends"
+TailwindConfig --> Theme : "contains"
+Theme --> ThemeExtension : "extends"
 ```
 
-**Diagram sources**
+**Diagram sources **
 - [tailwind.config.ts](file://tailwind.config.ts#L1-L196)
 
 **Section sources**
 - [tailwind.config.ts](file://tailwind.config.ts#L1-L196)
+- [components.json](file://components.json#L1-L21)
 
-## CSS Architecture
-The CSS architecture in sleekapp-v100 follows a layered approach with global styles in index.css and component-specific styles in App.css. The index.css file imports Tailwind's base, components, and utilities layers, then defines custom CSS variables for the design system. These variables use HSL color values to enable easy theme adjustments and ensure accessibility. The file establishes global typography rules, setting font families, colors, and line heights for the entire application. It also includes performance optimizations like will-change hints for animated elements and content-visibility for media elements. The App.css file contains application-specific styles, including layout rules for the root container and custom animations for the logo. This separation of concerns ensures that utility styles are managed by Tailwind while application-specific styles remain maintainable.
+## Design Tokens and Theme Configuration
+The application implements a comprehensive design token system in `designTokens.ts`, which serves as the single source of truth for visual design properties. This token-based approach ensures consistency across the application and facilitates theme management.
 
-```mermaid
-graph TD
-A[CSS Architecture] --> B[index.css]
-A --> C[App.css]
-B --> D[Tailwind Base]
-B --> E[Tailwind Components]
-B --> F[Tailwind Utilities]
-B --> G[CSS Variables]
-B --> H[Global Typography]
-B --> I[Performance Optimizations]
-C --> J[Layout Styles]
-C --> K[Custom Animations]
-C --> L[Component-Specific Styles]
-```
+The design tokens include:
 
-**Diagram sources**
-- [src/index.css](file://src/index.css#L1-L193)
-- [src/App.css](file://src/App.css#L1-L43)
+- **Color System**: Structured color palettes for primary (LoopTrace™ Blue), accent (Energy Orange), semantic colors (success, warning, error, info), and a modern gray scale
+- **Typography**: Font families, sizes, weights, and line heights following a consistent scale
+- **Spacing**: 4px grid-based spacing system with values from 4px to 128px
+- **Border Radius**: Multiple radius values from 4px to 32px plus full circle
+- **Shadows**: Elevation system with 11 shadow levels from xs to 2xl
+- **Animation**: Duration and easing presets for consistent motion design
+- **Z-Index**: Layering system for UI elements
+- **Breakpoints**: Mobile-first responsive design breakpoints
 
-**Section sources**
-- [src/index.css](file://src/index.css#L1-L193)
-- [src/App.css](file://src/App.css#L1-L43)
-
-## Component Library Implementation
-The component library in sleekapp-v100 is implemented in the src/components/ui/ directory, following the shadcn/ui pattern of building reusable UI primitives with Tailwind classes. Each component is designed as a composable primitive that can be used independently or combined with others to create complex interfaces. Components like Button, Card, Input, Form, and Dialog are built with accessibility in mind, using appropriate ARIA attributes and keyboard navigation. The Button component uses class-variance-authority (CVA) to define variants and sizes, allowing for consistent styling across different button types. The Card component provides structured slots for header, title, description, content, and footer, ensuring consistent card layouts throughout the application. Form components integrate with react-hook-form for robust form handling with validation and error messaging.
-
-```mermaid
-classDiagram
-class Button {
-+variants : object
-+sizes : object
-+asChild : boolean
-}
-class Card {
-+CardHeader
-+CardTitle
-+CardDescription
-+CardContent
-+CardFooter
-}
-class Input {
-+type : string
-+className : string
-}
-class Form {
-+FormLabel
-+FormControl
-+FormDescription
-+FormMessage
-+FormField
-}
-class Dialog {
-+DialogTrigger
-+DialogContent
-+DialogHeader
-+DialogTitle
-+DialogDescription
-+DialogFooter
-+DialogClose
-}
-Button --> "1" Card : "used in"
-Input --> "1" Form : "used in"
-Form --> "1" Dialog : "used in"
-```
-
-**Diagram sources**
-- [src/components/ui/button.tsx](file://src/components/ui/button.tsx#L1-L51)
-- [src/components/ui/card.tsx](file://src/components/ui/card.tsx#L1-L44)
-- [src/components/ui/input.tsx](file://src/components/ui/input.tsx#L1-L23)
-- [src/components/ui/form.tsx](file://src/components/ui/form.tsx#L1-L130)
-- [src/components/ui/dialog.tsx](file://src/components/ui/dialog.tsx#L1-L96)
-
-**Section sources**
-- [src/components/ui/button.tsx](file://src/components/ui/button.tsx#L1-L51)
-- [src/components/ui/card.tsx](file://src/components/ui/card.tsx#L1-L44)
-- [src/components/ui/input.tsx](file://src/components/ui/input.tsx#L1-L23)
-- [src/components/ui/form.tsx](file://src/components/ui/form.tsx#L1-L130)
-- [src/components/ui/dialog.tsx](file://src/components/ui/dialog.tsx#L1-L96)
-
-## Design Tokens System
-The design tokens in src/lib/designTokens.ts provide a centralized source of truth for visual design properties across the application. These tokens define color palettes, typography scales, spacing systems, border radii, shadows, animations, and breakpoints in a structured, type-safe manner. The color system includes primary (LoopTrace™ Blue), accent (Energy Orange), and semantic colors for success, warning, error, and info states. The typography system defines font families, sizes, weights, and line heights with responsive considerations. The spacing system follows a 4px grid, ensuring consistent rhythm in layouts. Border radii and shadows are defined with semantic names that reflect their intended use cases. The tokens are exported as a const assertion to ensure type safety and prevent modification at runtime.
+The tokens are exported as a const object with individual groups also exported for convenience, enabling both comprehensive and granular imports throughout the codebase.
 
 ```mermaid
 classDiagram
 class DesignTokens {
-+colors : object
-+typography : object
-+spacing : object
-+borderRadius : object
-+shadows : object
-+animation : object
-+zIndex : object
-+breakpoints : object
++colors : ColorPalette
++typography : TypographySystem
++spacing : SpacingSystem
++borderRadius : RadiusSystem
++shadows : ShadowSystem
++animation : AnimationSystem
++zIndex : ZIndexSystem
++breakpoints : BreakpointSystem
 }
-class Colors {
-+primary : object
-+accent : object
-+success : object
-+warning : object
-+error : object
-+info : object
-+gray : object
+class ColorPalette {
++primary : ColorScale
++accent : ColorScale
++success : ColorScale
++warning : ColorScale
++error : ColorScale
++info : ColorScale
++gray : ColorScale
 }
-class Typography {
-+fontFamily : object
-+fontSize : object
-+fontWeight : object
-+lineHeight : object
+class TypographySystem {
++fontFamily : FontFamilies
++fontSize : FontSizes
++fontWeight : FontWeights
++lineHeight : LineHeights
 }
-class Spacing {
-+0 : string
-+1 : string
-+2 : string
-+3 : string
-+4 : string
-+5 : string
-+6 : string
-+8 : string
-+10 : string
-+12 : string
-+16 : string
-+20 : string
-+24 : string
-+32 : string
-}
-DesignTokens --> Colors
-DesignTokens --> Typography
-DesignTokens --> Spacing
+DesignTokens --> ColorPalette
+DesignTokens --> TypographySystem
+DesignTokens --> SpacingSystem
+DesignTokens --> RadiusSystem
+DesignTokens --> ShadowSystem
+DesignTokens --> AnimationSystem
+DesignTokens --> ZIndexSystem
+DesignTokens --> BreakpointSystem
 ```
 
-**Diagram sources**
-- [src/lib/designTokens.ts](file://src/lib/designTokens.ts#L1-L205)
+**Diagram sources **
+- [designTokens.ts](file://src/lib/designTokens.ts#L1-L205)
 
 **Section sources**
-- [src/lib/designTokens.ts](file://src/lib/designTokens.ts#L1-L205)
+- [designTokens.ts](file://src/lib/designTokens.ts#L1-L205)
+- [index.css](file://src/index.css#L9-L124)
 
-## Import Aliases Configuration
-The aliases configuration in components.json enables clean, consistent import paths throughout the application. This configuration defines aliases for commonly used directories, reducing the complexity of relative imports and improving code readability. The "@/" prefix is used for all aliases, with "components" mapping to "@/components" for general components, "ui" mapping to "@/components/ui" for shadcn/ui primitives, "lib" mapping to "@/lib" for utilities and shared code, and "hooks" mapping to "@/hooks" for custom React hooks. This system works in conjunction with the TypeScript configuration to provide proper type checking and IDE support. The aliases make it easier to refactor code and move files without breaking imports, as components can always import from their logical location rather than their physical location in the directory structure.
+## shadcn/ui Component Integration
+The application leverages shadcn/ui components as a foundation for its UI, extending and customizing them to match the brand identity. The integration is configured in `components.json`, which specifies the project's styling approach and aliases.
 
-**Section sources**
-- [components.json](file://components.json#L1-L21)
+Key aspects of the shadcn/ui integration include:
 
-## Responsive Design Implementation
-The responsive design implementation in sleekapp-v100 uses a mobile-first approach with breakpoints defined in both the design tokens and Tailwind configuration. The system supports responsive typography with font sizes that adjust based on screen size, such as 'h1' and 'h1-mobile' variants. Components use Tailwind's responsive prefixes (sm:, md:, lg:, xl:) to adjust layout, spacing, and visibility across different screen sizes. The useIsMobile hook in src/hooks/use-mobile.tsx provides a React-friendly way to detect mobile devices and adjust behavior accordingly. The design system includes responsive spacing values like 'section' and 'section-mobile' to ensure consistent vertical rhythm across breakpoints. The container component centers content and limits maximum width, with a 2xl breakpoint set at 1400px to accommodate larger screens.
+- **Default Style**: Using the default styling approach rather than CSS variables
+- **TypeScript Support**: Full TypeScript integration with .tsx files
+- **Path Aliases**: Configuration of aliases for easier imports (e.g., "@/components/ui")
+- **Tailwind Configuration**: Reference to the custom tailwind.config.ts and index.css
 
-**Section sources**
-- [tailwind.config.ts](file://tailwind.config.ts#L5-L17)
-- [src/lib/designTokens.ts](file://src/lib/designTokens.ts#L194-L200)
-- [src/hooks/use-mobile.tsx](file://src/hooks/use-mobile.tsx#L1-L32)
-
-## Dark Mode Support
-Dark mode support is implemented through Tailwind's class-based dark mode strategy, with the darkMode setting configured as "class" in tailwind.config.ts. This approach adds a 'dark' class to the document when dark mode is active, allowing CSS variables to be overridden for dark theme values. The color system in index.css defines both light and dark mode values for all semantic colors, ensuring a cohesive dark theme that maintains brand identity. The design carefully balances contrast and readability, with dark mode using a deep charcoal background and light text for optimal legibility. Interactive elements like buttons and cards have hover states that provide visual feedback in both light and dark modes. The transition between modes is smooth, with no flicker or layout shift, thanks to the use of CSS variables that are updated atomically.
+The shadcn/ui components are extended through utility classes and custom variants. For example, the Button component defines multiple variants (default, gold, coral, outline, secondary, ghost, link, destructive) and sizes (default, sm, lg, icon), each with specific utility class combinations for visual styling.
 
 ```mermaid
 classDiagram
-class ThemeSystem {
-+lightMode : object
-+darkMode : object
-+toggleTheme()
+class Button {
++variant : string
++size : string
++asChild : boolean
 }
-class LightMode {
-+--background : hsl(30 25% 96%)
-+--foreground : hsl(0 0% 17%)
-+--primary : hsl(158 35% 27%)
-+--secondary : hsl(18 47% 60%)
+class ButtonVariants {
++default : string
++gold : string
++coral : string
++outline : string
++secondary : string
++ghost : string
++link : string
++destructive : string
 }
-class DarkMode {
-+--background : hsl(0 0% 12%)
-+--foreground : hsl(0 0% 95%)
-+--primary : hsl(158 35% 40%)
-+--secondary : hsl(18 47% 65%)
+class ButtonSizes {
++default : string
++sm : string
++lg : string
++icon : string
 }
-ThemeSystem --> LightMode
-ThemeSystem --> DarkMode
+Button --> ButtonVariants
+Button --> ButtonSizes
+Button --> Slot : "uses"
 ```
 
-**Diagram sources**
+**Diagram sources **
+- [components.json](file://components.json#L1-L21)
+- [button.tsx](file://src/components/ui/button.tsx#L1-L51)
+
+**Section sources**
+- [components.json](file://components.json#L1-L21)
+- [button.tsx](file://src/components/ui/button.tsx#L1-L51)
+- [card.tsx](file://src/components/ui/card.tsx#L1-L44)
+
+## Global Styles and CSS Modules
+The styling architecture combines Tailwind's utility classes with targeted global CSS for base resets, performance optimizations, and complex styling patterns that are difficult to achieve with utilities alone.
+
+The global styles are organized across two main files:
+
+- **index.css**: Contains the core design system definitions using CSS custom properties (HSL colors, gradients, shadows) and Tailwind's `@layer` directives
+- **App.css**: Contains application-specific styles not covered by Tailwind utilities
+
+Key features of the global styling approach:
+
+- **HSL Color System**: All colors defined as HSL variables in `:root` for easy theme switching
+- **Dark Mode Support**: Complete dark mode theme with warm, accessible colors
+- **Base Layer Styling**: Global typography settings, font families, and element defaults
+- **Performance Optimizations**: GPU acceleration hints and content visibility settings
+- **Radix UI Fixes**: Critical fixes for NavigationMenu component styling issues
+
+The global styles work in concert with Tailwind's utility classes, with the CSS variables defined in index.css being referenced in the Tailwind configuration for consistent theming.
+
+```mermaid
+classDiagram
+class GlobalStyles {
++index.css
++App.css
+}
+class indexCSS {
++ : root variables
++@layer base
++@layer utilities
++Radix UI fixes
+}
+class AppCSS {
++#root container
++.logo animations
++@keyframes
+}
+GlobalStyles --> indexCSS
+GlobalStyles --> AppCSS
+indexCSS --> TailwindConfig : "provides variables"
+AppCSS --> indexCSS : "extends"
+```
+
+**Diagram sources **
+- [index.css](file://src/index.css#L1-L193)
+- [App.css](file://src/App.css#L1-L43)
+
+**Section sources**
+- [index.css](file://src/index.css#L1-L193)
+- [App.css](file://src/App.css#L1-L43)
+
+## Micro-Interactions and Animation Strategy
+The application implements a sophisticated animation system using Framer Motion and optimized CSS transitions to create engaging user experiences while maintaining 60fps performance.
+
+The animation strategy is implemented through two key files:
+
+- **microInteractions.ts**: Contains a library of delightful UI feedback patterns including haptic feedback simulation, button press animations, success celebrations, and loading micro-animations
+- **optimizedAnimations.ts**: Contains GPU-accelerated animation utilities that use transform and opacity for optimal performance
+
+Key animation features include:
+
+- **Haptic Feedback**: Simulated through visual pulse effects and subtle audio feedback using Web Audio API
+- **Framer Motion Variants**: Predefined animation variants for common interactions (button tap, card hover, fade in, slide in)
+- **GPU Acceleration**: Strategic use of `transform: translateZ(0)` and `will-change` to promote elements to their own GPU layer
+- **Performance Optimization**: Animations restricted to transform and opacity properties to avoid layout thrashing
+- **Staggered Animations**: Container variants that animate children with staggered delays
+- **Scroll Reveal**: IntersectionObserver-based animations that trigger when elements enter the viewport
+
+The system also includes custom JavaScript animations for specific effects like confetti celebrations, ripple effects, and shake animations for form validation errors.
+
+```mermaid
+classDiagram
+class AnimationSystem {
++microInteractions.ts
++optimizedAnimations.ts
+}
+class microInteractions {
++triggerHaptic()
++playFeedbackSound()
++buttonTap
++cardHover
++fadeInUp
++slideIn
++scaleIn
++staggerContainer
++celebrateSuccess()
++createRipple()
++shakeElement()
++pulseElement()
++loadingDots
++smoothScroll()
+}
+class optimizedAnimations {
++optimizedFadeIn
++optimizedScale
++optimizedSlideIn
++staggerContainer
++buttonHover
++buttonTap
++cardHover
++pulse
++gpuAcceleration
++scrollReveal
+}
+AnimationSystem --> microInteractions
+AnimationSystem --> optimizedAnimations
+microInteractions --> WebAudioAPI : "uses"
+optimizedAnimations --> FramerMotion : "extends"
+```
+
+**Diagram sources **
+- [microInteractions.ts](file://src/lib/microInteractions.ts#L1-L339)
+- [optimizedAnimations.ts](file://src/lib/optimizedAnimations.ts#L1-L158)
+
+**Section sources**
+- [microInteractions.ts](file://src/lib/microInteractions.ts#L1-L339)
+- [optimizedAnimations.ts](file://src/lib/optimizedAnimations.ts#L1-L158)
+
+## Responsive Design and Dark Mode
+The application implements a comprehensive responsive design system with mobile-first breakpoints and full dark mode support.
+
+### Responsive Design
+The responsive system is built on a mobile-first approach with breakpoints defined in both the design tokens and Tailwind configuration:
+
+- **sm**: 640px
+- **md**: 768px
+- **lg**: 1024px
+- **xl**: 1280px
+- **2xl**: 1536px
+
+The system uses utility classes for responsive styling (e.g., `md:text-h3`, `lg:grid-cols-4`) and includes mobile-specific typography variants (e.g., `h1-mobile`, `h2-mobile`) for optimal readability on smaller screens.
+
+A custom `useIsMobile` hook provides programmatic access to mobile detection based on the 768px breakpoint, enabling conditional rendering and behavior changes for mobile devices.
+
+### Dark Mode
+Dark mode is implemented using Tailwind's class-based dark mode strategy with `darkMode: ["class"]` in the configuration. The color system is defined using CSS custom properties in `:root` and `.dark`, allowing for seamless theme switching.
+
+The dark mode theme maintains the brand's warmth with carefully selected dark background and text colors that ensure accessibility while providing a comfortable viewing experience in low-light environments.
+
+```mermaid
+classDiagram
+class ResponsiveSystem {
++Breakpoints
++MobileFirst
++UtilityClasses
++useIsMobile()
+}
+class Breakpoints {
++sm : 640px
++md : 768px
++lg : 1024px
++xl : 1280px
++2xl : 1536px
+}
+class DarkMode {
++Strategy : "class"
++ : root colors
++.dark colors
++HSL variables
++Accessibility
+}
+ResponsiveSystem --> Breakpoints
+ResponsiveSystem --> useIsMobileHook
+DarkMode --> HSLSystem
+DarkMode --> Accessibility
+```
+
+**Diagram sources **
+- [designTokens.ts](file://src/lib/designTokens.ts#L194-L200)
 - [tailwind.config.ts](file://tailwind.config.ts#L4-L5)
-- [src/index.css](file://src/index.css#L74-L124)
+- [index.css](file://src/index.css#L9-L124)
+- [use-mobile.tsx](file://src/hooks/use-mobile.tsx#L1-L31)
 
 **Section sources**
+- [designTokens.ts](file://src/lib/designTokens.ts#L194-L200)
 - [tailwind.config.ts](file://tailwind.config.ts#L4-L5)
-- [src/index.css](file://src/index.css#L74-L124)
+- [index.css](file://src/index.css#L9-L124)
+- [use-mobile.tsx](file://src/hooks/use-mobile.tsx#L1-L31)
 
-## Guidelines for New Components
-When creating new components in sleekapp-v100, developers should follow established patterns to maintain consistency with the design system. New components should be placed in appropriate subdirectories within src/components/ based on their functionality. Components should use the existing design tokens for colors, spacing, and typography rather than hardcoding values. For UI primitives, the shadcn/ui pattern should be followed, using Tailwind classes for styling and composing existing components when possible. Components should be designed to be composable, with clear props and default values. Accessibility should be prioritized, with appropriate ARIA attributes and keyboard navigation support. Components should support both light and dark modes through the use of CSS variables. Documentation should be included in the form of JSDoc comments that describe props and usage.
+## Complex Component Styling Examples
+The styling architecture is demonstrated through complex components that showcase the integration of utility classes, custom styling, and animations.
+
+### AIQuoteGenerator Interface
+The AIQuoteGenerator component implements a sophisticated styling approach that combines:
+
+- **Card-based Layout**: Using the shadcn/ui Card component with custom padding and shadow
+- **Form Controls**: Consistent styling of inputs, selects, and textareas with appropriate spacing
+- **File Upload**: Custom styling for file upload with preview thumbnails
+- **Progress Indicators**: Animated loading progress during AI processing
+- **Micro-Interactions**: Ripple effects on buttons and subtle animations on state changes
+- **Responsive Design**: Mobile-optimized layout with appropriate touch targets
+
+The component uses utility classes for layout and spacing while leveraging the design token system for consistent colors and typography.
+
+### ProductionStageTimeline
+The ProductionStageTimeline component demonstrates advanced styling techniques for data visualization:
+
+- **Timeline Visualization**: Custom CSS for the vertical timeline with connecting lines
+- **Status Indicators**: Color-coded icons and badges for different production stages
+- **Progress Bars**: Animated progress bars for in-progress stages
+- **Date Display**: Consistent formatting of dates with appropriate typography
+- **Responsive Layout**: Adapts from vertical timeline on mobile to more compact layout on larger screens
+- **Accessibility**: Proper contrast ratios and semantic HTML structure
+
+The component uses a combination of utility classes for layout and custom CSS for the timeline visualization, with animations for state changes.
+
+```mermaid
+classDiagram
+class AIQuoteGenerator {
++Card layout
++Form controls
++File upload
++Progress indicators
++Micro-interactions
++Responsive design
+}
+class ProductionStageTimeline {
++Timeline visualization
++Status indicators
++Progress bars
++Date display
++Responsive layout
++Accessibility
+}
+AIQuoteGenerator --> Card : "uses"
+AIQuoteGenerator --> Button : "uses"
+AIQuoteGenerator --> Input : "uses"
+ProductionStageTimeline --> Card : "uses"
+ProductionStageTimeline --> Badge : "uses"
+ProductionStageTimeline --> Icons : "uses"
+```
+
+**Diagram sources **
+- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L1-L200)
+- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L1-L183)
 
 **Section sources**
-- [src/components/ui/button.tsx](file://src/components/ui/button.tsx#L1-L51)
-- [src/components/ui/card.tsx](file://src/components/ui/card.tsx#L1-L44)
+- [AIQuoteGenerator.tsx](file://src/components/AIQuoteGenerator.tsx#L1-L200)
+- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L1-L183)
 
-## Extending Tailwind Utilities
-The Tailwind configuration can be extended to add custom utilities that are not covered by the default set. The theme.extend property in tailwind.config.ts allows for the addition of custom values for existing utilities like colors, spacing, and typography. For more complex customizations, Tailwind plugins can be used, with tailwindcss-animate already included for animation utilities. Custom utilities should be added sparingly and only when they represent a consistent design pattern across the application. When creating custom utilities, semantic names should be used that reflect the purpose rather than the visual effect. The postcss.config.js file configures PostCSS with Tailwind and Autoprefixer, ensuring that generated CSS is compatible with target browsers. Custom utilities should be documented in the design system documentation to ensure consistent usage.
+## Performance Optimization Techniques
+The styling architecture incorporates several performance optimization techniques to ensure fast load times and smooth interactions.
+
+### PurgeCSS Configuration
+The application leverages Vite's build optimizations to eliminate unused CSS:
+
+- **Tree Shaking**: Unused CSS classes are removed during the build process
+- **Content Configuration**: Tailwind's content array includes all source files to ensure used classes are preserved
+- **CSS Code Splitting**: Disabled to create a single CSS file for better caching
+
+### Critical CSS Extraction
+The build process implements critical CSS extraction and async loading:
+
+- **Preload Strategy**: CSS is preloaded and then applied asynchronously to prevent render blocking
+- **Critical CSS**: Essential styles are inlined or loaded first
+- **Async Loading**: Non-critical CSS is loaded after initial render
+
+This is implemented in vite.config.ts through a transformIndexHtml plugin that converts CSS links to preload links with onload handlers.
+
+### Asset Optimization
+Additional performance optimizations include:
+
+- **Image Compression**: JPEG, PNG, and SVG images are optimized
+- **Gzip and Brotli Compression**: Production builds are compressed with both algorithms
+- **Bundle Splitting**: Code is split into logical chunks for lazy loading
+- **Minification**: CSS is minified using lightningcss for faster processing
+
+```mermaid
+classDiagram
+class PerformanceOptimization {
++PurgeCSS
++CriticalCSS
++AssetOptimization
+}
+class PurgeCSS {
++Tree shaking
++Content configuration
++CSS code splitting : false
+}
+class CriticalCSS {
++Preload strategy
++Async loading
++transformIndexHtml
+}
+class AssetOptimization {
++Image compression
++Gzip compression
++Brotli compression
++Bundle splitting
++CSS minification
+}
+PerformanceOptimization --> PurgeCSS
+PerformanceOptimization --> CriticalCSS
+PerformanceOptimization --> AssetOptimization
+```
+
+**Diagram sources **
+- [vite.config.ts](file://vite.config.ts#L1-L200)
+- [init-critical.js](file://public/init-critical.js#L1-L50)
 
 **Section sources**
-- [tailwind.config.ts](file://tailwind.config.ts#L18-L192)
-- [postcss.config.js](file://postcss.config.js#L1-L7)
+- [vite.config.ts](file://vite.config.ts#L1-L200)
+- [init-critical.js](file://public/init-critical.js#L1-L50)
 
-## Maintaining Visual Consistency
-Visual consistency in sleekapp-v100 is maintained through a combination of design tokens, component primitives, and strict adherence to the design system guidelines. The designTokens.ts file serves as the single source of truth for all visual properties, ensuring that colors, spacing, and typography are consistent across components. The shadcn/ui component library provides pre-styled primitives that enforce consistent patterns for common UI elements. The Tailwind configuration extends the default theme with custom values that reflect the brand identity. CSS variables in index.css enable dynamic theme switching while maintaining consistency between light and dark modes. Regular code reviews and design system audits help ensure that new components adhere to established patterns and do not introduce visual inconsistencies.
+## Accessibility Considerations
+The styling system incorporates several accessibility features to ensure the application is usable by all users:
+
+- **Color Contrast**: All color combinations meet WCAG 2.1 AA contrast requirements
+- **Focus States**: Visible focus indicators for keyboard navigation
+- **Semantic HTML**: Proper use of HTML elements for screen reader compatibility
+- **Reduced Motion**: Respects `prefers-reduced-motion` media query
+- **Text Readability**: Appropriate font sizes, line heights, and spacing
+- **Keyboard Navigation**: Interactive elements are keyboard accessible
+- **ARIA Attributes**: Proper use of ARIA roles and properties
+
+The dark mode implementation specifically considers accessibility by maintaining sufficient contrast between text and background colors in both light and dark themes.
 
 **Section sources**
-- [src/lib/designTokens.ts](file://src/lib/designTokens.ts#L1-L205)
-- [tailwind.config.ts](file://tailwind.config.ts#L10-L192)
-- [src/index.css](file://src/index.css#L9-L124)
+- [index.css](file://src/index.css#L30-L124)
+- [tailwind.config.ts](file://tailwind.config.ts#L4-L5)
+- [button.tsx](file://src/components/ui/button.tsx#L8-L21)

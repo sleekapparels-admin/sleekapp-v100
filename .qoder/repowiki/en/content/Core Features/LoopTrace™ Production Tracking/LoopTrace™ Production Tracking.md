@@ -1,550 +1,468 @@
 # LoopTrace™ Production Tracking
 
 <cite>
-**Referenced Files in This Document**
-- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx)
-- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx)
-- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx)
+**Referenced Files in This Document**   
 - [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx)
+- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx)
 - [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx)
+- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx)
 - [ProductionAnalytics.tsx](file://src/components/production/ProductionAnalytics.tsx)
-- [QualityRiskAlert.tsx](file://src/components/production/QualityRiskAlert.tsx)
-- [useQualityPrediction.ts](file://src/hooks/useQualityPrediction.ts)
-- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts)
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx)
-- [CommunicationCenter.tsx](file://src/components/shared/CommunicationCenter.tsx)
+- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx)
+- [ConnectionStatusIndicator.tsx](file://src/components/production/ConnectionStatusIndicator.tsx)
+- [AIQualityScanner.tsx](file://src/components/production/AIQualityScanner.tsx)
 - [client.ts](file://src/integrations/supabase/client.ts)
-- [types.ts](file://src/integrations/supabase/types.ts)
-- [useRealtimeMessages.ts](file://src/hooks/useRealtimeMessages.ts)
-- [initialize-production-stages/index.ts](file://supabase/functions/initialize-production-stages/index.ts)
+- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts)
+- [database.ts](file://src/types/database.ts)
 </cite>
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [System Architecture](#system-architecture)
-3. [Core Components](#core-components)
-4. [Real-Time Data Flow](#real-time-data-flow)
-5. [Production Stages Overview](#production-stages-overview)
-6. [AI-Powered Features](#ai-powered-features)
-7. [Communication System](#communication-system)
-8. [Implementation Details](#implementation-details)
-9. [Common Use Cases](#common-use-cases)
-10. [Troubleshooting Guide](#troubleshooting-guide)
-11. [Best Practices](#best-practices)
-12. [Conclusion](#conclusion)
+2. [8-Stage Production Monitoring System](#8-stage-production-monitoring-system)
+3. [Real-Time Updates via Supabase Subscriptions](#real-time-updates-via-supabase-subscriptions)
+4. [User Interface Components](#user-interface-components)
+5. [Order Management by User Role](#order-management-by-user-role)
+6. [Supplier Coordination and Communication](#supplier-coordination-and-communication)
+7. [Production Analytics and Performance Insights](#production-analytics-and-performance-insights)
+8. [Troubleshooting Guide](#troubleshooting-guide)
+9. [Performance Optimization Techniques](#performance-optimization-techniques)
 
 ## Introduction
 
-LoopTrace™ Production Tracking is a revolutionary real-time manufacturing monitoring system designed to eliminate the "Bangladesh black box" in knitwear production. This comprehensive platform provides end-to-end visibility across all 8 manufacturing stages, combining photo documentation, AI-powered quality prediction, and smart alerts to deliver unprecedented transparency and control over production processes.
+LoopTrace™ Production Tracking provides real-time visibility into the manufacturing pipeline for apparel production. This comprehensive system enables buyers, suppliers, and administrators to monitor orders across eight distinct production stages, from order confirmation through shipment and delivery. The platform leverages Supabase real-time subscriptions for instant updates, incorporates photo documentation capabilities for quality verification, and utilizes predictive analytics to detect potential delays before they impact delivery timelines.
 
-The system addresses critical pain points in global apparel manufacturing by providing stakeholders with immediate access to production data, predictive insights, and seamless communication channels. Through its sophisticated real-time notification system built on Supabase subscriptions, LoopTrace™ ensures that buyers, suppliers, and manufacturers stay informed about production progress, quality risks, and potential delays before they become critical issues.
+The system is designed to provide transparency and accountability throughout the production process, ensuring all stakeholders have access to current information about order status, production progress, and potential risks. With role-based access controls, different users see relevant information and have appropriate permissions for their responsibilities in the production workflow.
 
-## System Architecture
+**Section sources**
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L1-L539)
 
-LoopTrace™ follows a modern, real-time architecture that seamlessly integrates frontend components with backend services through Supabase's real-time capabilities. The system is built around several key architectural principles:
+## 8-Stage Production Monitoring System
+
+The LoopTrace™ Production Tracking system implements an 8-stage monitoring framework specifically designed for RMG (Ready-Made Garments) manufacturing. Each stage represents a critical phase in the production lifecycle, with defined start and completion criteria, target dates, and progress tracking.
 
 ```mermaid
-graph TB
-subgraph "Frontend Layer"
-UI[React Components]
-RT[Real-time Hooks]
-State[State Management]
-end
-subgraph "Backend Layer"
-Supabase[Supabase Platform]
-Functions[Edge Functions]
-DB[(PostgreSQL Database)]
-end
-subgraph "AI Services"
-ML[Machine Learning]
-Predictions[Quality Prediction]
-Alerts[Delay Alerts]
-end
-UI --> RT
-RT --> Supabase
-Supabase --> DB
-Functions --> DB
-ML --> Predictions
-Predictions --> Alerts
-Alerts --> UI
+flowchart TD
+A[1. Order Confirmation] --> B[2. Fabric Sourcing]
+B --> C[3. Accessories Procurement]
+C --> D[4. Cutting & Pattern Making]
+D --> E[5. Sewing & Assembly]
+E --> F[6. Quality Control]
+F --> G[7. Finishing & Packaging]
+G --> H[8. Shipment & Delivery]
 ```
 
 **Diagram sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L1-L522)
-- [client.ts](file://src/integrations/supabase/client.ts#L1-L20)
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L40-L49)
 
-The architecture emphasizes real-time responsiveness through Supabase's PostgreSQL change notifications, enabling instant updates across all connected clients without polling mechanisms. This approach ensures that production data remains synchronized in real-time, providing stakeholders with the most current information available.
+The eight production stages are:
+
+1. **Order Confirmation**: Official acceptance of the purchase order with all specifications finalized
+2. **Fabric Sourcing**: Procurement of required textiles and materials from approved suppliers
+3. **Accessories Procurement**: Acquisition of buttons, zippers, labels, and other components
+4. **Cutting & Pattern Making**: Preparation of patterns and cutting of fabric according to specifications
+5. **Sewing & Assembly**: Construction of garments through stitching and assembly processes
+6. **Quality Control**: Comprehensive inspection for defects, measurements, and compliance
+7. **Finishing & Packaging**: Final touches, pressing, folding, and packaging for shipment
+8. **Shipment & Delivery**: Logistics coordination and final delivery to the destination
+
+Each stage can have one of four status values: "pending", "in_progress", "completed", or "delayed". The system tracks start and completion timestamps, target dates, and completion percentages to provide granular visibility into production progress.
 
 **Section sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L1-L522)
-- [client.ts](file://src/integrations/supabase/client.ts#L1-L20)
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L40-L49)
+- [database.ts](file://src/types/database.ts#L19-L27)
 
-## Core Components
+## Real-Time Updates via Supabase Subscriptions
+
+The LoopTrace™ system leverages Supabase's real-time capabilities to provide instant updates across the production tracking interface. This is implemented through PostgreSQL change subscriptions that push updates to clients as soon as production data changes in the database.
+
+```mermaid
+sequenceDiagram
+participant Client as "Client Application"
+participant Supabase as "Supabase Realtime"
+participant Database as "PostgreSQL Database"
+Client->>Supabase : Subscribe to production updates
+Supabase->>Database : Listen for changes
+Database->>Supabase : Change detected (INSERT/UPDATE/DELETE)
+Supabase->>Client : Push update notification
+Client->>Client : Update UI optimistically
+```
+
+**Diagram sources**
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L65-L90)
+- [client.ts](file://src/integrations/supabase/client.ts#L14-L20)
+
+The implementation uses Supabase channels to subscribe to changes in the `production_stages` table, filtered by the specific order ID:
+
+```typescript
+const channel = supabase
+  .channel(`production-updates-${selectedOrder.id}`)
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'production_stages',
+      filter: `supplier_order_id=eq.${selectedOrder.id}`
+    },
+    (payload) => {
+      console.log('Production stage updated:', payload);
+      fetchUserAndOrders();
+    }
+  )
+  .subscribe();
+```
+
+When a change is detected in any production stage for the selected order, the system refreshes the order data to ensure the UI reflects the most current information. This real-time synchronization eliminates the need for manual page refreshes and ensures all stakeholders see the same up-to-date information simultaneously.
+
+The system also includes a ConnectionStatusIndicator component that monitors the real-time connection status with Supabase, displaying visual indicators for connected, disconnected, or reconnecting states.
+
+**Section sources**
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L65-L90)
+- [ConnectionStatusIndicator.tsx](file://src/components/production/ConnectionStatusIndicator.tsx#L28-L40)
+
+## User Interface Components
+
+The LoopTrace™ Production Tracking interface consists of several key components that work together to provide a comprehensive view of production status. These components are designed to be modular, reusable, and provide an intuitive user experience.
 
 ### ProductionStageTimeline Component
 
-The ProductionStageTimeline serves as the primary visual representation of production progress, displaying all eight manufacturing stages in chronological order with interactive elements for tracking completion and status.
+The ProductionStageTimeline component visualizes the production process as a vertical timeline, showing each stage in chronological order with its current status, dates, and progress indicators.
 
 ```mermaid
 classDiagram
 class ProductionStageTimeline {
-+string orderId
-+ProductionStage[] stages
-+getStatusIcon(status, percentage) JSX.Element
-+getStatusColor(status) string
-+render() JSX.Element
++orderId : string
++stages : ProductionStage[]
+-getStageIcon(stageName : string) : ReactNode
+-getStatusIcon(status : string, completionPercentage : number | null, stageName : string) : ReactNode
+-getStatusColor(status : string) : string
+-getBadgeVariant(status : string) : BadgeVariant
+-sortedStages : ProductionStage[]
 }
 class ProductionStage {
-+string id
-+number stage_number
-+string stage_name
-+string status
-+string started_at
-+string completed_at
-+string target_date
-+number completion_percentage
++id : string
++stage_number : number
++stage_name : string
++status : string
++started_at : string | null
++completed_at : string | null
++target_date : string | null
++completion_percentage : number | null
 }
-ProductionStageTimeline --> ProductionStage : displays
+ProductionStageTimeline --> ProductionStage : "displays"
 ```
 
 **Diagram sources**
-- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L6-L15)
+- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L17-L20)
+- [database.ts](file://src/types/database.ts#L6-L15)
 
-Key features include:
-- **Visual Progress Indicators**: Color-coded icons representing stage status (completed, in progress, delayed, pending)
-- **Interactive Timeline**: Clickable stages with detailed information panels
-- **Progress Bars**: Visual representation of completion percentages
-- **Date Tracking**: Automatic calculation of elapsed and remaining time
-- **Responsive Design**: Adapts to various screen sizes and devices
-
-### PredictiveDelayAlert Component
-
-The PredictiveDelayAlert component provides intelligent delay detection using AI-driven heuristics to forecast potential bottlenecks before they impact production timelines.
-
-```mermaid
-flowchart TD
-Start([Stage Analysis]) --> CheckStatus{Status == 'In Progress'?}
-CheckStatus --> |Yes| CheckTarget{Past Target Date?}
-CheckStatus --> |No| CheckPending{Status == 'Pending'?}
-CheckTarget --> |Yes| HighRisk[High Risk Level]
-CheckTarget --> |No| CheckProgress{Progress < 80%?}
-CheckProgress --> |Yes| DaysLeft{Days Until Target < 2?}
-CheckProgress --> |No| MediumRisk[Medium Risk Level]
-DaysLeft --> |Yes| HighRisk
-DaysLeft --> |No| CheckLowProgress{Progress < 50%?}
-CheckLowProgress --> |Yes| MediumRisk
-CheckLowProgress --> |No| LowRisk[Low Risk Level]
-CheckPending --> |Yes| PendingCheck{Days Until Target < 7?}
-CheckPending --> |No| NoRisk[No Risk]
-PendingCheck --> |Yes| LowRisk
-PendingCheck --> |No| NoRisk
-HighRisk --> Alert[Generate High Risk Alert]
-MediumRisk --> Warning[Generate Medium Risk Warning]
-LowRisk --> Info[Generate Low Risk Info]
-NoRisk --> Success[All On Track]
-```
-
-**Diagram sources**
-- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx#L38-L106)
-
-### SupplierCoordinationPanel Component
-
-The SupplierCoordinationPanel facilitates seamless communication between buyers and suppliers through integrated messaging and supplier information management.
-
-```mermaid
-sequenceDiagram
-participant Buyer as Buyer
-participant Panel as Coordination Panel
-participant Supabase as Supabase
-participant Supplier as Supplier
-Buyer->>Panel : View Supplier Info
-Panel->>Supabase : Fetch Supplier Details
-Supabase-->>Panel : Supplier Information
-Panel-->>Buyer : Display Contact Info
-Buyer->>Panel : Send Message
-Panel->>Supabase : Store Message
-Supabase->>Supplier : Real-time Notification
-Supplier->>Supabase : Acknowledge Receipt
-Supabase-->>Panel : Update Message Status
-Panel-->>Buyer : Confirm Delivery
-```
-
-**Diagram sources**
-- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L45-L67)
+Key features of the ProductionStageTimeline include:
+- Visual timeline with vertical connector line
+- Stage-specific icons based on stage name
+- Status indicators with color coding (green for completed, blue for in progress, red for delayed)
+- Progress bars for stages in progress
+- Start, completion, and target date display
+- Warning indicators when target dates have passed without completion
 
 **Section sources**
-- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L1-L147)
-- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx#L1-L203)
-- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L1-L256)
+- [ProductionStageTimeline.tsx](file://src/components/production/ProductionStageTimeline.tsx#L1-L183)
 
-## Real-Time Data Flow
+### ProductionStageCard Component
 
-The LoopTrace™ system operates on a sophisticated real-time data flow architecture that ensures immediate synchronization of production updates across all stakeholders.
-
-```mermaid
-sequenceDiagram
-participant Supplier as Supplier System
-participant Supabase as Supabase
-participant Buyer as Buyer Dashboard
-participant AI as AI Engine
-participant Alert as Alert System
-Supplier->>Supabase : Update Production Stage
-Supabase->>Supabase : Trigger PostgreSQL Change
-Supabase->>Buyer : Real-time WebSocket Event
-Buyer->>Buyer : Update UI State
-Buyer->>AI : Analyze Stage Data
-AI->>Alert : Generate Predictions
-Alert->>Buyer : Display Alerts
-Note over Supplier,Alert : Real-time synchronization occurs instantly
-```
-
-**Diagram sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L63-L87)
-- [useRealtimeMessages.ts](file://src/hooks/useRealtimeMessages.ts#L17-L58)
-
-### Data Subscription Mechanisms
-
-The system employs multiple subscription channels to capture different types of production events:
-
-| Channel Type | Purpose | Event Types | Scope |
-|--------------|---------|-------------|-------|
-| `production-updates-{orderId}` | Stage progress updates | INSERT, UPDATE, DELETE | Specific order |
-| `order-messages-{orderId}` | Supplier communication | INSERT | Order-specific messages |
-| `messages-sent` | Outgoing messages | INSERT, UPDATE | User's sent messages |
-| `messages-received` | Incoming messages | INSERT, UPDATE | User's received messages |
-
-**Section sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L63-L87)
-- [useRealtimeMessages.ts](file://src/hooks/useRealtimeMessages.ts#L17-L58)
-
-## Production Stages Overview
-
-LoopTrace™ tracks production across eight distinct manufacturing stages, each representing a critical phase in the knitwear manufacturing process:
-
-| Stage Number | Stage Name | Description | Typical Duration |
-|--------------|------------|-------------|------------------|
-| 1 | Order Confirmation | Initial order acceptance and preparation | 1-2 days |
-| 2 | Fabric Sourcing | Procurement and quality verification of raw materials | 3-5 days |
-| 3 | Accessories Procurement | Acquisition of buttons, zippers, and other components | 2-3 days |
-| 4 | Cutting & Pattern Making | Fabric cutting according to patterns | 3-7 days |
-| 5 | Sewing & Assembly | Main garment construction and assembly | 5-10 days |
-| 6 | Quality Control | Inspection and defect identification | 2-3 days |
-| 7 | Finishing & Packaging | Ironing, labeling, and packaging preparation | 2-4 days |
-| 8 | Shipment & Delivery | Logistics coordination and delivery | 7-14 days |
-
-### Stage-Specific Features
-
-Each production stage includes specialized functionality tailored to its manufacturing requirements:
-
-```mermaid
-graph LR
-subgraph "Stage 4: Cutting & Pattern Making"
-CuttingPhotos[Photo Documentation]
-CuttingProgress[Progress Tracking]
-CuttingQC[Quality Checks]
-end
-subgraph "Stage 5: Sewing & Assembly"
-SewingPhotos[Assembly Photos]
-SewingProgress[Work-in-Progress Updates]
-SewingDefects[Defect Reporting]
-end
-subgraph "Stage 6: Quality Control"
-QCPhotos[Inspection Photos]
-QCResults[Quality Scores]
-QCReports[Defect Reports]
-end
-CuttingPhotos --> SewingPhotos
-SewingPhotos --> QCPhotos
-```
-
-**Diagram sources**
-- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L25-L41)
-
-**Section sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L37-L47)
-- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L25-L41)
-
-## AI-Powered Features
-
-### Quality Risk Prediction
-
-The AI-powered quality prediction system analyzes historical data and current production indicators to assess potential quality risks before they manifest as defects.
-
-```mermaid
-flowchart TD
-Input[Production Data] --> Analysis[AI Analysis Engine]
-Analysis --> RiskFactors[Risk Factor Detection]
-RiskFactors --> Scoring[Quality Risk Scoring]
-Scoring --> Classification{Risk Level Classification}
-Classification --> |Score 0-33| LowRisk[Low Risk]
-Classification --> |Score 34-66| MediumRisk[Medium Risk]
-Classification --> |Score 67-100| HighRisk[High Risk/Critical]
-LowRisk --> Recommendations[Standard Monitoring]
-MediumRisk --> Recommendations[Increased Inspection]
-HighRisk --> Recommendations[Immediate Intervention]
-Recommendations --> Alert[Quality Alert]
-Alert --> Stakeholders[Notify Stakeholders]
-```
-
-**Diagram sources**
-- [useQualityPrediction.ts](file://src/hooks/useQualityPrediction.ts#L16-L48)
-- [QualityRiskAlert.tsx](file://src/components/production/QualityRiskAlert.tsx#L12-L25)
-
-### Predictive Delay Analysis
-
-The predictive delay system uses machine learning heuristics to forecast potential production delays by analyzing completion patterns, resource allocation, and historical performance data.
-
-Key predictive factors include:
-- **Completion Percentage vs. Timeline**: Early-stage delays often indicate systemic issues
-- **Resource Utilization**: Bottleneck identification through capacity analysis
-- **Historical Performance**: Learning from past production patterns
-- **External Factors**: Seasonal demand variations and supply chain disruptions
-
-**Section sources**
-- [useQualityPrediction.ts](file://src/hooks/useQualityPrediction.ts#L1-L56)
-- [QualityRiskAlert.tsx](file://src/components/production/QualityRiskAlert.ts#L1-L113)
-- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx#L1-L203)
-
-## Communication System
-
-### Integrated Messaging Platform
-
-The communication system provides seamless interaction between buyers, suppliers, and internal teams through a unified messaging interface with real-time notifications.
+The ProductionStageCard component provides a detailed view of each production stage, allowing users to view and update stage information based on their role permissions.
 
 ```mermaid
 classDiagram
-class CommunicationCenter {
-+Message[] messages
-+Message selectedMessage
-+string newMessage
-+File[] selectedFiles
-+fetchMessages() void
-+sendMessage() void
-+markAsRead(messageId) void
+class ProductionStageCard {
++stage : Stage
++data? : StageData
++orderId : string
++userRole : string | null
+-isEditing : boolean
+-notes : string
+-completionPercentage : number
+-saving : boolean
+-canEdit : boolean
+-handleStartStage() : Promise<void>
+-handleUpdateStage() : Promise<void>
+-handleCompleteStage() : Promise<void>
 }
-class Message {
-+string id
-+string subject
-+string message
-+string sender_id
-+string recipient_id
-+string order_id
-+boolean read
-+string created_at
-+string[] attachments
+class Stage {
++number : number
++name : string
++icon : LucideIcon
++color : string
 }
-class SupplierCoordinationPanel {
-+string orderId
-+string supplierId
-+Message[] messages
-+Supplier supplier
-+handleSendMessage() void
+class StageData {
++id : string
++status : string
++started_at : string | null
++completed_at : string | null
++completion_percentage : number | null
++notes : string | null
++photos : string[] | null
++target_date : string | null
 }
-CommunicationCenter --> Message : manages
-SupplierCoordinationPanel --> Message : displays
-SupplierCoordinationPanel --> Supplier : shows
+ProductionStageCard --> Stage : "contains"
+ProductionStageCard --> StageData : "displays"
 ```
 
 **Diagram sources**
-- [CommunicationCenter.tsx](file://src/components/shared/CommunicationCenter.tsx#L12-L22)
-- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L11-L22)
+- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L45-L50)
+- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L27-L43)
 
-### File Attachment System
+The ProductionStageCard includes several key features:
 
-The system supports comprehensive file sharing for documentation, quality reports, and production evidence:
+- **State Management**: Uses React useState hooks to manage editing state, notes, and completion percentage
+- **Optimistic Updates**: Implements the useOptimisticStageUpdate hook to provide immediate UI feedback while updates are processed
+- **Role-Based Permissions**: Determines edit capabilities based on user role (admin, staff, supplier can edit; buyers view-only)
+- **Photo Documentation**: Displays uploaded photos with links to full-size versions
+- **Progress Tracking**: Shows completion percentage with editable input when in edit mode
+- **Action Buttons**: Provides appropriate actions based on stage status (Start, Update Progress, Mark Complete)
 
-- **Supported Formats**: PDF, DOC, DOCX, JPG, JPEG, PNG, GIF, XLSX, XLS
-- **Storage**: Secure cloud storage with automatic URL generation
-- **Size Limits**: Up to 5 files per message, with individual file size restrictions
-- **Access Control**: Role-based permissions for file visibility
+The component uses optimistic updates to enhance user experience, immediately reflecting changes in the UI while the update is processed in the background. If the update fails, the system automatically reverts to the previous state and displays an error message.
 
 **Section sources**
-- [CommunicationCenter.tsx](file://src/components/shared/CommunicationCenter.tsx#L1-L451)
-- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L1-L256)
+- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L1-L412)
+- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts#L79-L125)
 
-## Implementation Details
+## Order Management by User Role
 
-### Optimistic Updates
+The LoopTrace™ Production Tracking system implements role-based access control, ensuring that users see only the orders relevant to their role and have appropriate permissions for their responsibilities.
 
-The system implements optimistic updates to enhance user experience by immediately reflecting changes in the UI while maintaining data integrity through server-side validation.
+```mermaid
+flowchart TD
+A[User Authentication] --> B{Determine User Role}
+B --> C[Admin/Staff: View All Orders]
+B --> D[Supplier: View Assigned Orders]
+B --> E[Buyer: View Own Orders]
+C --> F[Display Orders Based on Role]
+D --> F
+E --> F
+```
+
+**Diagram sources**
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L119-L131)
+
+The system determines user roles by querying the user_roles table in Supabase and then fetches orders accordingly:
+
+- **Admin Users**: Can view all orders in the system, regardless of buyer or supplier
+- **Supplier Users**: Can only view orders assigned to their supplier organization
+- **Buyer Users**: Can only view orders associated with their email address
+
+This role-based filtering is implemented in the fetchUserAndOrders function, which calls different data retrieval functions based on the user's role:
+
+```typescript
+if (roleData?.role === 'admin') {
+  await fetchAllOrders();
+} else if (roleData?.role === 'supplier') {
+  await fetchSupplierOrders(session.user.id);
+} else {
+  if (!session.user.email) {
+    throw new Error('User email not found');
+  }
+  await fetchBuyerOrders(session.user.email);
+}
+```
+
+The UI reflects these role-based permissions by showing appropriate action buttons. Only users with edit permissions (admin, staff, supplier) see buttons to start stages, update progress, or mark stages as complete. Buyers can view production progress but cannot make changes to the production stages.
+
+**Section sources**
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L119-L131)
+- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L73-L74)
+
+## Supplier Coordination and Communication
+
+The SupplierCoordinationPanel component facilitates direct communication between buyers and suppliers throughout the production process, ensuring clear coordination and documentation of all interactions.
 
 ```mermaid
 sequenceDiagram
-participant User as User
-participant Component as Component
-participant Optimistic as Optimistic Hook
-participant Supabase as Supabase
-User->>Component : Update Stage
-Component->>Optimistic : Optimistic Update
-Optimistic->>Component : Immediate UI Update
-Component-->>User : Visual Feedback
-Optimistic->>Supabase : Server Update
-Supabase-->>Optimistic : Success/Error Response
-alt Success
-Optimistic-->>Component : Confirm Update
-else Error
-Optimistic->>Component : Rollback UI
-Component-->>User : Error Message
+participant Buyer as "Buyer User"
+participant Supabase as "Supabase Realtime"
+participant Supplier as "Supplier User"
+Buyer->>Supabase : Send message
+Supabase->>Database : Store message
+Supabase->>Supplier : Push message notification
+Supplier->>Supplier : See new message
+Supplier->>Supabase : Reply to message
+Supabase->>Database : Store reply
+Supabase->>Buyer : Push reply notification
+```
+
+**Diagram sources**
+- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L49-L63)
+
+The component provides two main sections:
+
+1. **Supplier Information**: Displays key contact details for the supplier, including company name, email, phone, and address
+2. **Communication Interface**: A messaging system that allows real-time conversation about the order
+
+The messaging system uses Supabase real-time subscriptions to provide instant updates when new messages are sent. When a user sends a message, it is stored in the order_messages table with metadata including the sender role (buyer or supplier), timestamp, and order reference.
+
+The interface shows messages in chronological order with visual differentiation between buyer and supplier messages. Each message displays the sender type and timestamp for clear attribution. The system also includes a text input area for composing new messages with a send button that is disabled when no content is entered or when a message is being sent.
+
+**Section sources**
+- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L1-L256)
+
+## Production Analytics and Performance Insights
+
+The ProductionAnalytics component provides comprehensive performance insights and predictive analytics to help stakeholders understand production efficiency and potential risks.
+
+```mermaid
+classDiagram
+class ProductionAnalytics {
++orderId : string
++stages : ProductionStage[]
+-calculateOverallProgress() : number
+-calculateEstimatedCompletion() : Date
+-getDelayedStages() : ProductionStage[]
+-getAverageStageTime() : number | null
+}
+class ProductionStage {
++id : string
++stage_number : number
++stage_name : string
++status : string
++started_at : string | null
++completed_at : string | null
++target_date : string | null
++completion_percentage : number | null
+}
+ProductionAnalytics --> ProductionStage : "analyzes"
+```
+
+**Diagram sources**
+- [ProductionAnalytics.tsx](file://src/components/production/ProductionAnalytics.tsx#L25-L28)
+- [database.ts](file://src/types/database.ts#L6-L15)
+
+The component calculates and displays several key metrics:
+
+- **Overall Progress**: A weighted average of completed stages and progress on in-progress stages
+- **Performance Metrics**: Estimated completion date, average stage duration, and delayed stages alert
+- **Quality Insights**: On-time performance percentage and AI-generated recommendations
+
+The PredictiveDelayAlert component enhances these analytics with AI-powered delay prediction. It analyzes current production velocity, stage durations, and target dates to identify stages at risk of delay. The system can simulate potential delays to help with contingency planning.
+
+```mermaid
+flowchart TD
+A[Current Stage Progress] --> B[Velocity Analysis]
+B --> C{Risk Assessment}
+C --> |High Risk| D[Alert with Recommendation]
+C --> |Low Risk| E[On Track Confirmation]
+D --> F[Display in UI]
+E --> F
+```
+
+**Diagram sources**
+- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx#L35-L246)
+
+The analytics system provides actionable insights, such as recommending expedited processing for stages with high delay risk or suggesting adjustments to delivery timelines based on current production velocity.
+
+**Section sources**
+- [ProductionAnalytics.tsx](file://src/components/production/ProductionAnalytics.tsx#L1-L249)
+- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx#L1-L246)
+
+## Troubleshooting Guide
+
+This section provides guidance for common issues that may occur with the LoopTrace™ Production Tracking system.
+
+### Subscription Failures
+
+If real-time updates are not appearing, check the following:
+
+1. **Connection Status**: Verify the ConnectionStatusIndicator shows "Live" rather than "Offline" or "Reconnecting"
+2. **Network Connectivity**: Ensure stable internet connection
+3. **Authentication**: Confirm the user is still authenticated (check for unexpected sign-outs)
+4. **Browser Console**: Check for JavaScript errors that might prevent subscription establishment
+
+The system automatically attempts to reconnect when the connection is lost, but persistent issues may require a page refresh or re-authentication.
+
+### Data Synchronization Problems
+
+If production stage updates are not reflecting in the UI:
+
+1. **Verify Subscription**: Ensure the Supabase channel is properly subscribed and not removed
+2. **Check Database Permissions**: Confirm the user has appropriate RLS (Row Level Security) policies to read and write to the production_stages table
+3. **Examine Network Requests**: Use browser developer tools to verify that update requests are being sent and receiving successful responses
+4. **Review Error Messages**: Check console logs for any error messages from Supabase operations
+
+### Photo Documentation Issues
+
+If photo uploads are not working:
+
+1. **Storage Configuration**: Ensure the 'production-evidence' bucket is configured in Supabase storage
+2. **Permissions**: Verify the user has write permissions to the storage bucket
+3. **File Size and Type**: Confirm the image meets size and format requirements
+4. **Network Issues**: Check for upload timeouts or interruptions
+
+The AIQualityScanner component provides a simulated analysis when actual AI integration is not available, allowing users to test the interface and understand the expected functionality.
+
+**Section sources**
+- [ConnectionStatusIndicator.tsx](file://src/components/production/ConnectionStatusIndicator.tsx#L14-L49)
+- [ProductionStageCard.tsx](file://src/components/production/ProductionStageCard.tsx#L293-L303)
+- [AIQualityScanner.tsx](file://src/components/production/AIQualityScanner.tsx#L30-L70)
+
+## Performance Optimization Techniques
+
+The LoopTrace™ Production Tracking system implements several performance optimization techniques to ensure a responsive user experience.
+
+### Efficient State Updates
+
+The system uses optimistic updates to provide immediate feedback when users modify production stages. Instead of waiting for the database operation to complete, the UI is updated immediately, and only reverted if the operation fails.
+
+```mermaid
+sequenceDiagram
+participant User as "User"
+participant UI as "User Interface"
+participant DB as "Database"
+User->>UI : Update stage progress
+UI->>UI : Update state optimistically
+UI->>DB : Send update request
+DB->>DB : Process update
+DB->>UI : Confirm success
+UI->>User : Show success
+alt Update fails
+DB->>UI : Return error
+UI->>UI : Revert to previous state
+UI->>User : Show error message
 end
 ```
 
 **Diagram sources**
-- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts#L26-L66)
+- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts#L26-L65)
 
-### Database Schema Integration
+This approach significantly improves perceived performance, as users don't have to wait for network latency before seeing their changes reflected in the interface.
 
-The production tracking system relies on a well-structured database schema that supports real-time operations and comprehensive data relationships:
+### Selective Data Fetching
 
-| Table | Purpose | Key Fields |
-|-------|---------|------------|
-| `production_stages` | Stage tracking | `supplier_order_id`, `stage_number`, `status`, `completion_percentage` |
-| `order_messages` | Communication logs | `order_id`, `sender_id`, `message`, `attachments` |
-| `supplier_orders` | Order management | `buyer_email`, `supplier_id`, `status` |
-| `production_batches` | Batch coordination | `batch_status`, `unit_price_base`, `complexity_multiplier` |
+The system implements role-based data fetching to minimize the amount of data transferred:
 
-**Section sources**
-- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts#L1-L176)
-- [types.ts](file://src/integrations/supabase/types.ts#L1-L800)
+- Admins fetch all orders with complete production stage data
+- Suppliers fetch only their assigned orders
+- Buyers fetch only their own orders
 
-## Common Use Cases
+This reduces both database load and network bandwidth usage, particularly for users who only need to see a subset of the total orders.
 
-### Tracking an Order from Fabric Cutting to Shipment
+### Component-Level Optimization
 
-**Scenario**: A buyer wants to monitor the progress of a knitwear order from initial fabric cutting through final shipment.
+The application uses React's useEffect hook with proper dependency arrays to prevent unnecessary re-renders. Subscriptions are properly cleaned up when components unmount to prevent memory leaks:
 
-**Step-by-Step Process**:
+```typescript
+useEffect(() => {
+  // Subscription setup
+  const channel = supabase
+    .channel(`production-updates-${selectedOrder.id}`)
+    // ... subscription configuration
+    .subscribe();
 
-1. **Order Initialization**: System automatically creates production stages based on product type
-2. **Fabric Arrival**: Supplier uploads photos and updates cutting stage status
-3. **Pattern Making**: Digital patterns are verified and cutting begins
-4. **Cutting Progress**: Real-time updates show completion percentages
-5. **Sewing Phase**: Assembly photos and progress tracking
-6. **Quality Control**: Inspection results and defect reporting
-7. **Packaging**: Finishing touches and preparation for shipment
-8. **Delivery**: Logistics coordination and tracking information
+  return () => {
+    // Cleanup subscription
+    supabase.removeChannel(channel);
+  };
+}, [selectedOrder?.id, user]);
+```
 
-**Expected Timeline**: 25-45 days depending on complexity and supplier capacity
-
-### Interpreting Quality Risk Scores
-
-**Scenario**: A buyer receives a quality risk alert and needs to understand the implications.
-
-**Risk Level Interpretation**:
-
-- **Low Risk (0-33)**: Standard monitoring recommended
-- **Medium Risk (34-66)**: Increased inspection frequency suggested
-- **High Risk (67-100)**: Immediate intervention required
-
-**Action Steps**:
-1. Review identified risk factors
-2. Examine AI recommendations
-3. Contact supplier for clarification
-4. Implement preventive measures
-5. Monitor subsequent updates closely
-
-### Responding to Automated Alerts
-
-**Scenario**: An automated delay alert appears indicating potential production bottlenecks.
-
-**Response Protocol**:
-
-1. **Immediate Assessment**: Review affected stages and timeline impacts
-2. **Supplier Communication**: Contact supplier through coordination panel
-3. **Alternative Planning**: Explore backup suppliers or expedited options
-4. **Stakeholder Notification**: Inform relevant team members
-5. **Mitigation Strategies**: Implement corrective actions
+The system also leverages React's built-in optimization patterns, such as memoizing expensive calculations and using stable function references to prevent unnecessary re-renders of child components.
 
 **Section sources**
-- [LoopTraceOrderTracking.tsx](file://src/components/buyer/LoopTraceOrderTracking.tsx#L1-L360)
-- [PredictiveDelayAlert.tsx](file://src/components/production/PredictiveDelayAlert.tsx#L38-L106)
-
-## Troubleshooting Guide
-
-### Common Issues and Solutions
-
-#### Delayed Updates
-
-**Symptoms**: Production updates not appearing in real-time
-**Causes**: Network connectivity, subscription failures, or database lag
-**Solutions**:
-1. Check internet connection stability
-2. Verify browser WebSocket support
-3. Refresh page to re-establish subscriptions
-4. Contact support if issue persists
-
-#### Photo Verification Failures
-
-**Symptoms**: Uploaded photos not displaying or failing to save
-**Causes**: File format issues, size limitations, or storage errors
-**Solutions**:
-1. Verify file format compatibility (.jpg, .png, .pdf)
-2. Reduce file size if necessary
-3. Retry upload with smaller files
-4. Check storage quota limits
-
-#### Communication Delays
-
-**Symptoms**: Messages not delivering or appearing late
-**Causes**: Real-time subscription issues or message queue problems
-**Solutions**:
-1. Verify user authentication status
-2. Check message recipient validity
-3. Review network connectivity
-4. Use fallback communication methods
-
-### Performance Optimization
-
-#### Reducing Load Times
-
-- **Pagination**: Implement for large order lists
-- **Caching**: Use browser caching for static assets
-- **Lazy Loading**: Load components as needed
-- **Optimized Queries**: Minimize database requests
-
-#### Memory Management
-
-- **Cleanup Subscriptions**: Remove unused realtime channels
-- **State Optimization**: Use efficient state management
-- **Component Unmounting**: Properly clean up event listeners
-
-**Section sources**
-- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L88-L140)
-- [SupplierCoordinationPanel.tsx](file://src/components/production/SupplierCoordinationPanel.tsx#L45-L67)
-
-## Best Practices
-
-### For Buyers
-
-1. **Regular Monitoring**: Check production updates daily during active periods
-2. **Proactive Communication**: Use coordination panel for early issue resolution
-3. **Quality Verification**: Review quality risk assessments regularly
-4. **Supplier Relationship**: Maintain open communication channels
-
-### For Suppliers
-
-1. **Timely Updates**: Provide stage updates within 24 hours
-2. **Photo Documentation**: Upload clear, dated photos for each stage
-3. **Quality Standards**: Address quality concerns immediately
-4. **Communication**: Use messaging system for important updates
-
-### For Manufacturers
-
-1. **Data Accuracy**: Ensure production data reflects actual progress
-2. **Documentation**: Maintain comprehensive records of production activities
-3. **Issue Resolution**: Address delays and quality issues promptly
-4. **Collaboration**: Work closely with buyers and suppliers
-
-### Technical Implementation
-
-1. **Subscription Management**: Properly handle realtime subscriptions
-2. **Error Handling**: Implement robust error recovery mechanisms
-3. **Security**: Validate all user inputs and permissions
-4. **Testing**: Thoroughly test real-time features
-
-## Conclusion
-
-LoopTrace™ Production Tracking represents a paradigm shift in manufacturing visibility, transforming opaque production processes into transparent, actionable workflows. By combining real-time data synchronization, AI-powered insights, and seamless communication tools, the system empowers stakeholders to make informed decisions, prevent potential issues, and optimize production outcomes.
-
-The platform's architecture ensures scalability and reliability while maintaining ease of use for stakeholders across the global supply chain. As the apparel industry continues to evolve, LoopTrace™ provides the technological foundation for building trust, reducing risks, and achieving operational excellence in knitwear manufacturing.
-
-Through continuous AI improvement and expanding feature sets, LoopTrace™ is positioned to become the industry standard for production transparency, setting new benchmarks for accountability and efficiency in global manufacturing operations.
+- [useOptimisticUpdate.ts](file://src/hooks/useOptimisticUpdate.ts#L16-L74)
+- [ProductionTracking.tsx](file://src/pages/ProductionTracking.tsx#L65-L90)

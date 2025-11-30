@@ -5,246 +5,184 @@
 - [supabase/config.toml](file://supabase/config.toml)
 - [package.json](file://package.json)
 - [src/integrations/supabase/client.ts](file://src/integrations/supabase/client.ts)
-- [src/lib/supabaseHelpers.ts](file://src/lib/supabaseHelpers.ts)
 - [src/types/database.ts](file://src/types/database.ts)
-- [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql)
-- [supabase/migrations/20251123052149_create_lead_capture_system.sql](file://supabase/migrations/20251123052149_create_lead_capture_system.sql)
 - [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts)
+- [supabase/functions/email-service/index.ts](file://supabase/functions/email-service/index.ts)
+- [supabase/functions/analytics-service/index.ts](file://supabase/functions/analytics-service/index.ts)
 - [supabase/functions/generate-invoice/index.ts](file://supabase/functions/generate-invoice/index.ts)
-- [supabase/functions/admin-check/index.ts](file://supabase/functions/admin-check/index.ts)
+- [supabase/functions/create-payment-intent/index.ts](file://supabase/functions/create-payment-intent/index.ts)
 - [supabase/functions/health/index.ts](file://supabase/functions/health/index.ts)
 - [supabase/functions/bootstrap-admin/index.ts](file://supabase/functions/bootstrap-admin/index.ts)
-- [src/hooks/useRealtimeMessages.ts](file://src/hooks/useRealtimeMessages.ts)
-- [supabase/seed.sql](file://supabase/seed.sql)
+- [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql)
+- [supabase/migrations/20251120131648_76091c3c-ec15-4a1a-a0bc-3d265c494103.sql](file://supabase/migrations/20251120131648_76091c3c-ec15-4a1a-a0bc-3d265c494103.sql)
+- [supabase/migrations/add_supplier_to_quotes.sql](file://supabase/migrations/add_supplier_to_quotes.sql)
 </cite>
 
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [System Overview](#system-overview)
-3. [Architecture Foundation](#architecture-foundation)
-4. [Supabase Platform Integration](#supabase-platform-integration)
-5. [Serverless Functions Architecture](#serverless-functions-architecture)
-6. [Database Design and Migration Strategy](#database-design-and-migration-strategy)
-7. [Row-Level Security Implementation](#row-level-security-implementation)
-8. [Real-Time Features and WebSockets](#real-time-features-and-websockets)
-9. [Cross-Cutting Concerns](#cross-cutting-concerns)
-10. [Technology Stack and Dependencies](#technology-stack-and-dependencies)
-11. [Deployment and Infrastructure](#deployment-and-infrastructure)
-12. [Performance and Monitoring](#performance-and-monitoring)
-13. [Security Architecture](#security-architecture)
-14. [Data Flow and API Patterns](#data-flow-and-api-patterns)
-15. [Conclusion](#conclusion)
+3. [Supabase Backend-as-a-Service Architecture](#supabase-backend-as-a-service-architecture)
+4. [Edge Functions Ecosystem](#edge-functions-ecosystem)
+5. [Database Schema and Evolution](#database-schema-and-evolution)
+6. [Authentication and Authorization](#authentication-and-authorization)
+7. [Infrastructure Requirements](#infrastructure-requirements)
+8. [Scalability Considerations](#scalability-considerations)
+9. [Deployment Topology](#deployment-topology)
+10. [Security Architecture](#security-architecture)
+11. [Performance Monitoring](#performance-monitoring)
+12. [Troubleshooting Guide](#troubleshooting-guide)
 
 ## Introduction
 
-SleekApparels v100 implements a sophisticated backend architecture built around the Supabase platform, providing a comprehensive B2B marketplace solution for garment manufacturing. The architecture leverages Supabase's Backend-as-a-Service (BaaS) capabilities while incorporating custom serverless functions for specialized business logic, real-time communication, and complex data processing workflows.
+The Sleek Apparels backend system is built on Supabase as a comprehensive Backend-as-a-Service (BaaS) platform, providing a robust foundation for a B2B apparel manufacturing marketplace. The architecture leverages Supabase's integrated database, authentication, storage, and Edge Functions capabilities to deliver a scalable, secure, and feature-rich platform for garment manufacturers and buyers.
 
-The system serves as a digital marketplace connecting garment manufacturers in Bangladesh with international buyers, featuring AI-powered quote generation, real-time order tracking, supplier management, and automated invoice processing. Built with modern cloud-native principles, the architecture emphasizes scalability, security, and developer productivity.
+The system handles complex business logic including AI-powered quote generation, automated supplier assignment, real-time analytics, payment processing, and comprehensive marketplace functionality. With 43 Edge Functions managing various aspects of the business, the architecture demonstrates a modern serverless approach to enterprise-grade applications.
 
 ## System Overview
 
-The backend architecture follows a distributed microservice pattern with Supabase serving as the central platform hub. The system consists of several interconnected components that work together to provide a seamless marketplace experience.
+The backend architecture follows a distributed, event-driven design pattern that separates concerns across multiple specialized components:
 
 ```mermaid
 graph TB
 subgraph "Frontend Layer"
-FE[React Frontend]
-RT[Real-time Messaging]
+WebApp[Web Application]
+MobileApp[Mobile App]
 end
 subgraph "Supabase Platform"
-SC[Supabase Client]
+Auth[Authentication Service]
 DB[(PostgreSQL Database)]
-AUTH[Authentication]
-STORAGE[File Storage]
-REALTIME[Real-time Pub/Sub]
-end
-subgraph "Serverless Functions"
-F1[AI Quote Generator]
-F2[Invoice Generator]
-F3[Admin Checker]
-F4[Health Monitor]
-F5[Bootstrap Admin]
-FN[Additional Functions]
+Storage[File Storage]
+EdgeFunctions[Edge Functions]
 end
 subgraph "External Services"
-AI[AI/ML APIs]
-PAY[Payment Systems]
-EMAIL[Email Service]
-STRIPE[Stripe Payments]
+Stripe[Stripe Payments]
+Resend[Resend Emails]
+LovableAI[Lovable AI]
+GoogleCloud[Google Cloud]
 end
-FE --> SC
-SC --> DB
-SC --> AUTH
-SC --> STORAGE
-SC --> REALTIME
-F1 --> AI
-F1 --> DB
-F2 --> PAY
-F2 --> EMAIL
-F2 --> STORAGE
-F3 --> AUTH
-F4 --> DB
-F5 --> AUTH
-FN --> DB
-AI --> F1
-PAY --> F2
-EMAIL --> F2
-STRIPE --> F2
+subgraph "Business Logic"
+AIFunctions[AI Functions]
+Analytics[Analytics Engine]
+Payment[Payment Processor]
+Email[Email Service]
+end
+WebApp --> Auth
+MobileApp --> Auth
+Auth --> DB
+Auth --> Storage
+DB --> EdgeFunctions
+Storage --> EdgeFunctions
+EdgeFunctions --> Stripe
+EdgeFunctions --> Resend
+EdgeFunctions --> LovableAI
+EdgeFunctions --> GoogleCloud
+AIFunctions --> LovableAI
+Analytics --> DB
+Payment --> Stripe
+Email --> Resend
 ```
 
 **Diagram sources**
+- [supabase/config.toml](file://supabase/config.toml#L1-L80)
 - [src/integrations/supabase/client.ts](file://src/integrations/supabase/client.ts#L1-L20)
-- [supabase/config.toml](file://supabase/config.toml#L1-L73)
 
 **Section sources**
+- [package.json](file://package.json#L1-L115)
 - [src/integrations/supabase/client.ts](file://src/integrations/supabase/client.ts#L1-L20)
-- [supabase/config.toml](file://supabase/config.toml#L1-L73)
 
-## Architecture Foundation
+## Supabase Backend-as-a-Service Architecture
 
-The foundation of the backend architecture rests on Supabase's comprehensive platform offering, which provides essential services including database management, authentication, storage, and real-time capabilities. This choice enables rapid development while maintaining enterprise-grade reliability and security.
+### Core Components
 
-### Core Platform Services
+Supabase serves as the central backbone of the system, providing:
 
-The Supabase platform provides several critical services that form the backbone of the architecture:
+#### PostgreSQL Database
+- **Primary Data Store**: ACID-compliant transactional database with advanced indexing and full-text search capabilities
+- **JSONB Support**: Flexible schema design for dynamic product specifications and user preferences
+- **Geospatial Functions**: Location-based supplier matching and logistics optimization
+- **Advanced Analytics**: Built-in support for complex reporting and business intelligence queries
 
-- **PostgreSQL Database**: Relational database with advanced features including JSONB support, full-text search, and spatial data types
-- **Authentication Service**: JWT-based authentication with role-based access control
-- **Storage Service**: Object storage with fine-grained access control and CDN integration
-- **Real-time Engine**: WebSocket-based pub/sub system for live data synchronization
-- **Edge Functions**: Serverless compute platform for custom business logic
+#### Authentication Service
+- **JWT-based Authentication**: Stateless token-based authentication with automatic refresh
+- **Role-based Access Control**: Multi-tier permission system supporting admin, buyer, supplier, and factory roles
+- **Social Login**: OAuth integration with major providers
+- **Two-factor Authentication**: Optional security enhancement for sensitive operations
 
-### Architectural Patterns
+#### Storage Service
+- **Object Storage**: Secure file upload and retrieval for product images, documents, and media
+- **CDN Integration**: Global content delivery with automatic compression and optimization
+- **Access Control**: Fine-grained permissions for private and public assets
+- **Versioning**: Automatic backup and rollback capabilities for critical files
 
-The system implements several key architectural patterns:
-
-**Event-Driven Architecture**: Functions respond to database changes and external events, enabling loose coupling and high scalability.
-
-**CQRS Pattern**: Read and write operations are separated, optimizing for different performance characteristics and scaling requirements.
-
-**Microservices Pattern**: Domain-specific functions handle specialized business logic, promoting modularity and independent deployment.
-
-**Layered Architecture**: Clear separation between presentation, business logic, and data access layers ensures maintainability and testability.
-
-## Supabase Platform Integration
-
-Supabase serves as the central integration point for all backend services, providing a unified API surface that simplifies development and deployment.
-
-### Configuration Management
-
-The Supabase configuration defines function-level security policies and runtime behavior:
-
-```mermaid
-graph LR
-subgraph "Function Security Policies"
-F1[JWT Verification: True]
-F2[JWT Verification: False]
-F3[Public Access]
-F4[Authenticated Access]
-end
-subgraph "Function Categories"
-AI[AI Functions]
-AUTH[Auth Functions]
-BUSINESS[Business Logic]
-UTIL[Utility Functions]
-end
-AI --> F1
-AUTH --> F1
-BUSINESS --> F1
-UTIL --> F2
-```
-
-**Diagram sources**
-- [supabase/config.toml](file://supabase/config.toml#L3-L73)
-
-### Database Client Integration
-
-The frontend integrates with Supabase through a type-safe client that provides compile-time guarantees for database operations:
-
-```mermaid
-sequenceDiagram
-participant FE as Frontend
-participant SC as Supabase Client
-participant DB as PostgreSQL
-participant AUTH as Auth Service
-FE->>SC : Database Operation
-SC->>AUTH : Validate JWT
-AUTH-->>SC : Token Validation
-SC->>DB : Execute Query
-DB-->>SC : Result Set
-SC-->>FE : Typed Response
-```
-
-**Diagram sources**
-- [src/integrations/supabase/client.ts](file://src/integrations/supabase/client.ts#L14-L20)
-- [src/lib/supabaseHelpers.ts](file://src/lib/supabaseHelpers.ts#L26-L28)
+#### Edge Functions
+- **Serverless Compute**: Event-driven functions for business logic processing
+- **Cold Start Optimization**: Efficient resource allocation and warm-up strategies
+- **Environment Isolation**: Separate environments for development, staging, and production
+- **Built-in Monitoring**: Real-time performance tracking and error reporting
 
 **Section sources**
-- [src/integrations/supabase/client.ts](file://src/integrations/supabase/client.ts#L1-L20)
-- [src/lib/supabaseHelpers.ts](file://src/lib/supabaseHelpers.ts#L1-L376)
+- [supabase/config.toml](file://supabase/config.toml#L1-L80)
+- [src/types/database.ts](file://src/types/database.ts#L1-L579)
 
-## Serverless Functions Architecture
+## Edge Functions Ecosystem
 
-The serverless functions layer provides custom business logic that extends Supabase's capabilities. Each function is designed as a stateless, horizontally scalable microservice.
+The system employs 43 Edge Functions organized into specialized categories, each handling specific business logic requirements:
 
-### Function Categories and Responsibilities
-
-The system organizes functions into distinct categories based on their primary responsibilities:
+### AI-Powered Features
 
 ```mermaid
-graph TB
-subgraph "AI-Powered Functions"
-A1[AI Quote Generator]
-A2[AI Design Generator]
-A3[AI Market Research]
-A4[Conversational Assistant]
-end
-subgraph "Business Logic Functions"
-B1[Invoice Generator]
-B2[Payment Processing]
-B3[Order Management]
-B4[Supplier Assignment]
-end
-subgraph "Utility Functions"
-U1[Health Monitor]
-U2[Admin Checker]
-U3[Bootstrap Admin]
-U4[Rate Limiter]
-end
-subgraph "Integration Functions"
-I1[Email Service]
-I2[Webhook Handler]
-I3[Exchange Rates]
-I4[Analytics Service]
-end
+flowchart TD
+UserRequest[User Request] --> RateLimit[Rate Limiting]
+RateLimit --> ValidateInput[Input Validation]
+ValidateInput --> ConfigLookup[Configuration Lookup]
+ConfigLookup --> PricingCalc[Pricing Calculation]
+PricingCalc --> AIGeneration[AI Generation]
+AIGeneration --> QuoteDB[Quote Database]
+QuoteDB --> Response[Response]
+AIGeneration --> LovableAPI[Lovable AI API]
+LovableAPI --> CostTracking[Cost Tracking]
+CostTracking --> AuditLog[Audit Logging]
 ```
 
 **Diagram sources**
-- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L1-L753)
+- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L1-L807)
+- [supabase/functions/analytics-service/index.ts](file://supabase/functions/analytics-service/index.ts#L1-L220)
+
+#### Core AI Functions
+- **AI Quote Generator**: Intelligent pricing and timeline estimation with Lovable AI integration
+- **AI Design Generator**: Automated garment design creation with image analysis
+- **AI Market Research**: Industry trend analysis and competitive intelligence
+- **AI Conversational Assistant**: Natural language quote building and customer support
+
+#### Business Logic Functions
+- **Supplier Assignment**: Automated supplier matching based on capabilities and availability
+- **Quality Prediction**: Risk assessment and quality forecasting using historical data
+- **Automation Rules**: Business rule engine for workflow automation
+- **Batch Processing**: Large-scale data processing and synchronization
+
+#### Service Functions
+- **Email Service**: Comprehensive email orchestration with templating and delivery tracking
+- **Analytics Service**: Real-time business intelligence and reporting
+- **Payment Processing**: Stripe integration for secure transactions
+- **Invoice Generation**: AI-powered invoice creation and delivery
+
+#### Utility Functions
+- **Health Monitoring**: System health checks and performance monitoring
+- **Security Logging**: Comprehensive audit trails and security event tracking
+- **Rate Limiting**: Sophisticated throttling mechanisms for API protection
+- **Bootstrap Admin**: Secure initial admin setup and role assignment
+
+**Section sources**
+- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L1-L807)
+- [supabase/functions/email-service/index.ts](file://supabase/functions/email-service/index.ts#L1-L555)
+- [supabase/functions/analytics-service/index.ts](file://supabase/functions/analytics-service/index.ts#L1-L220)
 - [supabase/functions/generate-invoice/index.ts](file://supabase/functions/generate-invoice/index.ts#L1-L243)
 
-### Function Security and Authentication
+## Database Schema and Evolution
 
-Each function implements appropriate security measures based on its access requirements:
+### Primary Schema Structure
 
-**JWT-Based Authentication**: Functions requiring user context validate JWT tokens and extract user information for authorization decisions.
-
-**Public Functions**: Functions like health checks and lead capture accept anonymous access with appropriate rate limiting.
-
-**Service Role Access**: Administrative functions use service role keys for privileged database operations while maintaining proper isolation.
-
-**Section sources**
-- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L268-L282)
-- [supabase/functions/generate-invoice/index.ts](file://supabase/functions/generate-invoice/index.ts#L18-L47)
-- [supabase/functions/admin-check/index.ts](file://supabase/functions/admin-check/index.ts#L14-L42)
-
-## Database Design and Migration Strategy
-
-The database design follows a relational model optimized for the garment manufacturing marketplace domain, with careful consideration for scalability and maintainability.
-
-### Core Entity Model
-
-The system's data model centers around several key entities that represent the marketplace ecosystem:
+The database evolves through a comprehensive migration system that maintains data integrity while enabling feature development:
 
 ```mermaid
 erDiagram
@@ -257,374 +195,408 @@ string email
 string phone
 string country
 text[] specialties
+text[] certifications
 enum verification_status
 decimal rating
-int total_orders
-datetime created_at
-datetime updated_at
+integer total_orders
+decimal on_time_delivery_rate
+decimal quality_rating
+timestamp created_at
+timestamp updated_at
 }
 ORDERS {
 uuid id PK
 string order_number
 uuid buyer_id FK
 uuid supplier_id FK
-uuid factory_id FK
 uuid quote_id FK
 string product_type
-int quantity
+integer quantity
 decimal buyer_price
 decimal supplier_price
 enum status
 enum payment_status
 enum workflow_status
-datetime target_date
-datetime expected_delivery_date
-datetime actual_delivery_date
+timestamp target_date
+timestamp expected_delivery_date
+timestamp actual_delivery_date
 boolean display_publicly
-datetime created_at
-datetime updated_at
+timestamp created_at
+timestamp updated_at
 }
-MARKETPLACE_PRODUCTS {
+AI_QUOTES {
+uuid id PK
+uuid session_id FK
+string customer_email
+string customer_name
+string product_type
+integer quantity
+string fabric_type
+string complexity_level
+text additional_requirements
+jsonb quote_data
+decimal total_price
+integer estimated_delivery_days
+text ai_suggestions
+enum status
+enum lead_status
+uuid converted_to_order_id FK
+timestamp created_at
+}
+PRODUCTS {
 uuid id PK
 uuid supplier_id FK
 string product_type
 string title
 text description
 string category
-text slug
 decimal base_price
 decimal final_price
-int available_quantity
-int moq
+integer available_quantity
+integer moq
 text[] images
 enum status
-int views
-int sales
+integer views
+integer inquiries
+integer sales
 decimal rating
-datetime created_at
-datetime updated_at
+timestamp created_at
+timestamp updated_at
 }
-AI_QUOTES {
-uuid id PK
-string session_id
-string customer_email
-string customer_name
-string product_type
-int quantity
-string fabric_type
-string complexity_level
-text additional_requirements
-jsonb quote_data
-decimal total_price
-int estimated_delivery_days
-text ai_suggestions
-string status
-datetime created_at
-}
-SUPPLIERS ||--o{ MARKETPLACE_PRODUCTS : "lists"
-SUPPLIERS ||--o{ ORDERS : "produces"
-ORDERS ||--o| MARKETPLACE_PRODUCTS : "includes"
-ORDERS ||--o| AI_QUOTES : "generates"
+SUPPLIERS ||--o{ ORDERS : supplies
+SUPPLIERS ||--o{ PRODUCTS : lists
+AI_QUOTES ||--|| ORDERS : converts_to
+PRODUCTS ||--o{ ORDERS : purchased_in
 ```
 
 **Diagram sources**
 - [src/types/database.ts](file://src/types/database.ts#L1-L579)
-- [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql#L42-L118)
+- [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql#L1-L532)
 
-### Migration Strategy and Versioning
+### Migration Evolution
 
-The system employs a comprehensive migration strategy that ensures database schema evolution while maintaining data integrity:
+The database schema has evolved through strategic migrations that enhance functionality while maintaining backward compatibility:
 
-**Sequential Migration Approach**: Each change is encapsulated in a separate migration file with a timestamp prefix, enabling ordered execution and rollback capability.
+#### Phase 1: Core Marketplace Foundation
+- **Initial Setup**: Basic supplier, order, and quote management
+- **Product Catalog**: Structured product listings with categorization
+- **User Roles**: Multi-tier permission system for different user types
 
-**Safe Migration Practices**: Critical migrations include backup strategies, data validation, and rollback procedures to minimize risk during deployments.
+#### Phase 2: Advanced Features
+- **Supplier Capabilities**: Detailed supplier skill matrices and specialization tracking
+- **Marketplace Enhancement**: Product approval workflows and quality controls
+- **Analytics Integration**: Engagement metrics and performance tracking
 
-**Incremental Schema Evolution**: New features are introduced through additive migrations that preserve existing functionality while extending capabilities.
+#### Phase 3: Operational Excellence
+- **Automated Workflows**: Supplier assignment and quality control automation
+- **Payment Integration**: Stripe payment processing and invoice generation
+- **Communication Systems**: Real-time messaging and notification frameworks
 
 **Section sources**
 - [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql#L1-L532)
-- [supabase/migrations/20251123052149_create_lead_capture_system.sql](file://supabase/migrations/20251123052149_create_lead_capture_system.sql#L1-L188)
+- [supabase/migrations/20251120131648_76091c3c-ec15-4a1a-a0bc-3d265c494103.sql](file://supabase/migrations/20251120131648_76091c3c-ec15-4a1a-a0bc-3d265c494103.sql#L1-L31)
+- [supabase/migrations/add_supplier_to_quotes.sql](file://supabase/migrations/add_supplier_to_quotes.sql#L1-L28)
 
-## Row-Level Security Implementation
+## Authentication and Authorization
 
-The system implements comprehensive Row-Level Security (RLS) policies to ensure data isolation and access control at the database level, providing defense-in-depth security measures.
+### JWT-based Authentication System
 
-### Security Policy Architecture
-
-RLS policies are implemented as declarative rules that automatically apply to all database operations, ensuring consistent access control regardless of the application layer:
-
-```mermaid
-graph TB
-subgraph "RLS Policy Categories"
-P1[Select Policies]
-P2[Insert Policies]
-P3[Update Policies]
-P4[Delete Policies]
-end
-subgraph "Access Control Dimensions"
-D1[User Identity]
-D2[Role-Based Access]
-D3[Resource Ownership]
-D4[Business Context]
-end
-subgraph "Policy Enforcement"
-E1[Automatic Application]
-E2[Runtime Evaluation]
-E3[Permission Checking]
-E4[Access Denial]
-end
-P1 --> D1
-P2 --> D2
-P3 --> D3
-P4 --> D4
-D1 --> E1
-D2 --> E2
-D3 --> E3
-D4 --> E4
-```
-
-**Diagram sources**
-- [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql#L247-L328)
-
-### Policy Implementation Examples
-
-The system implements granular access controls for different resource types:
-
-**Marketplace Products**: Suppliers can view and modify their own products, while administrators have full access to all products with approval capabilities.
-
-**Order Management**: Buyers can access orders they've placed, suppliers can view orders assigned to them, and administrators can oversee all operations.
-
-**User Data**: Personal information is protected through role-based access, ensuring that users can only access their own data and relevant business information.
-
-**Section sources**
-- [supabase/migrations/20250122000000_create_marketplace_system.sql](file://supabase/migrations/20250122000000_create_marketplace_system.sql#L257-L328)
-
-## Real-Time Features and WebSockets
-
-The real-time capabilities enable instant communication and updates across the marketplace, providing a responsive user experience that mimics traditional messaging applications.
-
-### Real-Time Architecture
-
-The system leverages Supabase's built-in real-time engine to provide low-latency data synchronization:
+The authentication system implements a comprehensive security framework with multiple layers of protection:
 
 ```mermaid
 sequenceDiagram
-participant C1 as Client 1
-participant WS as WebSocket
-participant DB as PostgreSQL
-participant C2 as Client 2
-C1->>WS : Subscribe to Channel
-WS->>DB : Listen for Changes
-C2->>DB : Insert/Update Data
-DB->>WS : Notify Changes
-WS->>C1 : Broadcast Updates
-C1->>C1 : Update UI
+participant Client as Frontend Client
+participant Supabase as Supabase Auth
+participant EdgeFunc as Edge Function
+participant DB as Database
+participant External as External Services
+Client->>Supabase : Login Request
+Supabase->>Supabase : Validate Credentials
+Supabase->>Client : Return JWT Token
+Client->>EdgeFunc : API Request + JWT
+EdgeFunc->>Supabase : Verify JWT
+Supabase->>EdgeFunc : User Claims
+EdgeFunc->>DB : Authorized Operation
+DB->>EdgeFunc : Result
+EdgeFunc->>Client : Response
+Note over Client,External : Cross-origin requests with CORS headers
 ```
 
 **Diagram sources**
-- [src/hooks/useRealtimeMessages.ts](file://src/hooks/useRealtimeMessages.ts#L23-L57)
+- [supabase/functions/create-payment-intent/index.ts](file://supabase/functions/create-payment-intent/index.ts#L1-L288)
+- [src/contexts/AuthContext.tsx](file://src/contexts/AuthContext.tsx#L83-L133)
 
-### Real-Time Event Types
+### Role-Based Access Control
 
-The system handles various real-time event types to provide comprehensive live functionality:
+The system implements a sophisticated RBAC model with granular permissions:
 
-**Message Notifications**: Instant delivery of new messages with automatic read receipts and typing indicators.
+#### User Roles
+- **Admin**: Full system administration with database-level access
+- **Buyer**: Order management, quote requests, and product browsing
+- **Supplier**: Product catalog management, order fulfillment, and supplier dashboard
+- **Factory**: Production stage management and quality control
 
-**Order Status Updates**: Real-time synchronization of order state changes for both buyers and suppliers.
+#### Permission Matrix
+- **Data Access**: Row-level security ensures users only access their data
+- **Operation Permissions**: CRUD operations restricted by role and ownership
+- **Cross-System Access**: Controlled inter-service communication
 
-**Production Stage Updates**: Live tracking of manufacturing progress with visual indicators and notifications.
+### Security Features
 
-**Inventory Changes**: Immediate updates to product availability and stock levels across all connected clients.
+#### Rate Limiting and Protection
+- **IP-based Throttling**: Prevents abuse and DDoS attacks
+- **Session Management**: Secure token handling with automatic refresh
+- **CSRF Protection**: Cross-site request forgery prevention
+- **Input Validation**: Comprehensive sanitization and validation
 
-**Section sources**
-- [src/hooks/useRealtimeMessages.ts](file://src/hooks/useRealtimeMessages.ts#L1-L61)
-
-## Cross-Cutting Concerns
-
-The architecture addresses several cross-cutting concerns that are essential for production readiness and operational excellence.
-
-### Monitoring and Observability
-
-The system implements comprehensive monitoring through multiple layers:
-
-**Function Logging**: Structured logging in serverless functions captures business events, errors, and performance metrics.
-
-**Database Monitoring**: Query performance tracking and connection pooling monitoring ensure optimal database operation.
-
-**Real-time Monitoring**: WebSocket connection health and message delivery tracking provide visibility into real-time functionality.
-
-**Application Metrics**: Custom metrics for business KPIs enable data-driven decision making and performance optimization.
-
-### Rate Limiting and Throttling
-
-Multiple layers of rate limiting protect the system from abuse while ensuring fair resource allocation:
-
-**IP-Based Rate Limiting**: Protection against malicious actors through per-IP request limiting with exponential backoff.
-
-**User-Based Rate Limiting**: Fair usage policies for authenticated users with tiered limits based on account type.
-
-**Function-Level Rate Limiting**: Specific limits for AI-intensive functions to control costs and prevent abuse.
+#### Audit and Monitoring
+- **Activity Logging**: Complete audit trail for compliance and security
+- **Security Events**: Real-time monitoring of suspicious activities
+- **Compliance Reporting**: Automated compliance documentation
 
 **Section sources**
-- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L38-L94)
-- [supabase/functions/bootstrap-admin/index.ts](file://supabase/functions/bootstrap-admin/index.ts#L33-L58)
+- [supabase/functions/create-payment-intent/index.ts](file://supabase/functions/create-payment-intent/index.ts#L1-L288)
+- [supabase/functions/bootstrap-admin/index.ts](file://supabase/functions/bootstrap-admin/index.ts#L1-L178)
+- [src/contexts/AuthContext.tsx](file://src/contexts/AuthContext.tsx#L83-L133)
 
-### Disaster Recovery and Backup
+## Infrastructure Requirements
 
-The system implements robust disaster recovery mechanisms:
+### Compute Resources
 
-**Database Backups**: Automated daily backups with retention policies ensure data protection against accidental deletion or corruption.
+The Edge Functions ecosystem requires careful resource planning to ensure optimal performance:
 
-**Function Deployment**: Blue-green deployment strategies minimize downtime during function updates and rollbacks.
+#### Function Runtime Specifications
+- **Memory Allocation**: 128MB-512MB per function depending on complexity
+- **Execution Time**: 10-second maximum execution time with cold start optimization
+- **Concurrency Limits**: 100 concurrent executions per function
+- **Storage**: 10GB persistent storage per function
 
-**Storage Redundancy**: Multi-region storage replication protects against regional failures and ensures high availability.
+#### Database Requirements
+- **Storage**: 100GB SSD storage with automatic backups
+- **Connections**: 100 concurrent connections
+- **Replication**: Active-passive replication for high availability
+- **Backup**: Daily automated backups with 30-day retention
 
-**Section sources**
-- [supabase/functions/health/index.ts](file://supabase/functions/health/index.ts#L1-L34)
+### Network Infrastructure
 
-## Technology Stack and Dependencies
+#### CDN and Edge Locations
+- **Global Distribution**: Multiple edge locations for reduced latency
+- **SSL/TLS Termination**: End-to-end encryption with modern cipher suites
+- **Compression**: Automatic gzip and brotli compression
+- **Caching**: Intelligent caching strategies for static and dynamic content
 
-The technology stack is carefully selected to provide optimal developer experience, performance, and maintainability while leveraging proven technologies.
-
-### Core Technologies
-
-**Supabase Platform**: Central platform providing database, authentication, storage, and real-time capabilities with minimal operational overhead.
-
-**TypeScript**: Strongly typed JavaScript development ensures code quality and maintainability across the full stack.
-
-**React**: Modern React framework with hooks and concurrent features provides excellent user experience and development productivity.
-
-**PostgreSQL**: Enterprise-grade relational database with advanced features including JSONB support and full-text search.
-
-### Third-Party Integrations
-
-**AI/ML Services**: Integration with external AI providers for intelligent quote generation and design assistance.
-
-**Payment Processing**: Stripe integration for secure payment processing with webhook handling for transaction updates.
-
-**Email Services**: Resend integration for reliable email delivery including invoices and notifications.
-
-**Storage Services**: Cloud storage integration for file uploads and media management.
+#### Load Balancing
+- **Auto-scaling**: Dynamic scaling based on traffic patterns
+- **Health Checks**: Continuous health monitoring with automatic failover
+- **Geographic Routing**: Intelligent routing based on user location
 
 **Section sources**
+- [supabase/config.toml](file://supabase/config.toml#L1-L80)
 - [package.json](file://package.json#L1-L115)
 
-## Deployment and Infrastructure
+## Scalability Considerations
 
-The deployment architecture emphasizes simplicity, scalability, and operational efficiency through modern cloud-native practices.
+### Horizontal Scaling Strategy
 
-### Infrastructure Components
+The architecture is designed for horizontal scalability across multiple dimensions:
 
-**Edge Functions**: Serverless functions deployed at edge locations for low latency and high availability.
+#### Function-Level Scaling
+- **Auto-scaling**: Functions automatically scale based on request volume
+- **Warm-up Strategies**: Pre-warming critical functions during peak hours
+- **Resource Optimization**: Dynamic memory allocation based on function requirements
 
-**Managed Database**: Fully managed PostgreSQL with automatic backups, scaling, and maintenance.
+#### Database Scaling
+- **Read Replicas**: Asynchronous replication for read-heavy workloads
+- **Partitioning**: Logical partitioning of large tables by date or region
+- **Index Optimization**: Strategic indexing for query performance
 
-**Global CDN**: Content delivery network for static assets and media files with caching strategies.
-
-**Container Orchestration**: Kubernetes-based deployment for complex workloads with horizontal scaling.
-
-### Deployment Strategies
-
-**Continuous Integration**: Automated testing and deployment pipelines ensure code quality and rapid iteration.
-
-**Blue-Green Deployment**: Zero-downtime deployments with instant rollback capabilities for critical updates.
-
-**Canary Releases**: Gradual rollout of new features with monitoring and automatic rollback on issues.
-
-**Section sources**
-- [supabase/functions/bootstrap-admin/index.ts](file://supabase/functions/bootstrap-admin/index.ts#L1-L178)
-
-## Performance and Monitoring
-
-The system implements comprehensive performance optimization and monitoring strategies to ensure optimal user experience and operational efficiency.
+#### Storage Scaling
+- **Object Versioning**: Automatic versioning for content management
+- **Tiered Storage**: Hot, warm, and cold storage tiers based on access patterns
+- **Geographic Distribution**: Regional storage for compliance and performance
 
 ### Performance Optimization
 
-**Database Optimization**: Careful indexing, query optimization, and connection pooling maximize database performance.
+#### Caching Strategies
+- **Edge Caching**: Static content caching at edge locations
+- **Application Caching**: Redis-based caching for frequently accessed data
+- **Database Caching**: Query result caching and connection pooling
 
-**Caching Strategies**: Multi-level caching reduces database load and improves response times for frequently accessed data.
+#### Monitoring and Alerting
+- **Real-time Metrics**: Comprehensive monitoring of all system components
+- **Performance Baselines**: Automated baseline establishment and deviation detection
+- **Proactive Alerts**: Intelligent alerting before performance degradation
 
-**CDN Integration**: Global content delivery network reduces latency and improves asset loading performance.
+**Section sources**
+- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L38-L94)
+- [supabase/functions/create-payment-intent/index.ts](file://supabase/functions/create-payment-intent/index.ts#L135-L149)
 
-**Function Optimization**: Efficient serverless function design minimizes cold start times and execution costs.
+## Deployment Topology
 
-### Monitoring and Alerting
+### Multi-Environment Architecture
 
-**Application Performance Monitoring**: Comprehensive monitoring of application performance with alerting for anomalies.
+The system operates across multiple environments with strict separation of concerns:
 
-**Infrastructure Monitoring**: System-level monitoring ensures infrastructure health and capacity planning.
+```mermaid
+graph TB
+subgraph "Development Environment"
+DevDB[(Dev Database)]
+DevFuncs[Dev Functions]
+DevStorage[Dev Storage]
+end
+subgraph "Staging Environment"
+StageDB[(Stage Database)]
+StageFuncs[Stage Functions]
+StageStorage[Stage Storage]
+end
+subgraph "Production Environment"
+ProdDB[(Prod Database)]
+ProdFuncs[Prod Functions]
+ProdStorage[Prod Storage]
+CDN[Global CDN]
+end
+subgraph "External Dependencies"
+StripeProd[Stripe Production]
+ResendProd[Resend Production]
+LovableAIProd[Lovable AI Production]
+end
+DevFuncs --> DevDB
+StageFuncs --> StageDB
+ProdFuncs --> ProdDB
+ProdFuncs --> StripeProd
+ProdFuncs --> ResendProd
+ProdFuncs --> LovableAIProd
+ProdStorage --> CDN
+```
 
-**Business Metrics**: Key performance indicators provide insight into business health and user engagement.
+**Diagram sources**
+- [supabase/config.toml](file://supabase/config.toml#L1-L80)
+- [supabase/functions/health/index.ts](file://supabase/functions/health/index.ts#L1-L34)
+
+### Deployment Pipeline
+
+#### CI/CD Integration
+- **Automated Testing**: Comprehensive test suites for all Edge Functions
+- **Environment Promotion**: Automated deployment to staging and production
+- **Rollback Mechanisms**: Quick rollback capabilities for failed deployments
+- **Feature Flags**: Gradual feature rollouts with A/B testing capabilities
+
+#### Infrastructure as Code
+- **Terraform Modules**: Infrastructure provisioning and management
+- **Environment Variables**: Secure configuration management
+- **Secret Rotation**: Automated secret rotation for security
+- **Compliance Automation**: Automated compliance checking and reporting
 
 **Section sources**
 - [supabase/functions/health/index.ts](file://supabase/functions/health/index.ts#L1-L34)
+- [supabase/functions/bootstrap-admin/index.ts](file://supabase/functions/bootstrap-admin/index.ts#L1-L178)
 
 ## Security Architecture
 
-The security architecture implements defense-in-depth principles with multiple layers of protection for data, applications, and infrastructure.
+### Defense-in-Depth Strategy
 
-### Authentication and Authorization
+The security architecture implements multiple layers of protection:
 
-**JWT-Based Authentication**: Secure token-based authentication with automatic refresh and expiration handling.
+#### Network Security
+- **TLS Encryption**: End-to-end encryption for all communications
+- **Firewall Rules**: Strict ingress and egress firewall configurations
+- **DDoS Protection**: Automatic mitigation of distributed denial-of-service attacks
+- **VPN Access**: Secure remote access for administrative tasks
 
-**Role-Based Access Control**: Fine-grained permissions based on user roles and business context.
+#### Application Security
+- **Input Sanitization**: Comprehensive input validation and sanitization
+- **SQL Injection Prevention**: Parameterized queries and prepared statements
+- **XSS Protection**: Content Security Policy and output encoding
+- **CSRF Protection**: Anti-forgery tokens for state-changing operations
 
-**Multi-Factor Authentication**: Optional additional authentication factors for sensitive operations.
+#### Data Security
+- **Encryption at Rest**: AES-256 encryption for all stored data
+- **Encryption in Transit**: TLS 1.3 for all network communications
+- **Access Controls**: Role-based access controls with least privilege principle
+- **Audit Trails**: Comprehensive logging and monitoring of all data access
 
-**Session Management**: Secure session handling with automatic logout and session validation.
+### Compliance Framework
 
-### Data Protection
+#### Regulatory Compliance
+- **GDPR**: Data protection and privacy compliance
+- **SOC 2**: Security and operational controls certification
+- **ISO 27001**: Information security management systems
+- **PCI DSS**: Payment card industry data security standards
 
-**Encryption**: End-to-end encryption for sensitive data both in transit and at rest.
-
-**Data Masking**: Personal information masking for non-essential use cases.
-
-**Audit Logging**: Comprehensive audit trails for compliance and security investigations.
+#### Internal Controls
+- **Security Reviews**: Regular security assessments and penetration testing
+- **Incident Response**: Comprehensive incident response procedures
+- **Training Programs**: Security awareness training for all team members
+- **Documentation**: Complete security documentation and procedures
 
 **Section sources**
-- [supabase/functions/admin-check/index.ts](file://supabase/functions/admin-check/index.ts#L1-L74)
+- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L131-L202)
 - [supabase/functions/bootstrap-admin/index.ts](file://supabase/functions/bootstrap-admin/index.ts#L60-L89)
 
-## Data Flow and API Patterns
+## Performance Monitoring
 
-The system implements consistent data flow patterns that ensure reliability, scalability, and maintainability across all API interactions.
+### Observability Stack
 
-### Request-Response Patterns
+The system implements comprehensive observability across all components:
 
-**Synchronous Operations**: Immediate responses for CRUD operations with optimistic concurrency control.
+#### Metrics Collection
+- **Function Metrics**: Execution time, memory usage, and error rates
+- **Database Metrics**: Query performance, connection pools, and I/O statistics
+- **Network Metrics**: Latency, throughput, and error rates
+- **Business Metrics**: Conversion rates, user engagement, and revenue metrics
 
-**Asynchronous Processing**: Background processing for long-running operations with progress tracking.
+#### Tracing and Debugging
+- **Distributed Tracing**: End-to-end request tracing across all services
+- **Structured Logging**: Centralized logging with correlation IDs
+- **Error Tracking**: Real-time error monitoring and alerting
+- **Performance Profiling**: CPU and memory profiling for optimization
 
-**Event-Driven Architecture**: Event-based processing enables loose coupling and high scalability.
+#### Alerting and Incident Management
+- **Threshold-based Alerts**: Automated alerts for performance deviations
+- **Anomaly Detection**: Machine learning-based anomaly detection
+- **Escalation Procedures**: Automated escalation based on alert severity
+- **Incident Response**: Integrated incident management workflows
 
 **Section sources**
-- [src/lib/supabaseHelpers.ts](file://src/lib/supabaseHelpers.ts#L26-L376)
+- [supabase/functions/health/index.ts](file://supabase/functions/health/index.ts#L1-L34)
+- [supabase/functions/analytics-service/index.ts](file://supabase/functions/analytics-service/index.ts#L1-L220)
 
-### Error Handling and Resilience
+## Troubleshooting Guide
 
-**Graceful Degradation**: System continues operating with reduced functionality during partial failures.
+### Common Issues and Solutions
 
-**Circuit Breaker Pattern**: Automatic failure detection prevents cascading failures across services.
+#### Authentication Problems
+- **Expired Tokens**: Automatic token refresh with exponential backoff
+- **Invalid Credentials**: Comprehensive error messaging with recovery guidance
+- **Permission Denied**: Clear error messages indicating required permissions
+- **Rate Limiting**: Graceful degradation with retry-after headers
 
-**Retry Mechanisms**: Intelligent retry logic with exponential backoff for transient failures.
+#### Database Connectivity
+- **Connection Pool Exhaustion**: Automatic connection pooling with monitoring
+- **Query Performance**: Query optimization with execution plan analysis
+- **Deadlocks**: Transaction isolation level optimization
+- **Backup Restoration**: Automated backup verification and restoration
+
+#### Edge Function Failures
+- **Cold Start Issues**: Function warming and optimization strategies
+- **Timeout Errors**: Configurable timeouts with graceful degradation
+- **Memory Limits**: Memory optimization and chunking strategies
+- **External Service Failures**: Circuit breaker patterns and fallback mechanisms
+
+### Diagnostic Tools
+
+#### Built-in Monitoring
+- **Health Checks**: Comprehensive health monitoring endpoints
+- **Performance Metrics**: Real-time performance monitoring dashboards
+- **Error Tracking**: Centralized error tracking and analysis
+- **Usage Analytics**: Detailed usage analytics and trend analysis
+
+#### Debugging Capabilities
+- **Logging Levels**: Configurable logging levels for different environments
+- **Debug Mode**: Development-specific debugging features
+- **Performance Profiling**: Built-in performance profiling tools
+- **Integration Testing**: Comprehensive integration testing frameworks
 
 **Section sources**
-- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L730-L753)
-
-## Conclusion
-
-The sleekapp-v100 backend architecture demonstrates a modern, scalable approach to building enterprise-grade applications using Supabase as the foundation. The architecture successfully balances rapid development with production-ready features, providing a solid foundation for the garment manufacturing marketplace.
-
-Key architectural strengths include:
-
-**Scalability**: Horizontal scaling through serverless functions and managed database services ensures the system can grow with demand.
-
-**Security**: Comprehensive security implementation through RLS policies, JWT authentication, and multi-layered protection measures.
-
-**Developer Experience**: Type-safe database operations, comprehensive tooling, and rapid iteration capabilities accelerate development.
-
-**Operational Excellence**: Monitoring, logging, and automated deployment processes ensure reliable operation in production environments.
-
-The architecture provides a robust foundation for the B2B marketplace while maintaining flexibility for future enhancements and feature additions. The combination of Supabase's platform capabilities with custom serverless functions creates a powerful and efficient backend solution that meets the complex requirements of the garment manufacturing industry.
-
-Future evolution of the architecture should focus on expanding AI capabilities, enhancing real-time features, and implementing advanced analytics to drive business intelligence and operational efficiency improvements.
+- [supabase/functions/ai-quote-generator/index.ts](file://supabase/functions/ai-quote-generator/index.ts#L748-L807)
+- [supabase/functions/create-payment-intent/index.ts](file://supabase/functions/create-payment-intent/index.ts#L279-L288)
