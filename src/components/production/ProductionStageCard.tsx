@@ -148,7 +148,7 @@ export const ProductionStageCard = ({ stage, data, orderId, userRole }: Producti
               <StageIcon className="h-5 w-5" />
             </div>
             <div>
-              <Card Title className="text-lg">
+              <CardTitle className="text-lg">
                 {stage.number}. {stage.name}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
