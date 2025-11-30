@@ -75,17 +75,17 @@ export default function ModernBuyerDashboard() {
   const { data: quotes = [], isLoading: quotesLoading } = useQuotes();
 
   // Calculate stats from real data
-  const activeOrders = orders.filter(o => 
+  const activeOrders = (orders || []).filter(o => 
     o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'rejected'
   ).length;
   
-  const pendingQuotes = quotes.filter(q => q.status === 'pending' || q.status === 'draft').length;
+  const pendingQuotes = (quotes || []).filter(q => q.status === 'pending' || q.status === 'draft').length;
   
-  const totalSpent = orders
+  const totalSpent = (orders || [])
     .filter(o => o.status === 'completed')
     .reduce((sum, order) => sum + (Number(order.buyer_price) || 0), 0);
   
-  const completedOrders = orders.filter(o => o.status === 'completed');
+  const completedOrders = (orders || []).filter(o => o.status === 'completed');
   const avgDeliveryTime = completedOrders.length > 0
     ? Math.round(completedOrders.reduce((sum, order) => {
         if (order.created_at && order.updated_at) {
@@ -96,7 +96,7 @@ export default function ModernBuyerDashboard() {
     : 0;
 
   // Map real orders to display format
-  const mappedOrders = orders
+  const mappedOrders = (orders || [])
     .filter(o => {
       if (selectedFilter === 'all') return true;
       if (selectedFilter === 'active') return o.status === 'in_production' || o.status === 'cutting' || o.status === 'sewing';
@@ -175,10 +175,21 @@ export default function ModernBuyerDashboard() {
   const recommendations = [];
   
   // Check for reorder opportunities
-  const recentCompletedOrders = orders
+  const recentCompletedOrders = (orders || [])
     .filter(o => o.status === 'completed')
     .sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime())
     .slice(0, 3);
+
+  type Recommendation = {
+    id: string;
+    type: string;
+    title: string;
+    description: string;
+    action: string;
+    icon: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<SVGSVGElement>>;
+    color: 'primary' | 'accent';
+    onClick: () => void;
+  };
 
   if (recentCompletedOrders.length > 0) {
     const lastOrder = recentCompletedOrders[0];
@@ -196,7 +207,7 @@ export default function ModernBuyerDashboard() {
         icon: RefreshCw,
         color: 'primary' as const,
         onClick: () => navigate('/instant-quote'),
-      });
+      } as Recommendation);
     }
   }
 
@@ -210,7 +221,7 @@ export default function ModernBuyerDashboard() {
     icon: TrendingUp,
     color: 'accent' as const,
     onClick: () => navigate('/products'),
-  });
+  } as Recommendation);
 
   // Show loading state while fetching user or data
   if (!userId || ordersLoading || quotesLoading) {

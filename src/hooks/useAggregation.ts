@@ -133,7 +133,9 @@ export const useBatchStatistics = () => {
         confirmed: data.filter(b => b.batch_status === 'confirmed').length,
         inProduction: data.filter(b => b.batch_status === 'in_production').length,
         completed: data.filter(b => b.batch_status === 'completed').length,
-        avgFillRate: data.reduce((acc, b) => acc + (b.current_quantity / b.target_quantity), 0) / data.length * 100,
+        avgFillRate: data.length > 0 
+          ? data.reduce((acc, b) => acc + ((b.current_quantity || 0) / b.target_quantity), 0) / data.length * 100 
+          : 0,
       };
 
       return stats;
