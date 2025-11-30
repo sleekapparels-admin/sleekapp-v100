@@ -88,18 +88,20 @@ export default function OrderDetails() {
         .single();
 
       // Fetch factory profile if assigned
-      let factoryProfile = null;
+      let factoryProfile: { full_name: string | null; company_name: string | null } | undefined = undefined;
       if (data.factory_id) {
         const { data: factory } = await supabase
           .from("profiles")
           .select("full_name, company_name")
           .eq("id", data.factory_id)
           .single();
-        factoryProfile = factory;
+        factoryProfile = factory || undefined;
       }
 
       setOrder({
         ...data,
+        notes: data.notes || undefined,
+        target_date: data.target_date || undefined,
         stage_progress: (data.stage_progress as Record<ProductionStage, number>) || {},
         buyer: buyerProfile || { full_name: "Unknown", company_name: "Unknown" },
         factory: factoryProfile,

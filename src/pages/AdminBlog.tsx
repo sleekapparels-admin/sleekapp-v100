@@ -49,7 +49,11 @@ const AdminBlog = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setPosts(data || []);
+      setPosts((data || []).map(post => ({
+        ...post,
+        published: post.published ?? false,
+        views_count: post.views_count ?? 0,
+      })));
     } catch (error) {
       console.error("Error fetching posts:", error);
       toast.error("Failed to load blog posts");
