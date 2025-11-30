@@ -9,8 +9,7 @@ import {
   TrendingUp, 
   Package,
   CheckCircle2,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from "lucide-react";
 
 interface QuoteDisplayProps {
@@ -34,9 +33,6 @@ interface QuoteDisplayProps {
     }>;
     suggestions: string;
   };
-  research: {
-    sources: string[];
-  };
   productType: string;
   quantity: number;
   onStartNew: () => void;
@@ -44,7 +40,6 @@ interface QuoteDisplayProps {
 
 export const InteractiveQuoteDisplay = ({
   quote,
-  research,
   productType,
   quantity,
   onStartNew,
@@ -58,7 +53,7 @@ export const InteractiveQuoteDisplay = ({
   const confidence = getConfidenceBadge(quote.confidenceScore);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto">
       {/* Main Quote Card */}
       <Card className="border-2 border-primary">
         <CardHeader className="bg-gradient-to-br from-primary/10 to-primary/5">
@@ -179,30 +174,6 @@ export const InteractiveQuoteDisplay = ({
             </>
           )}
 
-          {/* Data Sources */}
-          {research.sources.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <h4 className="font-semibold text-sm text-foreground">Research Sources</h4>
-                <div className="flex flex-wrap gap-2">
-                  {research.sources.map((source, index) => (
-                    <a
-                      key={index}
-                      href={source}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      Source {index + 1}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
             <Button onClick={onStartNew} variant="outline" className="flex-1">
@@ -218,7 +189,7 @@ export const InteractiveQuoteDisplay = ({
           {/* Disclaimer */}
           <div className="p-3 bg-muted/50 rounded-md border border-border">
             <p className="text-xs text-muted-foreground">
-              📋 This quote is generated using real-time market research and is valid for 7 days. 
+              📋 This AI-generated quote is based on real-time Bangladesh manufacturing data and is valid for 7 days. 
               Final pricing will be confirmed after reviewing your detailed requirements.
             </p>
           </div>
