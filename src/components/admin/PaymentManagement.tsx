@@ -30,7 +30,7 @@ interface Invoice {
   payment_type: string;
   status: string;
   due_date: string;
-  paid_at?: string;
+  paid_at: string | undefined;
   created_at: string;
   orders: {
     order_number: string;
@@ -65,7 +65,14 @@ export const PaymentManagement = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setInvoices(data || []);
+      setInvoices((data || []).map(inv => ({
+        ...inv,
+        status: inv.status ?? 'pending',
+        due_date: inv.due_date ?? '',
+        paid_at: inv.paid_at ?? undefined,
+        created_at: inv.created_at ?? new Date().toISOString(),
+        orders: inv.orders ?? { order_number: 'N/A', buyer_id: '' }
+      })));
     } catch (error) {
       console.error('Error fetching invoices:', error);
       toast({
@@ -209,7 +216,7 @@ export const PaymentManagement = () => {
                     {invoice.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{format(new Date(invoice.due_date), 'MMM dd, yyyy')}</TableCell>
+                <TableCell>{invoice.due_date ? format(new Date(invoice.due_date), 'MMM dd, yyyy') : 'N/A'}</TableCell>
                 <TableCell>
                   <Button variant="ghost" size="sm">
                     View

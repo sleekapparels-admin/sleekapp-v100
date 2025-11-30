@@ -242,10 +242,10 @@ export function DashboardAnalytics() {
         ? orders
             .filter(o => o.created_at)
             .reduce((sum, o) => {
-              const quote = quotes?.find(q => q.buyer_id === o.buyer_id);
-              if (quote) {
-                const quoteDate = new Date(quote.created_at).getTime();
-                const orderDate = new Date(o.created_at).getTime();
+          const quote = quotes?.find(q => q.buyer_id === o.buyer_id);
+          if (quote && quote.created_at) {
+            const quoteDate = new Date(quote.created_at).getTime();
+            const orderDate = new Date(o.created_at!).getTime();
                 return sum + (orderDate - quoteDate) / (1000 * 60 * 60 * 24); // days
               }
               return sum;

@@ -43,7 +43,15 @@ export const QuoteApprovalPanel = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setQuotes(data || []);
+      setQuotes((data || []).map(q => ({
+        ...q,
+        status: q.status ?? 'draft',
+        created_at: q.created_at ?? new Date().toISOString(),
+        product_type: q.product_type,
+        quantity: q.quantity,
+        total_price: q.total_price,
+        quote_data: q.quote_data
+      })));
     } catch (error: any) {
       toast.error(`Failed to load quotes: ${error.message}`);
     } finally {

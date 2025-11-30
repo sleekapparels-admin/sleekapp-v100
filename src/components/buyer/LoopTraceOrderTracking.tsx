@@ -18,7 +18,7 @@ interface ProductionStage {
   started_at: string | null;
   completed_at: string | null;
   target_date: string | null;
-  photos: string[];
+  photos: string[] | null;
   notes: string | null;
 }
 
@@ -167,7 +167,7 @@ export const LoopTraceOrderTracking = () => {
           ...order,
           supplier_orders: supplierOrderData ? [{
             id: supplierOrderData.id,
-            supplier_id: supplierOrderData.supplier_id,
+            supplier_id: supplierOrderData.supplier_id ?? '',
             suppliers: supplierInfo
           }] : []
         });
@@ -204,7 +204,12 @@ export const LoopTraceOrderTracking = () => {
         .eq('supplier_order_id', supplierOrderData.id)
         .order('stage_number', { ascending: true });
       
-      setStages(stagesData || []);
+      setStages((stagesData || []).map(s => ({
+        ...s,
+        description: s.description ?? '',
+        photos: s.photos ?? [],
+        completion_percentage: s.completion_percentage ?? 0
+      })));
     } catch (error: any) {
       console.error('Error fetching stages:', error);
     }

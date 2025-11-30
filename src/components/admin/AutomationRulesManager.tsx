@@ -40,7 +40,8 @@ export const AutomationRulesManager = () => {
         setRules(data.map(r => ({
           ...r,
           active: r.active ?? false,
-          priority: r.priority ?? 0
+          priority: r.priority ?? 0,
+          created_at: r.created_at ?? new Date().toISOString()
         })));
       }
     } catch (error: any) {

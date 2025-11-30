@@ -40,7 +40,23 @@ export const ProductEngagementMetrics = () => {
       
       // Sort and limit on client side since RPC doesn't support order/limit
       const sortedData = (data || [])
-        .sort((a: ProductMetrics, b: ProductMetrics) => b.total_interactions - a.total_interactions)
+        .map(m => ({
+          product_id: m.product_id ?? '',
+          product_name: m.product_name ?? 'Unknown Product',
+          category: m.category ?? 'Uncategorized',
+          unique_sessions: m.unique_sessions ?? 0,
+          hover_count: m.hover_count ?? 0,
+          quick_view_count: m.quick_view_count ?? 0,
+          wishlist_count: m.wishlist_count ?? 0,
+          color_swatch_count: m.color_swatch_count ?? 0,
+          design_click_count: m.design_click_count ?? 0,
+          quote_click_count: m.quote_click_count ?? 0,
+          view_details_count: m.view_details_count ?? 0,
+          total_interactions: m.total_interactions ?? 0,
+          last_interaction: m.last_interaction ?? new Date().toISOString()
+        }))
+        .filter(m => m.product_id !== '')
+        .sort((a, b) => b.total_interactions - a.total_interactions)
         .slice(0, 10);
       
       setMetrics(sortedData);
