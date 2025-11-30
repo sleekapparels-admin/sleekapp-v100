@@ -41,7 +41,7 @@ export const AIQualityScanner = () => {
 
       // Randomize result for demo purposes
       const score = Math.floor(Math.random() * (100 - 75) + 75); // Score between 75 and 100
-      const defects = [];
+      const defects: { type: string; confidence: number; location: { x: number; y: number } }[] = [];
 
       if (score < 90) {
         defects.push({

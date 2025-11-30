@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,6 +46,7 @@ export const ConversationalQuoteBuilder = () => {
   const [loading, setLoading] = useState(false);
   const [researchLoading, setResearchLoading] = useState(false);
   const { toast } = useToast();
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   // Form state
   const [productType, setProductType] = useState("");
@@ -74,6 +76,9 @@ export const ConversationalQuoteBuilder = () => {
 
     setResearchLoading(true);
     try {
+      const captchaToken = await recaptchaRef.current?.executeAsync();
+      recaptchaRef.current?.reset();
+
       const { data, error } = await supabase.functions.invoke('ai-market-research', {
         body: {
           productType,
@@ -81,6 +86,7 @@ export const ConversationalQuoteBuilder = () => {
           fabricType: fabricType || undefined,
           complexity: complexity || undefined,
           additionalRequirements: additionalRequirements || undefined,
+          captchaToken,
         },
       });
 
@@ -121,6 +127,9 @@ export const ConversationalQuoteBuilder = () => {
 
     setLoading(true);
     try {
+      const captchaToken = await recaptchaRef.current?.executeAsync();
+      recaptchaRef.current?.reset();
+
       const sessionId = localStorage.getItem('quote_session_id') || crypto.randomUUID();
       localStorage.setItem('quote_session_id', sessionId);
 
@@ -137,6 +146,7 @@ export const ConversationalQuoteBuilder = () => {
           phoneNumber: phoneNumber || undefined,
           sessionId,
           marketResearchId,
+          captchaToken,
         },
       });
 
@@ -229,6 +239,11 @@ export const ConversationalQuoteBuilder = () => {
                 onChange={(e) => setAdditionalRequirements(e.target.value)}
               />
             </div>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              size="invisible"
+              sitekey="6LcP_RMsAAAAAAyzUVk22XySYyE5zhKuWMotskop"
+            />
             <Button
               onClick={handleMarketResearch}
               disabled={researchLoading || !productType || !quantity}

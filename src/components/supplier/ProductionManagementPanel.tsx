@@ -72,7 +72,7 @@ export const ProductionManagementPanel = ({ supplierId }: { supplierId: string }
           const { data: orderData } = await supabase
             .from('orders')
             .select('order_number')
-            .eq('id', so.buyer_order_id)
+            .eq('id', so.buyer_order_id ?? '')
             .maybeSingle();
 
           return {
@@ -120,10 +120,24 @@ export const ProductionManagementPanel = ({ supplierId }: { supplierId: string }
             .select('*')
             .eq('supplier_order_id', supplierOrderId)
             .order('stage_number', { ascending: true });
-          setStages(newData || []);
+          setStages((newData || []).map(stage => ({
+            ...stage,
+            description: stage.description ?? '',
+            completion_percentage: stage.completion_percentage ?? 0,
+            notes: stage.notes ?? '',
+            photos: stage.photos ?? [],
+            status: stage.status ?? 'pending'
+          })));
         }
       } else {
-        setStages(data);
+        setStages((data || []).map(stage => ({
+          ...stage,
+          description: stage.description ?? '',
+          completion_percentage: stage.completion_percentage ?? 0,
+          notes: stage.notes ?? '',
+          photos: stage.photos ?? [],
+          status: stage.status ?? 'pending'
+        })));
       }
     } catch (error: any) {
       console.error('Error fetching stages:', error);
