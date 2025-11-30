@@ -165,6 +165,7 @@ export const LoopTraceOrderTracking = () => {
 
         result.push({
           ...order,
+          workflow_status: (order.workflow_status ?? 'pending') as string,
           supplier_orders: supplierOrderData ? [{
             id: supplierOrderData.id,
             supplier_id: supplierOrderData.supplier_id ?? '',

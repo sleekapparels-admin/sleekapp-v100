@@ -107,7 +107,15 @@ export const CommunicationCenter = ({ orderFilter }: CommunicationCenterProps) =
       const { data, error } = await query;
 
       if (error) throw error;
-      setMessages(data || []);
+      setMessages((data || []).map(msg => ({
+        ...msg,
+        subject: msg.subject ?? '(No Subject)',
+        sender_id: msg.sender_id ?? '',
+        recipient_id: msg.recipient_id ?? '',
+        read: msg.read ?? false,
+        created_at: msg.created_at ?? new Date().toISOString(),
+        attachments: msg.attachments ?? []
+      })));
     } catch (error: any) {
       toast({
         variant: "destructive",
