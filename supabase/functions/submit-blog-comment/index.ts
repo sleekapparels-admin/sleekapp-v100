@@ -6,47 +6,18 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const RECAPTCHA_SECRET_KEY = Deno.env.get('RECAPTCHA_SECRET_KEY');
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { postId, authorName, authorEmail, content, captchaToken } = await req.json();
+    const { postId, authorName, authorEmail, content } = await req.json();
 
     // Validate required fields
     if (!postId || !authorName || !authorEmail || !content) {
       return new Response(
         JSON.stringify({ success: false, message: 'Missing required fields' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // SECURITY: Verify reCAPTCHA token
-    if (!captchaToken) {
-      return new Response(
-        JSON.stringify({ success: false, message: 'CAPTCHA verification required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Verify reCAPTCHA with Google
-    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
-    });
-
-    const recaptchaResult = await recaptchaResponse.json();
-
-    if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
-      console.error('CAPTCHA verification failed:', recaptchaResult);
-      return new Response(
-        JSON.stringify({ success: false, message: 'CAPTCHA verification failed. Please try again.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
