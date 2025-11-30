@@ -92,7 +92,14 @@ export const FinancialDashboard = ({ supplierId }: { supplierId: string }) => {
             .limit(10);
 
           if (invoicesError) throw invoicesError;
-          setInvoices(invoicesData || []);
+      setInvoices((invoicesData || []).map(inv => ({
+        ...inv,
+        status: inv.status ?? 'pending',
+        due_date: inv.due_date ?? null,
+        paid_at: inv.paid_at ?? null,
+        created_at: inv.created_at ?? new Date().toISOString(),
+        order_id: inv.order_id ?? ''
+      })));
         }
       }
 

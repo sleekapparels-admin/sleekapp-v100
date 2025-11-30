@@ -142,49 +142,13 @@ serve(async (req) => {
   }
 
   try {
-    const { type, phone, email, country, captchaToken }: OTPRequest = await req.json();
+    const { type, phone, email, country }: OTPRequest = await req.json();
 
     if (!type || !['phone', 'email-quote', 'email-supplier'].includes(type)) {
       return new Response(
         JSON.stringify({ error: 'Valid type (phone, email-quote, email-supplier) is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
-    }
-
-    // Verify reCAPTCHA for supplier registration (anti-bot protection)
-    if (type === 'email-supplier' && captchaToken) {
-      const recaptchaSecret = Deno.env.get('RECAPTCHA_SECRET_KEY');
-      
-      if (!recaptchaSecret) {
-        logger.error('RECAPTCHA_SECRET_KEY not configured');
-        return new Response(
-          JSON.stringify({ error: 'CAPTCHA verification unavailable' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${captchaToken}`;
-      
-      try {
-        const captchaResponse = await fetch(verifyUrl, { method: 'POST' });
-        const captchaData = await captchaResponse.json();
-        
-        if (!captchaData.success) {
-          logger.warn('CAPTCHA verification failed', { errorCodes: captchaData['error-codes'] });
-          return new Response(
-            JSON.stringify({ error: 'CAPTCHA verification failed. Please try again.' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        
-        logger.success('CAPTCHA verified');
-      } catch (captchaError) {
-        logger.error('CAPTCHA verification error', captchaError);
-        return new Response(
-          JSON.stringify({ error: 'CAPTCHA verification error. Please try again.' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;

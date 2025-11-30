@@ -5,22 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Loader2, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { toast as sonnerToast } from "sonner";
 import { format } from "date-fns";
-
-interface ProductionStage {
-  id: string;
-  stage_name: string;
-  stage_number: number;
-  description: string;
-  status: string;
-  completion_percentage: number;
-  started_at: string | null;
-  completed_at: string | null;
-  target_date: string | null;
-  photos: string[] | null;
-  notes: string | null;
-}
+import { useProductionStages } from "@/hooks/useProductionStages";
 
 interface OrderWithTracking {
   id: string;
@@ -41,179 +27,86 @@ interface OrderWithTracking {
 export const LoopTraceOrderTracking = () => {
   const [orders, setOrders] = useState<OrderWithTracking[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-  const [stages, setStages] = useState<ProductionStage[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  // Use the new hook for stages
+  const { stages, isLoading: stagesLoading } = useProductionStages(selectedOrder);
 
   useEffect(() => {
-    if (selectedOrder) {
-      fetchProductionStages(selectedOrder);
-    }
-  }, [selectedOrder]);
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const { data: { user } } = await supabase.auth.getUser();
 
-  // Real-time subscription for production stages
-  useEffect(() => {
-    if (!selectedOrder) return;
+        if (!user) return;
 
-    // Get supplier_order_id for the selected order
-    const getSupplierOrderId = async () => {
-      const { data: supplierOrderData } = await supabase
-        .from('supplier_orders')
-        .select('id')
-        .eq('buyer_order_id', selectedOrder)
-        .maybeSingle();
-      
-      return supplierOrderData?.id;
-    };
+        // Fetch orders
+        const { data: ordersData, error: ordersError } = await supabase
+          .from('orders')
+          .select('id, order_number, product_type, quantity, workflow_status, expected_delivery_date')
+          .eq('buyer_id', user.id)
+          .in('workflow_status', ['bulk_production', 'qc_inspection', 'completed', 'shipped'])
+          .order('created_at', { ascending: false });
 
-    const setupRealtimeSubscription = async () => {
-      const supplierOrderId = await getSupplierOrderId();
-      if (!supplierOrderId) return;
-
-      // Subscribe to production_stages changes
-      const channel = supabase
-        .channel('production-stages-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*', // Listen to INSERT, UPDATE, DELETE
-            schema: 'public',
-            table: 'production_stages',
-            filter: `supplier_order_id=eq.${supplierOrderId}`
-          },
-          (payload) => {
-            console.log('Production stage updated:', payload);
-            
-            // Show toast notification
-            if (payload.eventType === 'UPDATE') {
-              const stage = payload.new as ProductionStage;
-              sonnerToast.success('Production Update', {
-                description: `${stage.stage_name}: ${stage.completion_percentage}% complete`,
-                duration: 5000,
-              });
-            } else if (payload.eventType === 'INSERT') {
-              const stage = payload.new as ProductionStage;
-              sonnerToast.info('New Production Stage', {
-                description: `${stage.stage_name} has started`,
-                duration: 5000,
-              });
-            }
-            
-            // Refresh stages data
-            fetchProductionStages(selectedOrder);
-          }
-        )
-        .subscribe();
-
-      // Cleanup on unmount
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    };
-
-    setupRealtimeSubscription();
-  }, [selectedOrder]);
-
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return;
-
-      // Fetch orders
-      const { data: ordersData, error: ordersError } = await supabase
-        .from('orders')
-        .select('id, order_number, product_type, quantity, workflow_status, expected_delivery_date')
-        .eq('buyer_id', user.id)
-        .in('workflow_status', ['bulk_production', 'qc_inspection', 'completed', 'shipped'])
-        .order('created_at', { ascending: false });
-
-      if (ordersError) throw ordersError;
-      if (!ordersData) {
-        setOrders([]);
-        return;
-      }
-
-      const result: OrderWithTracking[] = [];
-      
-      for (const order of ordersData) {
-        // Fetch supplier order using buyer_order_id
-        const { data: supplierOrderData } = await supabase
-          .from('supplier_orders')
-          .select('id, supplier_id')
-          .eq('buyer_order_id', order.id)
-          .maybeSingle();
-
-        let supplierInfo = { company_name: 'Unknown' };
-        if (supplierOrderData?.supplier_id) {
-          // Fetch supplier info
-          const { data: supplierData } = await supabase
-            .from('suppliers')
-            .select('company_name')
-            .eq('id', supplierOrderData.supplier_id)
-            .maybeSingle();
-          
-          if (supplierData) {
-            supplierInfo = supplierData;
-          }
+        if (ordersError) throw ordersError;
+        if (!ordersData) {
+          setOrders([]);
+          return;
         }
 
-        result.push({
-          ...order,
-          supplier_orders: supplierOrderData ? [{
-            id: supplierOrderData.id,
-            supplier_id: supplierOrderData.supplier_id ?? '',
-            suppliers: supplierInfo
-          }] : []
+        const result: OrderWithTracking[] = [];
+
+        for (const order of ordersData) {
+          // Fetch supplier order using buyer_order_id
+          const { data: supplierOrderData } = await supabase
+            .from('supplier_orders')
+            .select('id, supplier_id')
+            .eq('buyer_order_id', order.id)
+            .maybeSingle();
+
+          let supplierInfo = { company_name: 'Unknown' };
+          if (supplierOrderData?.supplier_id) {
+            // Fetch supplier info
+            const { data: supplierData } = await supabase
+              .from('suppliers')
+              .select('company_name')
+              .eq('id', supplierOrderData.supplier_id)
+              .maybeSingle();
+
+            if (supplierData) {
+              supplierInfo = supplierData;
+            }
+          }
+
+          result.push({
+            ...order,
+            workflow_status: (order.workflow_status ?? 'pending') as string,
+            supplier_orders: supplierOrderData ? [{
+              id: supplierOrderData.id,
+              supplier_id: supplierOrderData.supplier_id ?? '',
+              suppliers: supplierInfo
+            }] : []
+          });
+        }
+
+        setOrders(result);
+        if (result.length > 0) {
+          setSelectedOrder(result[0].id);
+        }
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message
         });
+      } finally {
+        setLoading(false);
       }
-      
-      setOrders(result);
-      if (result.length > 0) {
-        setSelectedOrder(result[0].id);
-      }
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const fetchProductionStages = async (orderId: string) => {
-    try {
-      const { data: supplierOrderData } = await supabase
-        .from('supplier_orders')
-        .select('id')
-        .eq('buyer_order_id', orderId)
-        .maybeSingle();
-      
-      if (!supplierOrderData) return;
-
-      const { data: stagesData } = await supabase
-        .from('production_stages')
-        .select('*')
-        .eq('supplier_order_id', supplierOrderData.id)
-        .order('stage_number', { ascending: true });
-      
-      setStages((stagesData || []).map(s => ({
-        ...s,
-        description: s.description ?? '',
-        photos: s.photos ?? [],
-        completion_percentage: s.completion_percentage ?? 0
-      })));
-    } catch (error: any) {
-      console.error('Error fetching stages:', error);
-    }
-  };
+    fetchOrders();
+  }, [toast]);
 
   const getStageIcon = (status: string) => {
     if (status === 'completed') return <CheckCircle className="h-5 w-5 text-green-600" />;
@@ -264,11 +157,10 @@ export const LoopTraceOrderTracking = () => {
                   <button
                     key={order.id}
                     onClick={() => setSelectedOrder(order.id)}
-                    className={`w-full text-left p-3 rounded-lg transition-colors ${
-                      selectedOrder === order.id
+                    className={`w-full text-left p-3 rounded-lg transition-colors ${selectedOrder === order.id
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-secondary hover:bg-secondary/80'
-                    }`}
+                      }`}
                   >
                     <div className="font-semibold">#{order.order_number}</div>
                     <div className="text-sm opacity-90">{order.product_type}</div>
@@ -299,7 +191,7 @@ export const LoopTraceOrderTracking = () => {
                   <div>
                     <Progress value={calculateOverallProgress()} className="h-3" />
                     <p className="text-sm text-muted-foreground mt-2">
-                      Expected Delivery: {selectedOrderData.expected_delivery_date 
+                      Expected Delivery: {selectedOrderData.expected_delivery_date
                         ? format(new Date(selectedOrderData.expected_delivery_date), 'MMM dd, yyyy')
                         : 'TBD'}
                     </p>
@@ -307,7 +199,11 @@ export const LoopTraceOrderTracking = () => {
 
                   {/* Stage Timeline */}
                   <div className="space-y-4">
-                    {stages.map((stage, index) => (
+                    {stagesLoading ? (
+                      <div className="flex justify-center py-8">
+                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : stages.map((stage, index) => (
                       <div key={stage.id} className="relative">
                         {index < stages.length - 1 && (
                           <div className="absolute left-[10px] top-[30px] w-0.5 h-[calc(100%+16px)] bg-border" />

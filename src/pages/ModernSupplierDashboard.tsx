@@ -114,19 +114,19 @@ export default function ModernSupplierDashboard() {
     }
   }, [supplier]);
 
-  // Calculate real stats
-  const activeOrders = orders.filter(o => 
+  // Calculate real stats from orders data
+  const activeOrders = orders?.filter(o => 
     o.status !== 'completed' && o.status !== 'cancelled' && o.status !== 'rejected'
-  ).length;
+  ).length || 0;
   
   const monthlyRevenue = orders
-    .filter(o => {
+    ?.filter(o => {
       const orderDate = new Date(o.created_at || '');
       const now = new Date();
       const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
       return orderDate >= monthAgo;
     })
-    .reduce((sum, order) => sum + (Number(order.supplier_price) || 0), 0);
+    .reduce((sum, order) => sum + (Number(order.supplier_price) || 0), 0) || 0;
   
   const capacityUtilization = (supplier as any)?.total_capacity_monthly 
     ? Math.min(100, Math.round((activeOrders * 100) / ((supplier as any).total_capacity_monthly / 500)))
@@ -135,11 +135,8 @@ export default function ModernSupplierDashboard() {
   const avgRating = (supplier as any)?.supplier_ratings?.[0]?.overall_score || 0;
 
   // Calculate performance score
-  const completedOrders = orders.filter(o => o.status === 'completed');
-  const onTimeOrders = completedOrders.filter(o => {
-    // This would need actual delivery tracking data
-    return true; // Placeholder
-  });
+  const completedOrders = orders?.filter(o => o.status === 'completed') || [];
+  const onTimeOrders = completedOrders.filter(o => true); // Placeholder - would need actual delivery tracking
   const onTimeDelivery = completedOrders.length > 0 
     ? Math.round((onTimeOrders.length / completedOrders.length) * 100)
     : 0;
@@ -166,7 +163,7 @@ export default function ModernSupplierDashboard() {
 
   // Extract urgent actions from real data
   const urgentActions = orders
-    .filter(o => o.status === 'quality_check' || o.status === 'awaiting_approval')
+    ?.filter(o => o.status === 'quality_check' || o.status === 'awaiting_approval')
     .slice(0, 3)
     .map(order => ({
       id: order.id,
@@ -176,7 +173,7 @@ export default function ModernSupplierDashboard() {
       message: order.status === 'quality_check' ? 'Upload Quality Check photos' : 'Update production status',
       dueIn: '2 hours',
       priority: 'high' as const,
-    }));
+    })) || [];
 
   // Add pending quote responses
   const pendingQuotes = quotes

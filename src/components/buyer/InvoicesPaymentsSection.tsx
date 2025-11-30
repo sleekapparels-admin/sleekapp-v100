@@ -67,7 +67,15 @@ export const InvoicesPaymentsSection = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setInvoices(data || []);
+      setInvoices((data || []).map(inv => ({
+        ...inv,
+        status: inv.status ?? 'pending',
+        due_date: inv.due_date ?? '',
+        created_at: inv.created_at ?? new Date().toISOString(),
+        order_id: inv.order_id ?? '',
+        paid_at: inv.paid_at ?? undefined,
+        orders: inv.orders ?? { order_number: 'N/A', product_type: 'N/A' }
+      })));
     } catch (error: any) {
       toast({
         variant: "destructive",

@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 export const useSupplierOrders = (supplierId: string) => {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
+  const { data: orders = [], isLoading: loading, error } = useQuery({
+    queryKey: ['supplier_orders', supplierId],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('supplier_orders')
         .select(`
@@ -25,23 +24,13 @@ export const useSupplierOrders = (supplierId: string) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
-    } catch (error: any) {
-      console.error('Error fetching supplier orders:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load orders",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+      return data;
+    },
+    enabled: !!supplierId,
+  });
 
-  const acceptOrder = async (orderId: string, notes?: string) => {
-    try {
-      setLoading(true);
-
+  const acceptOrderMutation = useMutation({
+    mutationFn: async ({ orderId, notes }: { orderId: string; notes?: string }) => {
       const { error } = await supabase
         .from('supplier_orders')
         .update({
@@ -66,31 +55,27 @@ export const useSupplierOrders = (supplierId: string) => {
           .update({ workflow_status: 'bulk_production' })
           .eq('id', supplierOrder.buyer_order_id);
       }
-
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplier_orders', supplierId] });
       toast({
         title: "Order Accepted",
         description: "You have successfully accepted this order",
       });
-
-      await fetchOrders();
-      return true;
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       console.error('Error accepting order:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: error.message || "Failed to accept order",
       });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  const rejectOrder = async (orderId: string, reason: string) => {
-    try {
-      setLoading(true);
-
+  const rejectOrderMutation = useMutation({
+    mutationFn: async ({ orderId, reason }: { orderId: string; reason: string }) => {
       const { error } = await supabase
         .from('supplier_orders')
         .update({
@@ -102,35 +87,27 @@ export const useSupplierOrders = (supplierId: string) => {
         .eq('id', orderId);
 
       if (error) throw error;
-
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplier_orders', supplierId] });
       toast({
         title: "Order Rejected",
         description: "Order has been rejected",
       });
-
-      await fetchOrders();
-      return true;
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       console.error('Error rejecting order:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: error.message || "Failed to reject order",
       });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  const submitCounterOffer = async (
-    orderId: string,
-    counterPrice: number,
-    notes: string
-  ) => {
-    try {
-      setLoading(true);
-
+  const submitCounterOfferMutation = useMutation({
+    mutationFn: async ({ orderId, counterPrice, notes }: { orderId: string; counterPrice: number; notes: string }) => {
       const { error } = await supabase
         .from('supplier_orders')
         .update({
@@ -141,67 +118,64 @@ export const useSupplierOrders = (supplierId: string) => {
         .eq('id', orderId);
 
       if (error) throw error;
-
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplier_orders', supplierId] });
       toast({
         title: "Counter Offer Submitted",
         description: "Your counter offer has been sent to admin for review",
       });
-
-      await fetchOrders();
-      return true;
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       console.error('Error submitting counter offer:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: error.message || "Failed to submit counter offer",
       });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  const updateOrderStatus = async (orderId: string, status: string) => {
-    try {
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
       const { error } = await supabase
         .from('supplier_orders')
         .update({ status })
         .eq('id', orderId);
 
       if (error) throw error;
-
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplier_orders', supplierId] });
       toast({
         title: "Status Updated",
         description: "Order status has been updated",
       });
-
-      await fetchOrders();
-      return true;
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       console.error('Error updating status:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: error.message || "Failed to update status",
       });
-      return false;
-    }
-  };
+    },
+  });
 
-  useEffect(() => {
-    if (supplierId) {
-      fetchOrders();
-    }
-  }, [supplierId]);
+  const fetchOrders = () => {
+    queryClient.invalidateQueries({ queryKey: ['supplier_orders', supplierId] });
+  };
 
   return {
     orders,
     loading,
+    error,
     fetchOrders,
-    acceptOrder,
-    rejectOrder,
-    submitCounterOffer,
-    updateOrderStatus,
+    acceptOrder: (orderId: string, notes?: string) => acceptOrderMutation.mutateAsync({ orderId, notes }),
+    rejectOrder: (orderId: string, reason: string) => rejectOrderMutation.mutateAsync({ orderId, reason }),
+    submitCounterOffer: (orderId: string, counterPrice: number, notes: string) => submitCounterOfferMutation.mutateAsync({ orderId, counterPrice, notes }),
+    updateOrderStatus: (orderId: string, status: string) => updateStatusMutation.mutateAsync({ orderId, status }),
   };
 };

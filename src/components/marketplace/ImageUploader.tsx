@@ -75,7 +75,7 @@ export function ImageUploader({
           preview: URL.createObjectURL(file),
           status: error ? 'error' : 'pending',
           progress: 0,
-          error,
+          error: error ?? undefined,
         });
       });
 
