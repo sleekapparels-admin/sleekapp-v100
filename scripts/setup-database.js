@@ -12,7 +12,7 @@ const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
 // Configuration
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://xcafrsphhnlssuzuatuo.supabase.co';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://eqpftggctumujhutomom.supabase.co';
 const SERVICE_ROLE_KEY = process.argv[2];
 
 // Colors for terminal output
@@ -209,7 +209,7 @@ async function main() {
     
     if (!tablesExist) {
       log('\n📋 TO CREATE TABLES:', 'cyan');
-      log('1. Open: https://supabase.com/dashboard/project/xcafrsphhnlssuzuatuo', 'blue');
+      log('1. Open: https://supabase.com/dashboard/project/eqpftggctumujhutomom', 'blue');
       log('2. Go to: SQL Editor → New Query', 'blue');
       log('3. Copy and paste: supabase/BASE_MIGRATION_SAFE.sql', 'blue');
       log('4. Click "Run"', 'blue');
