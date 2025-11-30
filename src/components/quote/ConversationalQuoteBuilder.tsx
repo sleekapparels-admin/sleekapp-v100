@@ -1,5 +1,4 @@
-import { useState, useRef } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +32,6 @@ interface QuoteData {
 export const ConversationalQuoteBuilder = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   // Form state
   const [productType, setProductType] = useState("");
@@ -81,9 +79,6 @@ export const ConversationalQuoteBuilder = () => {
 
     setLoading(true);
     try {
-      const captchaToken = await recaptchaRef.current?.executeAsync();
-      recaptchaRef.current?.reset();
-
       const sessionId = localStorage.getItem('quote_session_id') || crypto.randomUUID();
       localStorage.setItem('quote_session_id', sessionId);
 
@@ -99,7 +94,6 @@ export const ConversationalQuoteBuilder = () => {
           country: country || undefined,
           phoneNumber: phoneNumber || undefined,
           sessionId,
-          captchaToken,
         },
       });
 
@@ -264,12 +258,6 @@ export const ConversationalQuoteBuilder = () => {
               </div>
             </div>
           </div>
-
-          <ReCAPTCHA
-            ref={recaptchaRef}
-            size="invisible"
-            sitekey="6LcP_RMsAAAAAAyzUVk22XySYyE5zhKuWMotskop"
-          />
 
           <Button
             onClick={handleGenerateQuote}

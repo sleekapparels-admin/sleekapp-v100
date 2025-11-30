@@ -6,7 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const RECAPTCHA_SECRET_KEY = Deno.env.get('RECAPTCHA_SECRET_KEY');
 const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
 serve(async (req) => {
@@ -30,32 +29,8 @@ serve(async (req) => {
       customerName,
       country,
       phoneNumber,
-      captchaToken,
       sessionId
     } = await req.json();
-
-    // SECURITY: Verify reCAPTCHA
-    if (!captchaToken) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'CAPTCHA verification required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `secret=${RECAPTCHA_SECRET_KEY}&response=${captchaToken}`,
-    });
-
-    const recaptchaResult = await recaptchaResponse.json();
-    if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
-      console.error('CAPTCHA verification failed:', recaptchaResult);
-      return new Response(
-        JSON.stringify({ success: false, error: 'CAPTCHA verification failed' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     // Rate limiting
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
