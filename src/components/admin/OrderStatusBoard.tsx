@@ -159,7 +159,7 @@ export function OrderStatusBoard({ onOrderClick }: OrderStatusBoardProps) {
   }
 
   // Filter orders by search term
-  const filteredOrders = orders.filter((order: Order) => 
+  const filteredOrders = (orders || []).filter((order: Order) =>
     order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.product_type.toLowerCase().includes(searchTerm.toLowerCase())
   );

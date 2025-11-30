@@ -39,7 +39,7 @@ export const QuotesManagementSection = () => {
       let query = supabase
         .from('ai_quotes')
         .select('*')
-        .eq('customer_email', user.email)
+        .eq('customer_email', user.email ?? '')
         .order('created_at', { ascending: false });
 
       if (filter !== 'all') {
@@ -53,7 +53,11 @@ export const QuotesManagementSection = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setQuotes(data || []);
+      setQuotes((data || []).map(q => ({
+        ...q,
+        status: q.status ?? 'draft',
+        created_at: q.created_at
+      })));
     } catch (error: any) {
       toast({
         variant: "destructive",

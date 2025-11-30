@@ -77,7 +77,11 @@ export const SecurityMonitoringDashboard = () => {
         .limit(10);
 
       if (eventsError) throw eventsError;
-      setRecentEvents(events || []);
+      setRecentEvents((events || []).map(e => ({
+        ...e,
+        ip_address: e.ip_address ?? 'Unknown',
+        created_at: e.created_at ?? new Date().toISOString()
+      })));
 
       // Fetch hourly cost data (last 24 hours)
       const { data: costs, error: costsError } = await supabase
@@ -87,7 +91,14 @@ export const SecurityMonitoringDashboard = () => {
         .order('hour', { ascending: false });
 
       if (costsError) throw costsError;
-      setCostData(costs || []);
+      setCostData((costs || []).map(c => ({
+        ...c,
+        hour: c.hour ?? new Date().toISOString(),
+        function_name: c.function_name ?? 'Unknown',
+        model: c.model ?? 'Unknown',
+        request_count: c.request_count ?? 0,
+        total_cost: c.total_cost ?? 0
+      })));
 
       // Fetch security summary (last 7 days)
       const { data: summary, error: summaryError } = await supabase
@@ -97,7 +108,14 @@ export const SecurityMonitoringDashboard = () => {
         .order('day', { ascending: false });
 
       if (summaryError) throw summaryError;
-      setSecuritySummary(summary || []);
+      setSecuritySummary((summary || []).map(s => ({
+        ...s,
+        day: s.day ?? new Date().toISOString(),
+        event_type: s.event_type ?? 'Unknown',
+        severity: s.severity ?? 'low',
+        event_count: s.event_count ?? 0,
+        unique_ips: s.unique_ips ?? 0
+      })));
     } catch (error) {
       console.error('Error fetching security data:', error);
       toast.error('Failed to load security monitoring data');

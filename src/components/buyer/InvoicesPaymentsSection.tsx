@@ -14,8 +14,8 @@ interface Invoice {
   amount: number;
   payment_type: string;
   status: string;
-  due_date: string | null;
-  paid_at: string | null;
+  due_date: string;
+  paid_at: string | undefined;
   created_at: string;
   pdf_url: string | null;
   order_id: string;

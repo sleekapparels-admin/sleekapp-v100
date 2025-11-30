@@ -38,7 +38,11 @@ export const CMSManagementPanel = () => {
         .order('display_order');
 
       if (error) throw error;
-      setContents(data || []);
+      setContents((data || []).map(c => ({
+        ...c,
+        active: c.active ?? true,
+        display_order: c.display_order ?? 0
+      })));
     } catch (error: any) {
       toast.error(`Failed to load content: ${error.message}`);
     } finally {
